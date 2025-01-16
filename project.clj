@@ -23,7 +23,7 @@
     default-heap-size))
 
 (defproject puppetlabs/puppetserver ps-version
-  :description "Puppet Server"
+  :description "OpenVox Server"
 
   :license {:name "Apache License, Version 2.0"
               :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
@@ -95,12 +95,13 @@
                        :group "puppet"
                        :numeric-uid-gid 52
                        :build-type "foss"
+                       :package-name "openvox-server"
                        :puppet-platform-version 7
                        :java-args ~(str "-Xms2g -Xmx2g "
                                      "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"]
-                       :repo-target "puppet7"
-                       :nonfinal-repo-target "puppet7-nightly"
+                       :repo-target "openvox7"
+                       :nonfinal-repo-target "openvox7-nightly"
                        :bootstrap-source :services-d
                        :logrotate-enabled false}
                 :resources {:dir "tmp/ezbake-resources"}
@@ -172,7 +173,7 @@
                                                [puppetlabs/jruby-utils]
                                                [puppetlabs/puppetserver ~ps-version]
                                                [puppetlabs/trapperkeeper-webserver-jetty9]]
-                      :plugins [[puppetlabs/lein-ezbake "2.6.2"]]
+                      :plugins [[puppetlabs/lein-ezbake "2.6.3-SNAPSHOT-openvox"]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.bouncycastle/bcpkix-jdk18on]
                                       [puppetlabs/trapperkeeper-webserver-jetty9]]

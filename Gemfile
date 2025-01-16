@@ -1,4 +1,4 @@
-source ENV['GEM_SOURCE'] || 'https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/'
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place, fake_version = nil)
   if place =~ /^(git[:@][^#]*)#(.*)/
@@ -22,7 +22,9 @@ group :test do
   gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'] || "~> 2.4")
   gem "beaker-abs", *location_for(ENV['BEAKER_ABS_VERSION'] || "~> 1.0")
   gem "beaker-vmpooler", *location_for(ENV['BEAKER_VMPOOLER_VERSION'] || "~> 1.3")
-  gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || "~> 4.0")
+  # This needs to be updated so it doesn't require Ruby < 3.2. Just to get things building,
+  # I'm disabling it for now. - Nick
+  #gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || "~> 4.0")
   gem 'uuidtools'
   gem 'httparty'
   gem 'master_manipulator'

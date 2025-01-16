@@ -1,4 +1,21 @@
 require 'open3'
+
+def run_command(cmd)
+  output = ''
+  Open3.popen2e(cmd) do |_stdin, stdout_stderr, thread|
+    stdout_stderr.each do |line|
+      puts line
+      output += line
+    end
+    exitcode = thread.value.exitstatus
+    abort "Command failed!" unless exitcode.zero?
+  end
+  output.chomp
+end
+
+Dir.glob(File.join('tasks/**/*.rake')).each { |file| load file }
+
+### puppetlabs stuff ###
 require 'open-uri'
 require 'json'
 require 'pp'
