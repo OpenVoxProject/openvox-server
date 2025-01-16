@@ -1,10 +1,10 @@
 require 'open3'
 
-def run_command(cmd)
+def run_command(cmd, silent = false)
   output = ''
   Open3.popen2e(cmd) do |_stdin, stdout_stderr, thread|
     stdout_stderr.each do |line|
-      puts line
+      puts line unless silent
       output += line
     end
     exitcode = thread.value.exitstatus

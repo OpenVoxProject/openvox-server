@@ -2,7 +2,7 @@ def set_version(version)
   data = File.read('project.clj')
   data = data.sub(/\(def ps-version "[^"]*"/,"(def ps-version \"#{version}\"")
   File.write('project.clj', data)
-  run_command("git add project.clj && git commit -m 'Set version to #{version}'")
+  run_command("git add project.clj && git commit -m 'Set version to #{version}'", true)
 end
 
 namespace :vox do
@@ -18,9 +18,9 @@ namespace :vox do
     set_version(version)
 
     # Run git command to get short SHA and one line description of the commit on HEAD
-    branch = run_command('git rev-parse --abbrev-ref HEAD')
-    sha = run_command('git rev-parse --short HEAD')
-    msg = run_command('git log -n 1 --pretty=%B')
+    branch = run_command('git rev-parse --abbrev-ref HEAD', true)
+    sha = run_command('git rev-parse --short HEAD', true)
+    msg = run_command('git log -n 1 --pretty=%B', true)
 
     puts "Branch: #{branch}"
     puts "SHA: #{sha}"
