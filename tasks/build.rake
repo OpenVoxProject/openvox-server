@@ -12,8 +12,10 @@ require 'fileutils'
 # To be fixed one of these days. Relevant stuff:
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/tasks/build.rake
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/ext/fpm.rb
+# Also, these probably shouldn't live here long-term and be passed in so a GitHub Action can
+# determine which platforms to build packages for.
 @debs = "base-ubuntu18.04-i386.cow base-ubuntu20.04-i386.cow base-ubuntu22.04-i386.cow base-ubuntu24.04-i386.cow base-debian10-i386.cow base-debian11-i386.cow base-debian12-i386.cow"
-@rpms = "pl-el-7-x86_64 pl-el-8-x86_64 pl-el-9-x86_64 pl-el-10-x86_64 pl-sles-15-x86_64"
+@rpms = "pl-el-7-x86_64 pl-el-8-x86_64 pl-el-9-x86_64 pl-el-10-x86_64 pl-sles-15-x86_64 pl-amazon-2023-x86_64"
 
 def image_exists
   !`docker images -q #{@image}`.strip.empty?
@@ -42,8 +44,11 @@ end
 
 namespace :vox do
   desc 'Build openvox-server packages with Docker'
-  task :build do |_, _args|
+  task :build, [:tag] do |_, _args|
     begin
+      abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
+      run_command("git checkout #{args[:tag]}")
+      
       # If the Dockerfile has changed since this was last built,
       # delete all containers and do `docker rmi ezbake-builder`
       unless image_exists
@@ -56,7 +61,6 @@ namespace :vox do
       ezbake_dir = "#{tmp}/ezbake"
       run_command("git clone https://github.com/openvoxproject/ezbake #{ezbake_dir}")
       Dir.chdir(ezbake_dir) { |_| run_command('git checkout main') }
-      #FileUtils.cp_r("../ezbake", ezbake_dir)
 
       puts "Starting container"
       teardown if container_exists
