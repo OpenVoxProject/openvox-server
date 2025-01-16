@@ -44,7 +44,7 @@ end
 
 namespace :vox do
   desc 'Build openvox-server packages with Docker'
-  task :build, [:tag] do |_, _args|
+  task :build, [:tag] do |_, args|
     begin
       abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
       run_command("git checkout #{args[:tag]}")
