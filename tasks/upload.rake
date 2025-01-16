@@ -20,9 +20,9 @@ namespace :vox do
     s3 = "aws s3 --endpoint-url=#{endpoint}"
 
     # Ensure the AWS CLI isn't going to fail with the given parameters
-    run_command("#{s3} ls s3://#{bucket}/")
+    run_command("#{s3} ls s3://#{bucket}/", true)
 
-    glob = "#{__dir__}/../output/**/*#{munged_tag}*.{deb,rpm}"
+    glob = "#{__dir__}/../output/**/*#{munged_tag}*"
     if os
       # "arch" is not used here because it's all noarch
       glob += "#{os}*"
@@ -32,9 +32,7 @@ namespace :vox do
 
     path = "s3://#{bucket}/#{component}/#{args[:tag]}"
     files.each do |f|
-      #puts "Uploading #{File.basename(f)}"
-      puts "#{s3} cp #{f} #{path}/#{File.basename(f)}"
-      #run_command("#{s3} cp #{f} #{path}/#{File.basename(f)}")
+      run_command("#{s3} cp #{f} #{path}/#{File.basename(f)}")
     end
   end
 end
