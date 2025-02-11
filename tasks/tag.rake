@@ -31,7 +31,9 @@ namespace :vox do
     puts "Setting version after tag to #{snapshot_version}"
     set_version("#{snapshot_version}-SNAPSHOT")
 
-    puts "Pushing to origin"
-    run_command("git push origin && git push origin #{args[:tag]}")
+    unless !ENV['NOPUSH'].nil?
+      puts "Pushing to origin"
+      run_command("git push origin && git push origin #{args[:tag]}")
+    end
   end
 end
