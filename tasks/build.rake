@@ -72,7 +72,7 @@ namespace :vox do
       puts "Building openvox-server"
       run("cd /code && rm -rf ruby && rm -rf output && bundle install --without test && lein install")
       run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided,internal ezbake local-build")
-      Dir.glob('output/*i386*').each { |f| FileUtils.rm_rf(f) }
+      Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
       Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}
     ensure
       teardown
