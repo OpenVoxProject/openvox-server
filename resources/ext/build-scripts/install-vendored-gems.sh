@@ -56,13 +56,3 @@ cat "${DIR}/mri-gem-list-no-dependencies.txt"
 echo "jruby-puppet: { gem-home: ${DESTDIR}/opt/puppetlabs/puppet/lib/ruby/vendor_gems }" > jruby.conf
 
 install_gems "${DIR}/mri-gem-list-no-dependencies.txt" "--ignore-dependencies"
-
-# We need to install Dropsonde into an isolated directory so that its dependencies
-# can be installed with it without relying on the gems otherwise shipped by
-# puppet-agent or by puppetserver.
-echo "Installing Dropsonde into an isolated directory, to prevent dependency conflicts"
-cat "${DIR}/dropsonde-gem.txt"
-
-echo "jruby-puppet: { gem-home: ${DESTDIR}/opt/puppetlabs/server/data/puppetserver/dropsonde }" > jruby.conf
-
-install_gems "${DIR}/dropsonde-gem.txt"
