@@ -15,8 +15,7 @@ step "Configure puppet.conf" do
     end
   end
 
-  config = { 'certificate-authority' => { 'allow-subject-alt-names' => true },
-             'dropsonde' => { 'enabled' => false }}
+  config = { 'certificate-authority' => { 'allow-subject-alt-names' => true } }
   path = '/etc/puppetlabs/puppetserver/conf.d/puppetserver.conf'
   modify_tk_config(master, path, config)
 end
