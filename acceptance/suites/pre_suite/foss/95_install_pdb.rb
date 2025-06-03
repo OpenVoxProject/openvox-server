@@ -19,10 +19,6 @@ step 'Update Ubuntu 18 package repo' do
   end
 end
 
-step 'Install Puppet nightly repo' do
-  install_puppetlabs_release_repo_on(master, 'puppet7-nightly')
-end
-
 step 'Install PuppetDB module' do
   on(master, puppet('module install puppetlabs-puppetdb'))
 end
