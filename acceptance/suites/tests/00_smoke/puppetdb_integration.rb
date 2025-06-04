@@ -75,6 +75,7 @@ with_puppet_running_on(master, {}) do
   step 'Enable PuppetDB' do
     apply_manifest_on(master, <<EOM)
 class{'puppetdb::master::config':
+  terminus_package        => 'openvoxdb-termini',
   enable_reports          => true,
   manage_report_processor => true,
 }

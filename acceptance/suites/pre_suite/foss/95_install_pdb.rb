@@ -32,12 +32,14 @@ step 'Configure PuppetDB via site.pp' do
   create_remote_file(master, sitepp, <<SITEPP)
 node default {
   class { 'puppetdb':
+    puppetdb_package    => 'openvoxdb',
     manage_firewall     => false,
     manage_package_repo => #{manage_package_repo},
     postgres_version    => '14',
   }
 
   class { 'puppetdb::master::config':
+    terminus_package        => 'openvoxdb-termini',
     manage_report_processor => true,
     enable_reports          => true,
   }
