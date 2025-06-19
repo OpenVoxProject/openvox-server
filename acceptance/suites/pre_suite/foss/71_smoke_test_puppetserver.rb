@@ -13,13 +13,8 @@ step "(SERVER-414) Make sure puppetserver can start without puppet resource, "\
   "causes the tests to pass with false positive successful results."
 
 
-variant = master['platform'].to_array.first
-case variant
-  when /^(redhat|el|centos)$/
-    on(master, "puppetserver ca setup")
-    on(master, "service puppetserver start")
-    on(master, "service puppetserver status")
-    on(master, "service puppetserver stop")
-  else
-    step "(SERVER-414) Skipped for platform variant #{variant}"
-end
+on(master, "puppetserver ca setup")
+servicename = options['puppetservice']
+service(master, :start, servicename)
+service(master, :status, servicename)
+service(master, :stop, servicename)

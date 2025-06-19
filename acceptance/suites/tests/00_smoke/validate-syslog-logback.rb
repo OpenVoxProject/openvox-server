@@ -1,6 +1,6 @@
 test_name 'SERVER-1215: Validate that logback can be configured to work with syslog'
 
-service   = options['puppetservice']
+service = options['puppetservice']
 
 logback_path    = '/etc/puppetlabs/puppetserver/logback.xml'
 logback_backup  = '/etc/puppetlabs/puppetserver/logback.back'
@@ -58,7 +58,6 @@ step 'Restart puppetserver' do
 end
 
 step 'Validate that the puppetserver service is running' do
-  result=on(master, "service #{service} status", :acceptable_exit_codes => [0,1])
-  assert_equal(0, result.exit_code, 'FAIL: The puppetserver service does not appear to be running')
+  result = on(master, puppet_resource('service', service))
+  assert_match(/ensure.*=>.*running/, result.stdout, 'FAIL: The puppetserver service does not appear to be running')
 end
-
