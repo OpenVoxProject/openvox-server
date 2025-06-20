@@ -3,7 +3,6 @@ test_name "(SERVER-1268)/(TK-293) TK-AUTH uses certificate extensions for authen
 confine :except, :platform => 'windows'
 
 server = master.puppet['certname']
-ssldir = master.puppet['ssldir']
 confdir = master.puppet['confdir']
 
 teardown do
@@ -23,9 +22,9 @@ with_puppet_running_on master, {} do
   step "Confirm agent can connect with existing cert" do
     agents.each do |a|
       if (not_controller(a))
-        rc = on(a,
-                puppet("agent --test --detailed-exitcodes"),
-                {:acceptable_exit_codes => [0,2]})
+        on(a,
+           puppet("agent --test --detailed-exitcodes"),
+           {:acceptable_exit_codes => [0,2]})
       end
     end
   end
@@ -39,9 +38,9 @@ end
 step "Revoke and destroy the existing cert on the server" do
   agents.each do |a|
     if (not_controller(a))
-      rc = on(master,
-              "puppetserver ca clean --certname=#{a.hostname}",
-              {:acceptable_exit_codes => [0,2]})
+      on(master,
+         "puppetserver ca clean --certname=#{a.hostname}",
+         {:acceptable_exit_codes => [0,2]})
     end
   end
 end
@@ -51,9 +50,9 @@ with_puppet_running_on master, {} do
   step "Confirm agent can't connect with existing cert" do
     agents.each do |a|
       if (not_controller(a))
-        rc = on(a,
-                puppet("agent --test --detailed-exitcodes"),
-                {:acceptable_exit_codes => [1]})
+        on(a,
+           puppet("agent --test --detailed-exitcodes"),
+           {:acceptable_exit_codes => [1]})
       end
     end
   end
@@ -61,9 +60,9 @@ with_puppet_running_on master, {} do
   step "Remove the old certs on the agents so they'll make new ones" do
     agents.each do |a|
       if (not_controller(a))
-        rc = on(a,
-                "find #{confdir} -name #{a.hostname}.pem -delete",
-                {:acceptable_exit_codes => [0,1]})
+        on(a,
+           "find #{confdir} -name #{a.hostname}.pem -delete",
+           {:acceptable_exit_codes => [0,1]})
       end
     end
   end
@@ -75,10 +74,10 @@ with_puppet_running_on master, {} do
   step "Copy the CSR attributes file into place" do
     agents.each do |a|
       if (not_controller(a))
-        rc = scp_to(a,
-                    'acceptance/suites/tests/authorization/fixtures/csr_attributes.yaml',
-                    "#{confdir}",
-                    {:acceptable_exit_codes => [0]})
+        scp_to(a,
+               'acceptance/suites/tests/authorization/fixtures/csr_attributes.yaml',
+               "#{confdir}",
+               {:acceptable_exit_codes => [0]})
       end
     end
   end
@@ -86,17 +85,17 @@ with_puppet_running_on master, {} do
   step "Generate a new cert with a cert extension" do
     agents.each do |a|
       if (not_controller(a))
-        rc = on(a,
-                puppet("agent --test --detailed-exitcodes"),
-                {:acceptable_exit_codes => [1]})
+        on(a,
+           puppet("agent --test --detailed-exitcodes"),
+           {:acceptable_exit_codes => [1]})
       end
     end
   end
 
   step "Sign the certs" do
-    rc = on(master,
-            'puppetserver ca sign --all',
-            {:accept_all_exit_codes => true})
+    on(master,
+       'puppetserver ca sign --all',
+       {:accept_all_exit_codes => true})
   end
 end
 
@@ -146,4 +145,3 @@ with_puppet_running_on master, {} do
 end
 
 end
-
