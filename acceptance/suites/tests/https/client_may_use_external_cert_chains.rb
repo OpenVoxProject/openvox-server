@@ -74,7 +74,7 @@ EOF
   end
 
   report_content = on(master, "cat #{directory_to_serve}/#{master}").stdout.chomp
-  assert_match /(un)?changed/, report_content
+  assert_match(/(un)?changed/, report_content)
 
   system_ssl_tmpdir = master.tmpdir('system_ssl_store')
   script_location = system_ssl_tmpdir + '/connection_test.rb'
@@ -95,5 +95,5 @@ EOF
 
   create_remote_file(master, script_location, test_script)
   status = on(master, "/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver ruby #{script_location}").stdout.chomp
-  assert_match /.*200$/, status
+  assert_match(/.*200$/, status)
 end
