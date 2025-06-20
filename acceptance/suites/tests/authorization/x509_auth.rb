@@ -106,8 +106,9 @@ end
 # FIXME / TODO: create helper methods so that we can modify the tk auth.conf
 # file in place (and therefore test more use cases.)
 step "Lay down a test tk-auth.conf file" do
+  extension_auth_path = File.join(__dir__, 'fixtures', 'extensions_test_auth.conf')
   scp_to( master,
-    'acceptance/suites/tests/authorization/fixtures/extensions_test_auth.conf',
+    extension_auth_path,
     '/etc/puppetlabs/puppetserver/conf.d/auth.conf',
     :acceptable_exit_codes => 0 )
 end
