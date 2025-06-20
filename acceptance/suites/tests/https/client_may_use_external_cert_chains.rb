@@ -88,7 +88,7 @@ EOF
     Puppet::Server::PuppetConfig.initialize_puppet(puppet_config: {})
     client = Puppet.runtime[:http]
 
-    response = client.get(URI('https://github.com/index.html'), options: {include_system_store: true})
+    response = client.get(URI('https://voxpupuli.org/index.html'), options: {include_system_store: true})
 
     puts response.code
 EOF
