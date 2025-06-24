@@ -27,6 +27,23 @@ if master.platform.variant == 'debian'
   master.install_package('apt-transport-https')
 end
 
+step 'Ensure PuppetDB certificates are setup' do
+  # Normally the openvoxdb package automagically post-install runs
+  # 'puppetdb ssl-setup', but this relies on the openvox-agent already
+  # having certs generated at the time that the openvoxdb package
+  # was installed. If we installed openvoxdb before running the suite
+  # and before agent certs were generated, then we need this step
+  # to ensure that openvoxdb now gets its certs. (If they are already
+  # in place, the command should be idempotent.)
+  apply_manifest_on(master, <<~EOM)
+    exec { 'puppetdb-prepare-certs':
+      command => '/opt/puppetlabs/bin/puppetdb ssl-setup',
+      path    => '/bin:/sbin:/usr/bin',
+      onlyif  => 'test -f /opt/puppetlabs/bin/puppetdb',
+    }
+  EOM
+end
+
 step 'Configure PuppetDB via site.pp' do
   manage_package_repo = ! master.platform.match?(/ubuntu-18/)
   create_remote_file(master, sitepp, <<SITEPP)
