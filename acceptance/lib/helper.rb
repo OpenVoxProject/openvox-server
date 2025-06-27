@@ -71,6 +71,23 @@ module PuppetServerExtensions
 
   class << self
     attr_reader :config
+    # Flag to indicate whether tests should expect to be able to
+    # interoperate with an openvoxdb instance.
+    attr_accessor :pdb_integration_expected
+  end
+
+  # Set in pre_suite/foss/95_install_pdb.rb if the platform
+  # has postgresql available. After this, other tests
+  # can check test_with_pdb?() to determine if they should
+  # skip or test pdb related functionality.
+  def mark_pdb_integration_expected
+    PuppetServerExtensions.pdb_integration_expected = true
+  end
+
+  # Returns true if the tests should expect to be able to
+  # interoperate with an openvoxdb instance.
+  def test_with_pdb?
+    PuppetServerExtensions.pdb_integration_expected
   end
 
   # Return the configuration hash initialized by

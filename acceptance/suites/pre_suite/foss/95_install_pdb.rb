@@ -1,7 +1,10 @@
-skip_test('No Postgresql packages available for this platform') if unsupported_postgresql_platform?(master)
-skip_test('Skipped for fips') if master.fips_mode?
-
 test_name 'PuppetDB setup'
+
+skip_test('Skipped for fips') if master.fips_mode?
+skip_test('No Postgresql packages available for this platform') if unsupported_postgresql_platform?(master)
+
+mark_pdb_integration_expected
+
 sitepp = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 teardown do

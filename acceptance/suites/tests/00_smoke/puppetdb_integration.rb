@@ -15,9 +15,10 @@
 ## to ensure that metrics related to PuppetDB communication were recorded.
 #
 
-# We only run this test if we'll have puppetdb installed, which is gated in
-# acceptance/suites/pre_suite/foss/95_install_pdb.rb using the same conditional
-skip_test('openvoxdb was not configured on this platform due to lack of postgresql packages') if unsupported_postgresql_platform?(master)
+# We only run this test if we'll have puppetdb installed and
+# configured, which is gated in
+# acceptance/suites/pre_suite/foss/95_install_pdb.rb.
+skip_test('openvoxdb was not configured on this platform due to lack of postgresql packages') if !test_with_pdb?
 skip_test('Skipped for fips') if master.fips_mode?
 skip_test if master.is_pe?
 
