@@ -393,7 +393,6 @@ module PuppetServerExtensions
   #
   require 'hocon/config_factory'
   def append_match_request(args)
-    cn                    = args[:cn]            #The cannonical name to allow.
     name                  = args[:name] || args[:cn]  #friendly name.
     host                  = args[:host] || master
     allow                 = args[:allow]|| args[:cn]
@@ -404,7 +403,6 @@ module PuppetServerExtensions
     type                  = args[:type] || 'path'
     default_http_methods  = ['head', 'get', 'put', 'post', 'delete']
     method                = args[:method] || default_http_methods
-    query_params          = args[:query_params] || {}
     #TODO: handle TK-293 X509 extensions.
     authconf_file         = args[:authconf_file] ||
 	options[:'puppetserver-confdir']+'/auth.conf'

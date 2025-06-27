@@ -11,7 +11,6 @@ skip_test if master.is_pe?
 test_name "v4 catalog endpoint workflows" do
 
   no_change     = { acceptable_exit_codes: 0      }
-  allow_failure = { acceptable_exit_codes: [0, 1] }
   allow_change  = { acceptable_exit_codes: [0, 2] }
 
   auth_path = '/etc/puppetlabs/puppetserver/conf.d/auth.conf'
