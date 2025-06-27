@@ -57,20 +57,16 @@ module PuppetServerExtensions
     Beaker::Log.notify "Puppet Server Acceptance Configuration:\n\n#{pp_config}\n\n"
   end
 
-  # PuppetDB development packages aren't available on as many platforms as
-  # Puppet Server's packages, so we need to restrict the PuppetDB-related
-  # testing to a subset of the platforms.
-  # This guards both the installation of the PuppetDB package repository file
-  # and the running of the PuppetDB test(s).
-  def puppetdb_supported_platforms()
+  # Postgresql doesn't have packages for older Debian and Ubuntu
+  # platforms that we have openvox-server and openvoxdb packages
+  # built for.
+  #
+  # This test lets us skip the configuration and testing
+  # related to openvoxdb integration on these platforms.
+  def unsupported_postgresql_platform?(host)
     [
-      /debian-8/,
-      /debian-9/,
-      /el-6/,
-      /el-7/,
-      /ubuntu-16.04/,
-      /ubuntu-18.04/
-    ]
+      /debian-10/,
+    ].any? { |p| host['platform'] =~ p }
   end
 
   class << self

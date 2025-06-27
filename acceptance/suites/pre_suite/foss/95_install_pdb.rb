@@ -1,7 +1,5 @@
-
-matching_puppetdb_platform = puppetdb_supported_platforms.select { |r| r =~ master.platform }
-skip_test if matching_puppetdb_platform.length == 0 || master.fips_mode?
-
+skip_test('No Postgresql packages available for this platform') if unsupported_postgresql_platform?(master)
+skip_test('Skipped for fips') if master.fips_mode?
 
 test_name 'PuppetDB setup'
 sitepp = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
