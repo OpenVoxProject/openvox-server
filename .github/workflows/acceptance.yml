@@ -61,10 +61,10 @@ on:
           (Collection) OpenVox collection to use. (ignored if
           Pre-release Build is true)
 
-          NOTE: This should really only be set to openvox8 when
-          testing the main branch. If you need to test openvox7, you
-          should run the pipeline from the 7.x branch instead.
-        default: 'openvox8'
+          NOTE: This should really only be set to openvox7 when
+          testing the 7.x branch. If you need to test openvox8, you
+          should run the pipeline from the main branch instead.
+        default: 'openvox7'
         type: string
       artifacts-url:
         description: |-
