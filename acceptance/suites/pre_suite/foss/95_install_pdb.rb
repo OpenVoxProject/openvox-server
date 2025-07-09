@@ -20,6 +20,16 @@ step 'Update Ubuntu 18 package repo' do
   end
 end
 
+step 'Update EL postgresql repos' do
+  # work around for testing on rhel and the repos on the image not finding the pg packages it needs
+  if master.platform =~ /el-/
+    major_version = master.platform.match(/el-(\d+)/)[1]
+
+    on master, "dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-#{major_version}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    on master, "dnf -qy module disable postgresql"
+  end
+end
+
 step 'Install PuppetDB module' do
   on(master, puppet('module install puppetlabs-puppetdb'))
 end
