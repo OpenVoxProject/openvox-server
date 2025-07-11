@@ -71,3 +71,5 @@ jobs:
           bundler-cache: true
       - name: build it
         run: bundle exec rake vox:build
+        env:
+          EZ_VERBOSE: true
