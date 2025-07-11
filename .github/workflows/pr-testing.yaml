@@ -65,3 +65,12 @@ jobs:
           ./install-clj-kondo --dir .
       - name: kondo lint
         run: ./clj-kondo --lint src test
+
+  tests:
+    needs:
+      - pr-testing
+      - clojure-linting
+    runs-on: ubuntu-24.04
+    name: Test suite
+    steps:
+      - run: echo Test suite completed
