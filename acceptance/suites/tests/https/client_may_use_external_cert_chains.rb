@@ -74,7 +74,7 @@ EOF
   end
 
   report_content = on(master, "cat #{directory_to_serve}/#{master}").stdout.chomp
-  assert_match /(un)?changed/, report_content
+  assert_match(/(un)?changed/, report_content)
 
   system_ssl_tmpdir = master.tmpdir('system_ssl_store')
   script_location = system_ssl_tmpdir + '/connection_test.rb'
@@ -88,12 +88,12 @@ EOF
     Puppet::Server::PuppetConfig.initialize_puppet(puppet_config: {})
     client = Puppet.runtime[:http]
 
-    response = client.get(URI('https://github.com/index.html'), options: {include_system_store: true})
+    response = client.get(URI('https://voxpupuli.org/index.html'), options: {include_system_store: true})
 
     puts response.code
 EOF
 
   create_remote_file(master, script_location, test_script)
   status = on(master, "/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver ruby #{script_location}").stdout.chomp
-  assert_match /.*200$/, status
+  assert_match(/.*200$/, status)
 end

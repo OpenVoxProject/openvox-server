@@ -17,13 +17,18 @@ end
 
 teardown do
   step 'Stop the server so the original SSL config can be restored' do
-    # This is done as a 'service stop' as opposed to a resource 'ensure=stopped'
-    # to ensure that the OS isn't trying to restart a failing service in the
-    # background (e.g, on a system using systemd Restart=on-failure) and
-    # potentially recreating part of the SSL state before the original state
-    # can be restored.  'ensure=stopped' doesn't terminate the systemd
-    # Restart=on-failure loop.
-    on(master, "service #{puppetservice} stop")
+    ## This is done as a 'service stop' as opposed to a resource 'ensure=stopped'
+    ## to ensure that the OS isn't trying to restart a failing service in the
+    ## background (e.g, on a system using systemd Restart=on-failure) and
+    ## potentially recreating part of the SSL state before the original state
+    ## can be restored.  'ensure=stopped' doesn't terminate the systemd
+    ## Restart=on-failure loop.
+    #
+    # (2025-06-19 Partlow) Switching this back to a resource service
+    # call since the service command is not present on all systems
+    # under test. Further, ensure=stopped should stop a systemd
+    # service, regardless of Restart=on-failure settings.
+    on(master, puppet_resource('service', puppetservice, 'ensure=stopped'))
   end
 
   # Re-enable PuppetDB facts terminus
@@ -35,10 +40,10 @@ teardown do
     on(master, "mv #{backup_ssldir}/#{File.basename(ssldir)} #{File.dirname(ssldir)}")
     on(master, "mv #{backup_cadir}/#{File.basename(cadir)} #{File.dirname(cadir)}")
   end
+
   step 'Restart the server with original SSL config before ending the test' do
     on(master, puppet("resource service #{puppetservice} ensure=running"))
   end
-
 end
 
 step 'Disable facts reporting to PuppetDB while we munge certs' do
@@ -67,7 +72,7 @@ step 'Ensure puppetserver can start successfully with the public/private key but
   # started whereas 'service start' should only return a 0 exit code if the
   # startup was successful.
   on(master, 'puppetserver ca setup')
-  on(master, "service #{puppetservice} start")
+  service(master, :start, puppetservice)
 end
 
 step 'Ensure an agent run with the generated master cert is now successful' do

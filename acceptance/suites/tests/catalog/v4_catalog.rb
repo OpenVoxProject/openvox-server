@@ -11,7 +11,6 @@ skip_test if master.is_pe?
 test_name "v4 catalog endpoint workflows" do
 
   no_change     = { acceptable_exit_codes: 0      }
-  allow_failure = { acceptable_exit_codes: [0, 1] }
   allow_change  = { acceptable_exit_codes: [0, 2] }
 
   auth_path = '/etc/puppetlabs/puppetserver/conf.d/auth.conf'
@@ -33,10 +32,7 @@ test_name "v4 catalog endpoint workflows" do
 
   old_puppet_conf = puppet_conf_for(master, {})
   testdir = master.tmpdir('v4catalog')
-  pdb = on(master,
-              '[ -d /etc/puppetlabs/puppetdb ]',
-              allow_failure).
-              exit_code == 0
+  pdb = test_with_pdb?
 
   def conf_for(non_root_agent)
     <<PUPPETCONF

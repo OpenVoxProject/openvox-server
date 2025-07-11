@@ -15,10 +15,11 @@
 ## to ensure that metrics related to PuppetDB communication were recorded.
 #
 
-# We only run this test if we'll have puppetdb installed, which is gated in
-# acceptance/suites/pre_suite/foss/95_install_pdb.rb using the same conditional
-matching_puppetdb_platform = puppetdb_supported_platforms.select { |r| r =~ master.platform }
-skip_test if matching_puppetdb_platform.length == 0 || master.fips_mode?
+# We only run this test if we'll have puppetdb installed and
+# configured, which is gated in
+# acceptance/suites/pre_suite/foss/95_install_pdb.rb.
+skip_test('openvoxdb was not configured on this platform due to lack of postgresql packages') if !test_with_pdb?
+skip_test('Skipped for fips') if master.fips_mode?
 skip_test if master.is_pe?
 
 require 'json'
@@ -75,6 +76,7 @@ with_puppet_running_on(master, {}) do
   step 'Enable PuppetDB' do
     apply_manifest_on(master, <<EOM)
 class{'puppetdb::master::config':
+  terminus_package        => 'openvoxdb-termini',
   enable_reports          => true,
   manage_report_processor => true,
 }

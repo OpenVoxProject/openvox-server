@@ -29,7 +29,7 @@ test_name 'Intermediate CA import' do
 
 
   step 'Stop and backup the CA' do
-    on master, "service #{master['puppetservice']} stop"
+    on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
 
     on master, "mkdir -p #{backup_directory}/{ca,ssl}"
     on master, "cp -pR #{ca_directory}/* #{backup_directory}/ca"
@@ -74,7 +74,7 @@ test_name 'Intermediate CA import' do
   end
 
   teardown do
-    on master, "service #{master['puppetservice']} stop"
+    on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
     on master, "rm -rf #{ssl_directory}/*"
     on master, "cp -pR #{backup_directory}/ssl/* #{ssl_directory}/"
     on master, "rm -rf #{ca_directory}/*"
@@ -85,7 +85,7 @@ test_name 'Intermediate CA import' do
       on master, puppet("config set --section master storeconfigs true")
       on master, puppet("config set --section master node_terminus classifier")
     end
-    on master, "service #{master['puppetservice']} start"
+    on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
   end
 
   step 'Import External CA infrastructure and restart Puppet Server' do
@@ -95,7 +95,7 @@ test_name 'Intermediate CA import' do
                 '--cert-bundle', cert_bundle_path,
                 '--crl-chain', crl_chain_path].join(' ')
 
-    on master, "service #{master['puppetservice']} start"
+    on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
   end
 
 

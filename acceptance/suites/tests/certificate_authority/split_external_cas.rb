@@ -42,7 +42,8 @@ teardown do
   # location, even when using the force flag. The escape ensures that an
   # alias is not used.
   on master, "\\cp -frp #{backupdir}/puppetserver/* #{jetty_confdir}/../"
-  on(master, "service #{master['puppetservice']} restart")
+  on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
+  on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
 end
 
 # Backup files in scope for modification by test
@@ -121,7 +122,8 @@ create_remote_file master, "#{jetty_confdir}/../services.d/ca.cfg", "puppetlabs.
 # disable pdb connectivity
 on master, puppet('config set --section master route_file /tmp/nonexistent.yaml')
 # restart master
-on(master, "service #{master['puppetservice']} restart")
+on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
+on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
 
 step "Start the Puppet master service..."
 with_puppet_running_on(master, master_opts) do
