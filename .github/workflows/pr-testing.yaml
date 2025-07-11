@@ -1,10 +1,14 @@
+---
 name: PR Testing
 
 on:
-  workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
-    paths: ['src/**','test/**','project.clj']
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   pr-testing:
@@ -42,3 +46,31 @@ jobs:
         timeout-minutes: 30
       - name: rspec tests
         run: rake spec
+
+  clojure-linting:
+    name: Clojure Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: checkout repo
+        uses: actions/checkout@v4
+      - name: install clj-kondo (this is quite fast)
+        run: |
+          curl -sLO https://raw.githubusercontent.com/clj-kondo/clj-kondo/master/script/install-clj-kondo
+          chmod +x install-clj-kondo
+          ./install-clj-kondo --dir .
+      - name: kondo lint
+        run: ./clj-kondo --lint src test
+
+  tests:
+    needs:
+      - pr-testing
+      - clojure-linting
+    runs-on: ubuntu-24.04
+    name: Test suite
+    steps:
+      - run: echo Test suite completed
