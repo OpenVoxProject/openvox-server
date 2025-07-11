@@ -1,10 +1,14 @@
+---
 name: PR Testing
 
 on:
-  workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
-    paths: ['src/**','test/**','project.clj']
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   pr-testing:
