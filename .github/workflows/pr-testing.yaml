@@ -73,3 +73,4 @@ jobs:
         run: bundle exec rake vox:build
         env:
           EZ_VERBOSE: true
+          EZBAKE_BRANCH: 'erb'
