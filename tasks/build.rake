@@ -5,11 +5,11 @@ require 'tmpdir'
 @container = 'openvox-server-builder'
 @timestamp = Time.now.strftime('%Y%m%d_%H%M%S')
 # It seems like these are special files/names that, when you want to add a new one, require
-# changes in some other component.  But no, it seems to only really look at the parts of 
+# changes in some other component.  But no, it seems to only really look at the parts of
 # the text in the string, as long as it looks like "base-<whatever you want to call the platform>-i386.cow"
 # and "<doesn't matter>-<os>-<osver>-<arch which doesn't matter because it's actually noarch>".
 # I think it just treats all debs like Debian these days. And all rpms are similar.
-# So do whatever you want I guess. We really don't need separate packages for each platform. 
+# So do whatever you want I guess. We really don't need separate packages for each platform.
 # To be fixed one of these days. Relevant stuff:
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/tasks/build.rake
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/ext/fpm.rb
@@ -46,9 +46,9 @@ namespace :vox do
   desc 'Build openvox-server packages with Docker'
   task :build, [:tag] do |_, args|
     begin
-      abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
-      run_command("git fetch --tags && git checkout #{args[:tag]}")
-      
+      #abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
+      #run_command("git fetch --tags && git checkout #{args[:tag]}")
+
       # If the Dockerfile has changed since this was last built,
       # delete all containers and do `docker rmi ezbake-builder`
       unless image_exists
@@ -72,7 +72,7 @@ namespace :vox do
 
       puts "Building openvox-server"
       run("cd /code && rm -rf ruby && rm -rf output && bundle install --without test && lein install")
-      run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided,internal ezbake local-build")
+      run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake EZ_VERBOSE=true lein with-profile user,ezbake,provided,internal ezbake local-build")
       run_command("sudo chown -R $USER output", print_command: true)
       Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
       Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}
