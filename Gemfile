@@ -29,5 +29,5 @@ group :test do
   gem 'master_manipulator'
 
   # docker-api 1.32.0 requires ruby 2.0.0
-  gem 'docker-api', '1.31.0'
+  gem 'docker-api', '2.4.0'
 end
