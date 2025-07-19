@@ -7,6 +7,6 @@ net-smtp 0.3.1
 power_assert 2.0.1
 prime 0.1.2
 rake 13.0.6
-rexml 3.2.5
+rexml 3.3.9
 rss 0.2.9
 test-unit 3.5.3
