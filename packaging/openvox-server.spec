@@ -71,6 +71,7 @@ install -p -D -m 0644 ext/system-config/services.d/bootstrap.cfg %{buildroot}%{a
 
 install -p -D -m 0644 ext/ezbake.manifest %{buildroot}%{_docdir}/%{name}/ezbake.manifest
 
+install -p -D -m 0755 ext/bin/puppetserver %{buildroot}/opt/puppetlabs/bin/puppetserver
 # TODO: should rubygem-puppetserver-ca actually ship this file?
 install -p -D -m 0755 ext/cli/ca %{buildroot}%{appdir}/cli/apps/ca
 install -p -D -m 0755 ext/cli/irb %{buildroot}%{appdir}/cli/apps/irb
@@ -143,9 +144,14 @@ fi
 %endif
 
 %files
+# apps
+/opt/puppetlabs/bin/puppetserver
 %{appdir}/cli/apps
+
+# service
 %{appdir}/config/services.d/bootstrap.cfg
 %{appdir}/puppet-server-release.jar
+
 # TODO why owned by puppet?
 %dir %attr(0775,puppet,puppet) %{serverdir}/data
 %dir %attr(0700,puppet,puppet) %{serverdir}/data/puppetserver/jars
@@ -158,10 +164,12 @@ fi
 /opt/puppetlabs/puppet/lib/ruby/vendor_gems
 %attr(0755,puppet,puppet) %{serverdir}/data/puppetserver/vendored-jruby-gems
 
+# systemd
 %{_sysusersdir}/%{name}.conf
 %{_unitdir}/%{service}.service
-%{_sysconfdir}/sysconfig/%{service}
+%config(noreplace) %{_sysconfdir}/sysconfig/%{service}
 
+# configs
 # TODO: why owned by puppet?
 %dir %attr(0750,puppet,puppet) %{etcdir}/ca
 %config(noreplace) %{etcdir}/conf.d/auth.conf
