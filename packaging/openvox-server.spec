@@ -30,21 +30,18 @@ BuildRequires: systemd-rpm-macros
 %if 0%{?rhel} >= 10 || 0%{?fedora}
 %global java jre-21-headless
 %global java_bin /usr/lib/jvm/jre-21/bin/java
-%elif 0%{?rhel} >= 8
-%global java jre-17-headless
-%global java_bin /usr/lib/jvm/jre-17/bin/java
-%elif 0%{?rhel}
-%global java jre-11-headless
-%global java_bin /usr/lib/jvm/jre-11/bin/java
-%elif 0%{?sles_version}
-%global java java-11-openjdk-headless
 %elif 0%{?amzn}
 # TODO: also a build requirement?
 Requires: tzdata-java
 %global java (java-17-amazon-corretto-headless or java-11-amazon-corretto-headless)
 %else
-# TODO: probably wrong
-%global java java-1.8.0-openjdk-headless
+# RPM 4 doesn't support elif
+%if 0%{?sles_version}
+%global java java-11-openjdk-headless
+%else
+%global java jre-17-headless
+%global java_bin /usr/lib/jvm/jre-17/bin/java
+%endif
 %endif
 BuildRequires: %{java}
 
