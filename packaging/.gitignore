@@ -1,0 +1,3 @@
+*.tar.gz
+*.rpm
+/results_openvox-server
