@@ -1,1 +1,1 @@
-u     puppet  52   "Puppet"  /opt/puppetlabs/server/data      /usr/sbin/nologin
+u     puppet  52   "Puppet"  /opt/puppetlabs/server/data/puppetserver      /sbin/nologin
