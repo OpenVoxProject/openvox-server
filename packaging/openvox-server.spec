@@ -51,8 +51,7 @@ Requires: tzdata-java
 BuildRequires: %{java}
 
 Requires: %{java}
-# TODO: 8.21.0 introduces a regression
-Requires: openvox-agent >= 8.21.0
+Requires: openvox-agent >= 8.21.1
 
 Provides: puppetserver
 Obsoletes: puppetserver < 9
@@ -107,19 +106,19 @@ install -p -D -m 0644 ext/config/services.d/ca.cfg %{buildroot}%{etcdir}/service
 mkdir -p -m 0755 %{buildroot}%{serverdir}/data/puppetserver/{yaml,jars}
 
 %pre
-%if 0%{?rhel} >= 9 || 0%{?fedora} > 0
+%if 0%{?rhel} >= 9 || 0%{?fedora}
 %sysusers_create_compat %{SOURCE1}
-%elif 0%{?rhel} > 0
-# TODO sysusers
-%elif 0{?sles_version} > 0
+%elif 0{?sles_version}
 # TODO sysusers
 %service_add_pre %{service}.service
+%else
+%sysusers_create_package %{name} %{SOURCE1}
 %endif
 
 %post
-%if 0%{?rhel} > 0 || 0%{?fedora} > 0
+%if 0%{?rhel} || 0%{?fedora}
 %systemd_post %{service}.service
-%elif 0{?sles_version} > 0
+%elif 0{?sles_version}
 %service_add_post %{service}.service
 %endif
 
@@ -137,16 +136,16 @@ if [ "$1" = "1" ]; then
 fi
 
 %preun
-%if 0%{?rhel} > 0 || 0%{?fedora} > 0
+%if 0%{?rhel} || 0%{?fedora}
 %systemd_preun %{service}.service
-%elif 0{?sles_version} > 0
+%elif 0{?sles_version}
 %service_del_preun %{service}.service
 %endif
 
 %postun
-%if 0%{?rhel} > 0 || 0%{?fedora} > 0
+%if 0%{?rhel} || 0%{?fedora}
 %systemd_postun_with_restart %{service}.service
-%elif 0{?sles_version} > 0
+%elif 0{?sles_version}
 %service_del_postun %{service}.service
 %endif
 
