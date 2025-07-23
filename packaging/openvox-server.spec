@@ -152,10 +152,10 @@ fi
 %{appdir}/config/services.d/bootstrap.cfg
 %{appdir}/puppet-server-release.jar
 
-# TODO why owned by puppet?
 %dir %attr(0775,puppet,puppet) %{serverdir}/data
+%dir %attr(0775,puppet,puppet) %{serverdir}/data/puppetserver
 %dir %attr(0700,puppet,puppet) %{serverdir}/data/puppetserver/jars
-%dir %attr(0700,puppet,puppet) %{serverdir}/data/puppetserver/yaml
+%dir %attr(0750,puppet,puppet) %{serverdir}/data/puppetserver/yaml
 
 # TODO: LICENSE
 %doc %{_docdir}/%{name}/ezbake.manifest
