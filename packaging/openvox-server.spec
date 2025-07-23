@@ -46,9 +46,11 @@ Requires: tzdata-java
 BuildRequires: %{java}
 
 Requires: %{java}
-Requires: openvox-agent >= 8
+# TODO: 8.21.0 introduces a regression
+Requires: openvox-agent >= 8.21.0
 
-# TODO obsolete puppetserver
+Provides: puppetserver
+Obsoletes: puppetserver < 9
 
 %description
 Server component
