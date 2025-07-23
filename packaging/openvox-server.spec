@@ -20,7 +20,7 @@ Source1:        openvox-server.sysusers
 
 BuildArch: noarch
 
-%if 0%{?rhel} == 8
+%if 0%{?rhel} && 0%{?rhel} < 9
 BuildRequires: systemd
 %else
 BuildRequires: systemd-rpm-macros
@@ -39,8 +39,13 @@ Requires: tzdata-java
 %if 0%{?sles_version}
 %global java java-11-openjdk-headless
 %else
+%if 0%{?rhel} == 7
+%global java jre-11-headless
+%global java_bin /usr/lib/jvm/jre-11/bin/java
+%else
 %global java jre-17-headless
 %global java_bin /usr/lib/jvm/jre-17/bin/java
+%endif
 %endif
 %endif
 BuildRequires: %{java}
