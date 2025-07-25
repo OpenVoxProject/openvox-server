@@ -83,20 +83,33 @@ jobs:
         run: rake spec
 
   build:
-    name: build openvox-server
+    name: build openvox-server - Java ${{ matrix.version }}
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ['11', '17', '21']
     steps:
       - name: checkout repo
         uses: actions/checkout@v5
         with:
           submodules: recursive
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.version }}
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
-      # uses the Dockerfile to build openvox-server in a container
-      # the container hardcodes the java version
+      - name: Output ruby environment
+        run: bundle env
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@13.4
+        with:
+          lein: latest
       - name: build it
         run: bundle exec rake vox:build
 
