@@ -25,7 +25,13 @@ BuildRequires: systemd
 %else
 BuildRequires: systemd-rpm-macros
 %endif
+
+%if 0%{?sles_version}
+BuildRequires: sysuser-tools
+%sysusers_requires
+%else
 %{?sysusers_requires_compat}
+%endif
 
 %if 0%{?rhel} >= 10 || 0%{?fedora}
 %global java jre-21-headless
@@ -66,6 +72,10 @@ Server component
 %build
 %if 0%{?rhel} || 0%{?fedora}
 sed -i 's|/usr/bin/java|%{java_bin}|' ext/redhat/puppetserver.service
+%endif
+
+%if 0%{sles_version}
+%sysusers_generate_pre %{SOURCE1} puppet %{name}.conf
 %endif
 
 %install
@@ -109,7 +119,7 @@ mkdir -p -m 0755 %{buildroot}%{serverdir}/data/puppetserver/{yaml,jars}
 %if 0%{?rhel} >= 9 || 0%{?fedora}
 %sysusers_create_compat %{SOURCE1}
 %elif 0{?sles_version}
-# TODO sysusers
+%{name}.pre
 %service_add_pre %{service}.service
 %else
 %sysusers_create_package %{name} %{SOURCE1}
