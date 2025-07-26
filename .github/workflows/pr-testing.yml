@@ -83,7 +83,7 @@ jobs:
         run: rake spec
 
   build:
-    name: build openvox-server
+    name: build openvox-server - Java ${{ matrix.version }}
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -104,6 +104,12 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler-cache: true
+      - name: Output ruby environment
+        run: bundle env
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@13.4
+        with:
+          lein: latest
       - name: build it
         run: bundle exec rake vox:build
 
