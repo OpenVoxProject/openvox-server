@@ -54,6 +54,7 @@ Requires: tzdata-java
 %endif
 
 Requires: %{java}
+# First version to include OpenFact
 Requires: openvox-agent >= 8.21.1
 
 Provides: puppetserver
