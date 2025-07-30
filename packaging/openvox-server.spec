@@ -36,10 +36,6 @@ BuildRequires: sysuser-tools
 %if 0%{?rhel} >= 10 || 0%{?fedora}
 %global java jre-21-headless
 %global java_bin /usr/lib/jvm/jre-21/bin/java
-%elif 0%{?amzn}
-# TODO: also a build requirement?
-Requires: tzdata-java
-%global java (java-17-amazon-corretto-headless or java-11-amazon-corretto-headless)
 %else
 # RPM 4 doesn't support elif
 %if 0%{?sles_version}
@@ -55,6 +51,10 @@ Requires: tzdata-java
 %endif
 %endif
 BuildRequires: %{java}
+
+%if 0%{?amzn}
+Requires: tzdata-java
+%endif
 
 Requires: %{java}
 Requires: openvox-agent >= 8.21.1
