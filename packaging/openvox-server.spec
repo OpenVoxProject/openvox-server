@@ -33,13 +33,11 @@ BuildRequires: sysuser-tools
 %{?sysusers_requires_compat}
 %endif
 
-%if 0%{?rhel} >= 10 || 0%{?fedora}
-%global java jre-21-headless
-%global java_bin /usr/lib/jvm/jre-21/bin/java
-%else
-# RPM 4 doesn't support elif
 %if 0%{?sles_version}
 %global java java-11-openjdk-headless
+%elif 0%{?rhel} >= 10 || 0%{?fedora}
+%global java jre-21-headless
+%global java_bin /usr/lib/jvm/jre-21/bin/java
 %else
 %if 0%{?rhel} == 7
 %global java jre-11-headless
@@ -47,7 +45,6 @@ BuildRequires: sysuser-tools
 %else
 %global java jre-17-headless
 %global java_bin /usr/lib/jvm/jre-17/bin/java
-%endif
 %endif
 %endif
 BuildRequires: %{java}
