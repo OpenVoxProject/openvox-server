@@ -23,7 +23,7 @@
 
   :min-lein-version "2.9.1"
 
-  :parent-project {:coords [puppetlabs/clj-parent "7.3.35"]
+  :parent-project {:coords [puppetlabs/clj-parent "7.3.36"]
                    :inherit [:managed-dependencies]}
 
   :dependencies [[org.clojure/clojure]
@@ -80,8 +80,8 @@
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
 
-  :plugins [[lein-parent "0.3.7"]
-            [jonase/eastwood "1.4.2" :exclusions [org.clojure/clojure]]
+  :plugins [[lein-parent "0.3.9"]
+            [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
             [puppetlabs/i18n "0.9.2" :hooks false]]
@@ -115,13 +115,13 @@
   :profiles {:defaults {:source-paths  ["dev"]
                         :dependencies  [[org.clojure/tools.namespace]
                                         [com.puppetlabs/trapperkeeper-webserver-jetty10 :classifier "test"]
-                                        [puppetlabs/trapperkeeper nil :classifier "test" :scope "test"]
+                                        [puppetlabs/trapperkeeper 4.0.2 :classifier "test" :scope "test"]
                                         [puppetlabs/trapperkeeper-metrics :classifier "test" :scope "test"]
-                                        [puppetlabs/kitchensink nil :classifier "test" :scope "test"]
+                                        [puppetlabs/kitchensink 3.4.0 :classifier "test" :scope "test"]
                                         [ring-basic-authentication]
                                         [ring/ring-mock]
                                         [beckon]
-                                        [lambdaisland/uri "1.4.70"]
+                                        [lambdaisland/uri "1.19.155"]
                                         [puppetlabs/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
              :dev [:defaults :dev-deps]
@@ -154,7 +154,7 @@
                     :jvm-opts ["-Dclojure.core.async.pool-size=50"]
                     ;; Use humane test output so you can actually see what the problem is
                     ;; when a test fails.
-                    :dependencies [[pjstadig/humane-test-output "0.8.3"]]
+                    :dependencies [[pjstadig/humane-test-output "0.11.0"]]
                     :injections [(require 'pjstadig.humane-test-output)
                                  (pjstadig.humane-test-output/activate!)]}
 
@@ -225,7 +225,7 @@
                              puppetlabs.puppetserver.cli.irb
                              puppetlabs.puppetserver.cli.gem
                              puppetlabs.services.protocols.legacy-routes]}
-             :ci {:plugins [[lein-pprint "1.1.1"]
+             :ci {:plugins [[lein-pprint "1.3.2"]
                             [lein-exec "0.3.7"]]}}
 
   :test-selectors {:default (complement :multithreaded-only)
