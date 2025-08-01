@@ -80,7 +80,7 @@
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
 
-  :plugins [[lein-parent "0.3.7"]
+  :plugins [[lein-parent "0.3.9"]
             [jonase/eastwood "1.4.2" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
