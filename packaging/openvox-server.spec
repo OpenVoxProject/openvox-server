@@ -10,7 +10,7 @@
 %global __requires_exclude_from .+/(vendor_gems|vendored-jruby-gems)/bin/.*$
 
 Name:           openvox-server
-Version:        8.9.0
+Version:        8.10.0
 Release:        1%{?dist}
 Summary:        Server component for OpenVox agents
 License:        Apache-2.0
