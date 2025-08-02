@@ -68,7 +68,7 @@ Server component
 %setup -n puppetserver-%{version}
 
 %build
-%if 0%{?rhel} || 0%{?fedora}
+%if 0%{?java_bin:1}
 sed -i 's|/usr/bin/java|%{java_bin}|' ext/redhat/puppetserver.service
 %endif
 
