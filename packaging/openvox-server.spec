@@ -1,3 +1,4 @@
+%global agentvendordir /opt/puppetlabs/puppet/lib/ruby/vendor_gems
 %global serverdir /opt/puppetlabs/server
 # TODO use datadir variable?
 %global appdir %{serverdir}/apps/puppetserver
@@ -5,7 +6,7 @@
 %global etcdir %{_sysconfdir}/puppetlabs/puppetserver
 %global service puppetserver
 
-%global __requires_exclude_from .+/(vendor_gems|vendored-jruby-gems)/bin/.*$
+%global __requires_exclude_from .+/vendored-jruby-gems/bin/.*$
 
 Name:           openvox-server
 Version:        8.10.0
@@ -68,6 +69,7 @@ Server component
 %build
 %if 0%{?java_bin:1}
 sed -i 's|/usr/bin/java|%{java_bin}|' ext/redhat/puppetserver.service
+sed -i 's|java|%{java_bin}|' ext/build-scripts/install-vendored-gems.sh
 %endif
 
 %if 0%{?sles_version}
@@ -84,8 +86,12 @@ rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/gette
 rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/locale-*/samples
 
 # Clean up shebangs - based on brp-mangle-shebangs
+%if 0%{?java_bin:1}
+java_shebang=$(realpath %{java_bin})
+%else
 java_shebang=$(realpath /usr/bin/java)
-find -executable -type f ! -path '*:*' ! -path $'*\n*' \
+%endif
+find %{buildroot}%{serverdir} %{buildroot}%{agentvendordir} -executable -type f ! -path '*:*' ! -path $'*\n*' \
 | file -N --mime-type -f - \
 | grep -P ".+(?=: (text/|application/javascript))" \
 | {
@@ -134,9 +140,10 @@ while IFS= read -r line; do
     continue
   fi
 
-  if ! { echo "$shebang" | grep -q -P "^/(?:usr/)?(?:bin|sbin)/"; }; then
-    continue
-  fi
+  # TODO: look at $java_shebang
+  #if ! { echo "$shebang" | grep -q -P "^/(?:usr/)?(?:bin|sbin)/"; }; then
+  #  continue
+  #fi
 
   # Replace "special" env shebang:
   # /whatsoever/env -whatever /whatever/foo → /whatever/foo
@@ -146,10 +153,9 @@ while IFS= read -r line; do
 
   if [ "$shebang" = "/usr/bin/ruby" ] ; then
     shebang=/opt/puppetlabs/puppet/bin/ruby
-%if 0%{?java_bin:1}
-  elif [ "$shebang" = "$java" ] ; then
-    shebang=%{java_bin}
-%endif
+  elif [[ "$shebang" == "${java_shebang}"* ]] ; then
+    # Something looks for the realpath but we want to use the symlink
+    shebang="%{java_bin}${shebang#${java_shebang}}"
   fi
 
   if [ "#!$shebang" != "#!$orig_shebang" ]; then
@@ -251,7 +257,7 @@ fi
 %doc %{_docdir}/%{name}/ezbake.manifest
 
 # vendored gems
-/opt/puppetlabs/puppet/lib/ruby/vendor_gems
+%agentvendordir
 %attr(0755,puppet,puppet) %{serverdir}/data/puppetserver/vendored-jruby-gems
 %exclude %{serverdir}/data/puppetserver/vendored-jruby-gems/cache
 
