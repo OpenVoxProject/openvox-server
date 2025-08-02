@@ -72,7 +72,7 @@ Server component
 sed -i 's|/usr/bin/java|%{java_bin}|' ext/redhat/puppetserver.service
 %endif
 
-%if 0%{sles_version}
+%if 0%{?sles_version}
 %sysusers_generate_pre %{SOURCE1} puppet %{name}.conf
 %endif
 
