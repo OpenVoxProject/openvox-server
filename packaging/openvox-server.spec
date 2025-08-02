@@ -130,14 +130,8 @@ mkdir -p -m 0755 %{buildroot}%{serverdir}/data/puppetserver/{yaml,jars}
 %service_add_post %{service}.service
 %endif
 
-%postinstall
 if [ "$1" = "1" ]; then
     : # Null command in case additional_postinst_install is empty
-    #/opt/puppetlabs/puppet/bin/puppet config set --section master vardir  /opt/puppetlabs/server/data/puppetserver
-    #/opt/puppetlabs/puppet/bin/puppet config set --section master logdir  /var/log/puppetlabs/puppetserver
-    #/opt/puppetlabs/puppet/bin/puppet config set --section master rundir  /var/run/puppetlabs/puppetserver
-    #/opt/puppetlabs/puppet/bin/puppet config set --section master pidfile /var/run/puppetlabs/puppetserver/puppetserver.pid
-    #/opt/puppetlabs/puppet/bin/puppet config set --section master codedir /etc/puppetlabs/code
     #install --directory /etc/puppetlabs/puppet/ssl
     #chown -R puppet:puppet /etc/puppetlabs/puppet/ssl
     #find /etc/puppetlabs/puppet/ssl -type d -print0 | xargs -0 chmod 770
