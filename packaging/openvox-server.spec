@@ -5,8 +5,6 @@
 %global etcdir %{_sysconfdir}/puppetlabs/puppetserver
 %global service puppetserver
 
-# TODO shebang expands /usr/bin/java
-# TODO replace shebang
 %global __requires_exclude_from .+/(vendor_gems|vendored-jruby-gems)/bin/.*$
 
 Name:           openvox-server
@@ -83,6 +81,86 @@ DESTDIR=%{buildroot} bash ext/build-scripts/install-vendored-gems.sh
 # Clean up vendored gems
 rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/*/.github
 rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/gettext-*/samples
+rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/locale-*/samples
+
+# Clean up shebangs - based on brp-mangle-shebangs
+java_shebang=$(realpath /usr/bin/java)
+find -executable -type f ! -path '*:*' ! -path $'*\n*' \
+| file -N --mime-type -f - \
+| grep -P ".+(?=: (text/|application/javascript))" \
+| {
+while IFS= read -r line; do
+  f=${line%%:*}
+
+  # Remove the dot
+  path="${f#.}"
+
+
+  if ! read shebang_line < "$f"; then
+    echo >&2 "*** WARNING: Cannot read the first line from $f, removing executable bit"
+    ts=$(stat -c %y "$f")
+    chmod -x "$f"
+    touch -d "$ts" "$f"
+    continue
+  fi
+
+  orig_shebang="${shebang_line#\#!}"
+  if [ "$orig_shebang" = "$shebang_line" ]; then
+    echo >&2 "*** WARNING: $f is executable but has no shebang, removing executable bit"
+    ts=$(stat -c %y "$f")
+    chmod -x "$f"
+    touch -d "$ts" "$f"
+    continue
+  fi
+
+  # Trim spaces
+  while shebang="${orig_shebang//  / }"; [ "$shebang" != "$orig_shebang" ]; do
+    orig_shebang="$shebang"
+  done
+  # Treat "#! /path/to " as "#!/path/to"
+  orig_shebang="${orig_shebang# }"
+
+  shebang="$orig_shebang"
+
+  if [ -z "$shebang" ]; then
+    echo >&2 "*** WARNING: $f is executable but has empty shebang, removing executable bit"
+    ts=$(stat -c %y "$f")
+    chmod -x "$f"
+    touch -d "$ts" "$f"
+    continue
+  fi
+  if [ -n "${shebang##/*}" ]; then
+    echo >&2 "*** ERROR: $f has shebang which doesn't start with '/' ($shebang)"
+    continue
+  fi
+
+  if ! { echo "$shebang" | grep -q -P "^/(?:usr/)?(?:bin|sbin)/"; }; then
+    continue
+  fi
+
+  # Replace "special" env shebang:
+  # /whatsoever/env -whatever /whatever/foo → /whatever/foo
+  shebang=$(echo "$shebang" | sed -r -e 's@^(.+)/env( -[^ ]+)* /(.+)$@/\3@')
+  # /whatsoever/env -whatever foo → /whatsoever/foo
+  shebang=$(echo "$shebang" | sed -r -e 's@^(.+/)env( -[^ ]+)* (.+)$@\1\3@')
+
+  if [ "$shebang" = "/usr/bin/ruby" ] ; then
+    shebang=/opt/puppetlabs/puppet/bin/ruby
+%if 0%{?java_bin:1}
+  elif [ "$shebang" = "$java" ] ; then
+    shebang=%{java_bin}
+%endif
+  fi
+
+  if [ "#!$shebang" != "#!$orig_shebang" ]; then
+    echo "mangling shebang in $path from $orig_shebang to #!$shebang"
+    ts=$(stat -c %y "$f")
+    sed -i -e "1c #!$shebang" "$f"
+    touch -d "$ts" "$f"
+  fi
+
+done
+}
 
 install -p -D -m 0644 puppet-server-release.jar %{buildroot}%{appdir}/puppet-server-release.jar
 install -p -D -m 0644 ext/system-config/services.d/bootstrap.cfg %{buildroot}%{appdir}/config/services.d/bootstrap.cfg
