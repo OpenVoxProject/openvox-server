@@ -80,6 +80,10 @@ sed -i 's|/usr/bin/java|%{java_bin}|' ext/redhat/puppetserver.service
 # TODO: this needs internet access
 DESTDIR=%{buildroot} bash ext/build-scripts/install-vendored-gems.sh
 
+# Clean up vendored gems
+rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/*/.github
+rm -rf %{buildroot}%{serverdir}/data/puppetserver/vendored-jruby-gems/gems/gettext-*/samples
+
 install -p -D -m 0644 puppet-server-release.jar %{buildroot}%{appdir}/puppet-server-release.jar
 install -p -D -m 0644 ext/system-config/services.d/bootstrap.cfg %{buildroot}%{appdir}/config/services.d/bootstrap.cfg
 
@@ -171,6 +175,7 @@ fi
 # vendored gems
 /opt/puppetlabs/puppet/lib/ruby/vendor_gems
 %attr(0755,puppet,puppet) %{serverdir}/data/puppetserver/vendored-jruby-gems
+%exclude %{serverdir}/data/puppetserver/vendored-jruby-gems/cache
 
 # systemd
 %{_sysusersdir}/%{name}.conf
