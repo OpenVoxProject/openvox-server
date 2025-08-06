@@ -38,6 +38,12 @@ on:
         required: true
         type: string
         default: main
+      fork:
+        description: |-
+          (Fork) The fork of openvox-server to run the Beaker test suite from.
+        required: true
+        type: string
+        default: openvoxproject
       pre-release-build:
         description: |-
           (Pre-release Build) Whether to test unreleased version
@@ -85,12 +91,6 @@ on:
           true)
         default: 'https://s3.osuosl.org/openvox-artifacts'
         type: string
-      fork:
-        description: |-
-          The github fork of the project-name Beaker test suite to run.
-        required: true
-        type: string
-        default: openvoxproject
 
 permissions:
   contents: read
@@ -99,59 +99,14 @@ jobs:
   acceptance:
     uses: 'openvoxproject/shared-actions/.github/workflows/beaker_acceptance.yml@main'
     with:
+      suite-name: openvox-server
       ref: ${{ inputs.ref }}
-      project-name: openvox-server
-      install-openvox: true
+      fork: ${{ inputs.fork }}
       openvox-collection: ${{ inputs.collection }}
       openvox-agent-version: ${{ inputs.openvox-agent-version }}
       openvox-agent-pre-release-build: ${{ inputs.pre-release-build }}
-      install-openvox-server: true
       openvox-server-version: ${{ inputs.openvox-server-version }}
       openvox-server-pre-release-build: ${{ inputs.pre-release-build }}
-      install-openvoxdb: true
       openvoxdb-version: ${{ inputs.openvoxdb-version }}
       openvoxdb-pre-release-build: ${{ inputs.pre-release-build }}
       artifacts-url: ${{ inputs.artifacts-url }}
-      fork: ${{ inputs.fork }}
-      acceptance-working-dir: './'
-      acceptance-pre-suite: |-
-        [
-          "acceptance/suites/pre_suite/openvox/configure_type_defaults.rb",
-          "acceptance/suites/pre_suite/foss/00_setup_environment.rb",
-          "acceptance/suites/pre_suite/foss/070_InstallCACerts.rb",
-          "acceptance/suites/pre_suite/foss/10_update_ca_certs.rb",
-          "acceptance/suites/pre_suite/foss/15_prep_locales.rb",
-          "acceptance/suites/pre_suite/foss/71_smoke_test_puppetserver.rb",
-          "acceptance/suites/pre_suite/foss/80_configure_puppet.rb",
-          "acceptance/suites/pre_suite/foss/85_configure_sut.rb",
-          "acceptance/suites/pre_suite/foss/90_validate_sign_cert.rb",
-          "acceptance/suites/pre_suite/foss/95_install_pdb.rb",
-          "acceptance/suites/pre_suite/foss/99_collect_data.rb"
-        ]
-      acceptance-tests: |-
-        [
-          "acceptance/suites/tests"
-        ]
-      beaker-options: |-
-        {
-          "helper":       "acceptance/lib/helper.rb",
-          "load_path":    "acceptance/lib",
-          "options_file": "acceptance/config/beaker/options.rb"
-        }
-      vms: |-
-        [
-          {
-            "role": "primary",
-            "count": 1,
-            "cpus": 4,
-            "mem_mb": 8192,
-            "cpu_mode": "host-model"
-          },
-          {
-            "role": "agent",
-            "count": 1,
-            "cpus": 2,
-            "mem_mb": 2048,
-            "cpu_mode": "host-model"
-          }
-        ]
