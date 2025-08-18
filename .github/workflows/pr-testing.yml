@@ -102,14 +102,14 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
 
-      - name: Setup Bundle
-        run: bundle install
-
       - name: Setup Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+
+      - name: Setup Bundle
+        run: bundle install
 
       - name: Output ruby environment
         run: bundle env
