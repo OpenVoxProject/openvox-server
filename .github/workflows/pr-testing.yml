@@ -108,12 +108,6 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Bundle List
-        run: bundle list
-
-      - name: Output ruby environment
-        run: bundle env
-
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@13.4
         with:
