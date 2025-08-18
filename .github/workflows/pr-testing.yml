@@ -120,7 +120,7 @@ jobs:
       #     lein: latest
 
       - name: build it
-        run: bundle exec rake vox:build['${{ github.ref }}']
+        run: bundle exec rake vox:build
 
   clojure-linting:
     name: Clojure Linting
