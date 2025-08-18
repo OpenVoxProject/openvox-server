@@ -84,6 +84,10 @@ jobs:
 
   build:
     name: build openvox-server - Java ${{ matrix.java }} Ruby ${{ matrix.ruby }}
+    # https://rpm.org/releases/4.18.2
+    # https://github.com/actions/runner-images?tab=readme-ov-file
+    # rpm in 22 is version 4.17.x and allows our macros
+    # rpm in 24 is version 4.18.x and does not allow our rpmversion macro
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
