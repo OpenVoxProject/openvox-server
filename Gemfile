@@ -12,7 +12,7 @@ end
 
 gem 'public_suffix', '>= 4.0.7', '< 7'
 # 1.0.0 is the first OpenVoxProject release
-gem 'packaging', git: 'https://github.com/OpenVoxProject/packaging.git', tag: '1.0.0'
+gem 'packaging', '~> 1.0', github: 'OpenVoxProject/packaging'
 gem 'rake', :group => [:development, :test]
 
 group :test do
