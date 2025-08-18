@@ -43,7 +43,7 @@ namespace :vox do
 
     puts "Building openvox-server"
     run_command("rm -rf ruby && rm -rf output && bundle install --without test && lein install", silent: false, print_command: true)
-    run_command("COW=\"#{@debs}\" MOCK=\"#{@rpms}\" EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build", silent: false, print_command: true)
+    run_command("COW=\"#{@debs}\" MOCK=\"#{@rpms}\" lein with-profile user,ezbake,provided ezbake local-build", silent: false, print_command: true)
     run_command("sudo chown -R $USER output", print_command: true)
     Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
     Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}

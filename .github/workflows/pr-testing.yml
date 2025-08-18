@@ -84,7 +84,7 @@ jobs:
 
   build:
     name: build openvox-server - Java ${{ matrix.java }} Ruby ${{ matrix.ruby }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -116,11 +116,11 @@ jobs:
       - name: build it
         run: bundle exec rake vox:build
         env:
-          # EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS: true
+          EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS: true
           EZBAKE_BRANCH: no-bundle-on-local-build
-          # EZBAKE_NODEPLOY: true
+          EZBAKE_NODEPLOY: true
           EZBAKE_REPO: https://github.com/rwaffen/ezbake
-          # LEIN_PROFILES: ezbake
+          LEIN_PROFILES: ezbake
 
   clojure-linting:
     name: Clojure Linting
