@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
       matrix:
         java: ['11', '17', '21']
-        ruby: ['3.1', '3.2', '3.3', '3.4']
+        ruby: ['3.2', '3.3']
     steps:
       - name: checkout repo
         uses: actions/checkout@v5
@@ -108,19 +108,19 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Setup Bundle
-        run: bundle install
+      # - name: Setup Bundle
+      #   run: bundle install
 
-      - name: Output ruby environment
-        run: bundle env
+      # - name: Output ruby environment
+      #   run: bundle env
 
-      - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
-        with:
-          lein: latest
+      # - name: Install clojure tools
+      #   uses: DeLaGuardo/setup-clojure@13.4
+      #   with:
+      #     lein: latest
 
       - name: build it
-        run: bundle exec rake vox:build
+        run: bundle exec rake vox:build['${{ github.ref }}']
 
   clojure-linting:
     name: Clojure Linting
