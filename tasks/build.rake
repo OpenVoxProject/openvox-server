@@ -39,11 +39,11 @@ namespace :vox do
     run_command("git config --global user.email 'you@example.com'; git config --global user.name 'Your Name'")
 
     puts "Installing ezbake from source"
-    run_command("cd #{ezbake_dir} && lein install")
+    run_command("cd #{ezbake_dir} && lein install", silent: false, print_command: true)
 
     puts "Building openvox-server"
     run_command("rm -rf ruby && rm -rf output && lein install")
-    run_command("COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided,internal ezbake local-build")
+    run_command("COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build", silent: false, print_command: true)
     run_command("sudo chown -R $USER output", print_command: true)
     Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
     Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}
