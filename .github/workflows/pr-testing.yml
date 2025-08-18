@@ -115,6 +115,12 @@ jobs:
 
       - name: build it
         run: bundle exec rake vox:build
+        env:
+          # EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS: true
+          EZBAKE_BRANCH: no-bundle-on-local-build
+          # EZBAKE_NODEPLOY: true
+          EZBAKE_REPO: https://github.com/rwaffen/ezbake
+          # LEIN_PROFILES: ezbake
 
   clojure-linting:
     name: Clojure Linting
