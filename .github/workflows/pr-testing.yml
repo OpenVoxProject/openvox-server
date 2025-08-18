@@ -114,10 +114,10 @@ jobs:
       # - name: Output ruby environment
       #   run: bundle env
 
-      # - name: Install clojure tools
-      #   uses: DeLaGuardo/setup-clojure@13.4
-      #   with:
-      #     lein: latest
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@13.4
+        with:
+          lein: latest
 
       - name: build it
         run: bundle exec rake vox:build
