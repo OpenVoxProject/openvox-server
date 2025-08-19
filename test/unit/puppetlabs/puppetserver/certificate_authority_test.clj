@@ -26,7 +26,7 @@
            (java.nio.file.attribute FileAttribute)
            (java.security MessageDigest PublicKey)
            (java.security.cert X509CRL X509Certificate)
-           (java.time LocalDateTime ZoneOffset)
+           (java.time LocalDateTime ZoneOffset ZonedDateTime)
            (java.util Date)
            (java.util.concurrent TimeUnit)
            (java.util.concurrent.locks ReentrantReadWriteLock)
@@ -2177,9 +2177,9 @@
                         public-key
                         (.getThisUpdate crl)
                         ;; create a date 5 days from now using java.time
-                        (-> (LocalDateTime/now)
+                        (-> (ZonedDateTime/now)
                             (.plusDays 5)
-                            (.toInstant ZoneOffset/UTC)
+                            (.toInstant)
                             (Date/from))
                         (biginteger 1)
                         nil)
