@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: setup java
@@ -61,7 +61,7 @@ jobs:
         ruby: ['3.1', '3.2', '3.3', '3.4']
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: setup ruby
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: setup ruby
@@ -110,7 +110,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       # newer versions cause lint errors
       # https://github.com/clj-kondo/clj-kondo/releases
       - name: Install clojure tools
