@@ -11,8 +11,6 @@ def location_for(place, fake_version = nil)
 end
 
 gem 'public_suffix', '>= 4.0.7', '< 7'
-# 1.0.0 is the first OpenVoxProject release
-gem 'packaging', '~> 1.0', github: 'OpenVoxProject/packaging'
 gem 'rake', :group => [:development, :test]
 
 group :test do
@@ -27,6 +25,12 @@ group :test do
   gem 'master_manipulator'
 
   gem 'docker-api', '>=1.31.0', '< 3'
+end
+
+# cut from ezbake
+group :packaging do
+  gem 'packaging', '~> 1.0', github: 'OpenVoxProject/packaging'
+  gem 'fpm', '~> 1.16'
 end
 
 group :release, optional: true do
