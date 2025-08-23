@@ -76,8 +76,9 @@ namespace :vox do
       run("cd /ezbake && lein install")
 
       puts "Building openvox-server"
+      ezbake_version_var = ENV['EZBAKE_VERSION'] ? "EZBAKE_VERSION=#{ENV['EZBAKE_VERSION']}" : ''
       run("cd /code && rm -rf ruby && rm -rf output && bundle install --without test && lein install")
-      run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided,internal ezbake local-build")
+      run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided,internal ezbake local-build")
       run_command("sudo chown -R $USER output", print_command: true)
       Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
       Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}

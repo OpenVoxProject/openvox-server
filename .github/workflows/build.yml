@@ -20,6 +20,10 @@ on:
           Branch/tag from ezbake that will be used for openvoxdb/server builds.
         type: string
         default: 'main'
+      ezbake-ver:
+        description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version found in project.clj in this repo if not specified.'
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -31,4 +35,6 @@ jobs:
       ref: ${{ inputs.ref }}
       deb_platform_list: ${{ inputs.deb_platform_list }}
       rpm_platform_list: ${{ inputs.rpm_platform_list }}
+      ezbake-ref: ${{ inputs.ezbake-ref }}
+      ezbake-ver: ${{ inputs.ezbake-ver }}
     secrets: inherit
