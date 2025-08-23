@@ -93,7 +93,7 @@
                        :build-type "foss"
                        :package-name "openvox-server"
                        :puppet-platform-version 8
-                       :java-args ~(str "-Xms2g -Xmx2g "
+                       :java-args ~(str "-Djava.security.properties==/opt/puppetlabs/java.security.fips -Xms2g -Xmx2g "
                                      "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"
                                      "/opt/puppetlabs/server/data/puppetserver/yaml"]
@@ -127,7 +127,8 @@
              :dev [:defaults :dev-deps]
              :fips-deps {:dependencies [[org.bouncycastle/bcpkix-fips]
                                         [org.bouncycastle/bc-fips]
-                                        [org.bouncycastle/bctls-fips]]
+                                        [org.bouncycastle/bctls-fips]
+                                        [org.bouncycastle/bcutil-fips]]
                          :jvm-opts ~(let [version (System/getProperty "java.specification.version")
                                           [major minor _] (clojure.string/split version #"\.")
                                           unsupported-ex (ex-info "Unsupported major Java version."
@@ -166,14 +167,14 @@
                                                ;; in the list above, so any version overrides need to be
                                                ;; specified in both places. TODO: fix this.
                                                [org.clojure/clojure]
-                                               [org.bouncycastle/bcpkix-jdk18on]
+                                               [org.bouncycastle/bcpkix-fips]
                                                [puppetlabs/jruby-utils]
                                                [puppetlabs/puppetserver ~ps-version]
                                                [com.puppetlabs/trapperkeeper-webserver-jetty10]
                                                [puppetlabs/trapperkeeper-metrics]]
                       :plugins [[puppetlabs/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "3.0.1-SNAPSHOT")]]
                       :name "puppetserver"}
-             :uberjar {:dependencies [[org.bouncycastle/bcpkix-jdk18on]
+             :uberjar {:dependencies [
                                       [com.puppetlabs/trapperkeeper-webserver-jetty10]]
                        :aot [puppetlabs.trapperkeeper.main
                              puppetlabs.trapperkeeper.services.status.status-service
