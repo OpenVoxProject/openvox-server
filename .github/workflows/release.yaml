@@ -13,7 +13,7 @@ jobs:
     # Optional but recommended to use a specific environment
     environment: release
     # Prevent releases from forked repositories
-    if: github.repository_owner == 'OpenVoxProject'
+    if: github.repository_owner == 'OpenVoxProject' && !startsWith(github.ref_name, '99.')
 
     permissions:
       contents: write
