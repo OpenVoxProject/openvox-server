@@ -115,7 +115,7 @@
   :profiles {:defaults {:source-paths  ["dev"]
                         :dependencies  [[org.clojure/tools.namespace]
                                         [com.puppetlabs/trapperkeeper-webserver-jetty10 :classifier "test"]
-                                        [puppetlabs/trapperkeeper nil :classifier "test" :scope "test"]
+                                        [puppetlabs/trapperkeeper 4.0.2 :classifier "test" :scope "test"]
                                         [puppetlabs/trapperkeeper-metrics :classifier "test" :scope "test"]
                                         [puppetlabs/kitchensink nil :classifier "test" :scope "test"]
                                         [ring-basic-authentication]
