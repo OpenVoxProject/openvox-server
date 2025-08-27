@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+cli_defaults=${INSTALL_DIR}/cli/cli-defaults.sh
+
+CLASSPATH=${INSTALL_DIR}/puppet-server-release.jar
+
+if [ -e "$cli_defaults" ]; then
+  . $cli_defaults
+  if [ $? -ne 0 ]; then
+    echo "Unable to initialize cli defaults, failing irb subcommand." 1>&2
+    exit 1
+  fi
+fi
+
+"${JAVA_BIN}" $JAVA_ARGS_CLI \
+    -cp "$CLASSPATH" \
+    clojure.main -m puppetlabs.puppetserver.cli.irb \
+    --config "${CONFIG}" -- "$@"
