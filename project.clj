@@ -121,7 +121,7 @@
                                         [ring-basic-authentication]
                                         [ring/ring-mock]
                                         [beckon]
-                                        [lambdaisland/uri "1.4.70"]
+                                        [lambdaisland/uri "1.19.155"]
                                         [puppetlabs/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
              :dev [:defaults :dev-deps]
@@ -225,7 +225,7 @@
                              puppetlabs.puppetserver.cli.irb
                              puppetlabs.puppetserver.cli.gem
                              puppetlabs.services.protocols.legacy-routes]}
-             :ci {:plugins [[lein-pprint "1.1.1"]
+             :ci {:plugins [[lein-pprint "1.3.2"]
                             [lein-exec "0.3.7"]]}}
 
   :test-selectors {:default (complement :multithreaded-only)
