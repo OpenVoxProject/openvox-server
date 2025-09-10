@@ -225,7 +225,7 @@
                              puppetlabs.puppetserver.cli.irb
                              puppetlabs.puppetserver.cli.gem
                              puppetlabs.services.protocols.legacy-routes]}
-             :ci {:plugins [[lein-pprint "1.1.1"]
+             :ci {:plugins [[lein-pprint "1.3.2"]
                             [lein-exec "0.3.7"]]}}
 
   :test-selectors {:default (complement :multithreaded-only)
