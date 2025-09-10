@@ -121,7 +121,7 @@
                                         [ring-basic-authentication]
                                         [ring/ring-mock]
                                         [beckon]
-                                        [lambdaisland/uri "1.4.70"]
+                                        [lambdaisland/uri "1.19.155"]
                                         [puppetlabs/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
              :dev [:defaults :dev-deps]
