@@ -154,7 +154,7 @@
                     :jvm-opts ["-Dclojure.core.async.pool-size=50"]
                     ;; Use humane test output so you can actually see what the problem is
                     ;; when a test fails.
-                    :dependencies [[pjstadig/humane-test-output "0.8.3"]]
+                    :dependencies [[pjstadig/humane-test-output "0.11.0"]]
                     :injections [(require 'pjstadig.humane-test-output)
                                  (pjstadig.humane-test-output/activate!)]}
 
