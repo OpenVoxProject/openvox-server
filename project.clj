@@ -172,7 +172,7 @@
                                                [puppetlabs/puppetserver ~ps-version]
                                                [com.puppetlabs/trapperkeeper-webserver-jetty10]
                                                [puppetlabs/trapperkeeper-metrics]]
-                      :plugins [[puppetlabs/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "3.0.1-SNAPSHOT")]]
+                      :plugins [[puppetlabs/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.6.3-SNAPSHOT-openvox")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [
                                       [com.puppetlabs/trapperkeeper-webserver-jetty10]]
@@ -267,4 +267,3 @@
                                        (fn [new prev]
                                          (if (map? prev) [new prev] (conj prev new)))
                                        #(spit %1 (pr-str %2))]})
-
