@@ -15,40 +15,15 @@
 
 (def slf4j-version "2.0.17")
 (def i18n-version "1.0.4")
-(def logback-version "1.3.16")
+(def logback-version "1.5.32")
 (def jackson-version "2.21.3")
 ;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
 ;; response headers automatically rather than transferring it chunked,
 ;; and also string flushing behavior is changed, and some part of the system
 ;; does not handle one or both of these correctly. We need to debug this and
 ;; fix it before upgrading.
-(def ring-core-version "1.14.2")
-
-(require '[clojure.string :as str]
-         '[leiningen.core.main :as main])
-(defn fail-if-logback->1-3!
-  "Fails the build if logback-version is > 1.3.x."
-  [logback-version]
-  (let [[x y] (->> (str/split (str logback-version) #"\.")
-                   (take 2)
-                   (map #(Integer/parseInt %)))]
-    (when (or (> x 1)
-              (and (= x 1) (> y 3)))
-      (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
-
-(fail-if-logback->1-3! logback-version)
-
-(defn fail-if-ring-core->1-14!
-  "Fails the build if ring-core version is > 1.14.x."
-  [ring-core-version]
-  (let [[x y] (->> (str/split (str ring-core-version) #"\.")
-                (take 2)                                    ;; keep major and minor versions
-                (map #(Integer/parseInt %)))]
-    (when (or (> x 1)                                       ;; major version is greater than 1
-            (and (= x 1) (> y 14)))                         ;; major version is 1 and minor version is greater than 14
-      (main/abort (format "ring-core version %s is not supported. Must be 1.14.x until performance regression is fixed (#197)." ring-core-version)))))
-
-(fail-if-ring-core->1-14! ring-core-version)
+;; FIXME: validate that we did not re-introduce the above issue and remove comment
+(def ring-core-version "1.15.3")
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -68,7 +43,8 @@
                          [org.clojure/tools.namespace "0.3.1"]
                          [org.clojure/tools.reader "1.6.0"]
                          [beckon "0.1.1"]
-                         [ch.qos.logback/logback-access ~logback-version]
+                         [ch.qos.logback.access/logback-access-common "2.0.12"]
+                         [ch.qos.logback.access/logback-access-jetty12 "2.0.12"]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
                          [cheshire "6.2.0"]
@@ -105,14 +81,14 @@
                          [org.openvoxproject/trapperkeeper "4.3.5"]
                          [org.openvoxproject/trapperkeeper "4.3.5" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.0"]
-                         [org.openvoxproject/trapperkeeper-authorization "2.2.0"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.3.0"]
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.2"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.2.0"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.2.0" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.3.0"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.3.0" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-scheduler "1.3.2"]
-                         [org.openvoxproject/trapperkeeper-status "1.4.0"]
-                         [org.openvoxproject/trapperkeeper-webserver "10.0.0"]
-                         [org.openvoxproject/trapperkeeper-webserver "10.0.0" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-status "1.5.0"]
+                         [org.openvoxproject/trapperkeeper-webserver "12.0.0"]
+                         [org.openvoxproject/trapperkeeper-webserver "12.0.0" :classifier "test"]
                          [org.ow2.asm/asm "9.9.1"]
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
