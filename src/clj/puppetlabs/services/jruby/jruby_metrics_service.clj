@@ -60,7 +60,7 @@
                                 {:default-metrics-allowed default-metrics-allowed})
       (register-status
        "jruby-metrics"
-       (status-core/get-artifact-version "puppetlabs" "puppetserver")
+       (status-core/get-artifact-version "org.openvoxproject" "puppetserver")
        jruby-metrics-service-status-version
        (partial jruby-metrics-core/v1-status metrics))
       (assoc context :metrics metrics)))

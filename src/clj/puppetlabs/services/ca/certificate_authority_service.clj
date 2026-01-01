@@ -97,7 +97,7 @@
            (ca/generate-infra-serials! settings))))
       (register-status
         "ca"
-        (status-core/get-artifact-version "puppetlabs" "puppetserver")
+        (status-core/get-artifact-version "org.openvoxproject" "puppetserver")
         1
         core/v1-status)
       (assoc context :auth-handler auth-handler
