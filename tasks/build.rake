@@ -18,6 +18,33 @@ rpm_platforms = ENV['RPM_PLATFORMS'] || 'el-8,el-9,el-10,sles-15,sles-16,amazon-
 @debs = deb_platforms.split(',').map{ |p| "base-#{p.split('-').join}-i386.cow" }.join(' ')
 @rpms = rpm_platforms.split(',').map{ |p| "pl-#{p}-x86_64" }.join(' ')
 
+# The deps must be built in this order due to dependencies between them.
+# There is a circular dependency between clj-http-client and trapperkeeper-webserver-jetty10,
+# but only for tests, so the build *should* work.
+DEP_BUILD_ORDER = [
+  'clj-parent',
+  'clj-kitchensink',
+  'clj-i18n',
+  'comidi',
+  'jvm-ssl-utils',
+  'clj-typesafe-config',
+  'jruby-deps',
+  'trapperkeeper',
+  'trapperkeeper-filesystem-watcher',
+  'trapperkeeper-webserver-jetty10',
+  'ring-middleware',
+  'jruby-utils',
+  'clj-shell-utils',
+  'clj-http-client',
+  'dujour-version-check',
+  'clj-rbac-client',
+  'trapperkeeper-authorization',
+  'trapperkeeper-metrics',
+  'trapperkeeper-scheduler',
+  'trapperkeeper-status',
+  'trapperkeeper-comidi-metrics',
+].freeze
+
 def image_exists
   !`docker images -q #{@image}`.strip.empty?
 end
@@ -68,39 +95,30 @@ namespace :vox do
           :branch => ENV.fetch('EZBAKE_BRANCH', 'main'),
         }
       end
-      rebuild_branch = ENV['FULL_DEP_REBUILD_BRANCH']
-      if rebuild_branch
-        # The deps must be built in this order due to dependencies between them.
-        # There is a circular dependency between clj-http-client and trapperkeeper-webserver-jetty10,
-        # but only for tests, so the build *should* work.
-        [
-          'clj-parent',
-          'clj-kitchensink',
-          'clj-i18n',
-          'comidi',
-          'jvm-ssl-utils',
-          'clj-typesafe-config',
-          'jruby-deps',
-          'trapperkeeper',
-          'trapperkeeper-filesystem-watcher',
-          'trapperkeeper-webserver-jetty10',
-          'ring-middleware',
-          'jruby-utils',
-          'clj-shell-utils',
-          'clj-http-client',
-          'dujour-version-check',
-          'clj-rbac-client',
-          'trapperkeeper-authorization',
-          'trapperkeeper-metrics',
-          'trapperkeeper-scheduler',
-          'trapperkeeper-status',
-          'trapperkeeper-comidi-metrics',
-        ].each do |lib|
-          libs_to_build_manually[lib] = {
-            :repo => "https://github.com/openvoxproject/#{lib}",
-            :branch => rebuild_branch,
-          }
-        end
+
+      deps_to_build = []
+      dep_branch = nil
+
+      full_rebuild_branch = ENV['FULL_DEP_REBUILD_BRANCH']
+      subset_list = (ENV['DEP_REBUILD'] || '').split(',').map(&:strip).reject(&:empty?)
+      subset_branch = ENV.fetch('DEP_REBUILD_BRANCH', 'main').to_s
+      rebuild_org = ENV.fetch('DEP_REBUILD_ORG', 'openvoxproject').to_s
+
+      if full_rebuild_branch && !full_rebuild_branch.strip.empty?
+        dep_branch = full_rebuild_branch.strip
+        deps_to_build = DEP_BUILD_ORDER.dup
+      elsif !subset_list.empty?
+        dep_branch = subset_branch
+        unknown = subset_list.reject { |lib| DEP_BUILD_ORDER.include?(lib) }
+        puts "WARNING: Unknown deps in DEP_REBUILD (will be ignored): #{unknown.join(', ')}" unless unknown.empty?
+        deps_to_build = DEP_BUILD_ORDER.select { |lib| subset_list.include?(lib) }
+      end
+
+      deps_to_build.each do |lib|
+        libs_to_build_manually[lib] = {
+          :repo => "https://github.com/#{rebuild_org}/#{lib}",
+          :branch => dep_branch,
+        }
       end
 
       deps_tmp = Dir.mktmpdir("deps")
