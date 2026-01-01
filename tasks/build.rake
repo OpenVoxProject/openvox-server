@@ -89,7 +89,7 @@ namespace :vox do
       end
 
       libs_to_build_manually = {}
-      if ENV['EZBAKE_BRANCH']
+      if ENV['EZBAKE_BRANCH'] && !ENV['EZBAKE_BRANCH'].strip.empty?
         libs_to_build_manually['ezbake'] = {
           :repo => ENV.fetch('EZBAKE_REPO', 'https://github.com/openvoxproject/ezbake'),
           :branch => ENV.fetch('EZBAKE_BRANCH', 'main'),
