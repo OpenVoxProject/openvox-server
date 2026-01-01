@@ -38,7 +38,7 @@
                                 {:default-metrics-allowed default-metrics-allowed})
       (register-status
         "puppet-profiler"
-        (status-core/get-artifact-version "puppetlabs" "puppetserver")
+        (status-core/get-artifact-version "org.openvoxproject" "puppetserver")
         1
         (partial puppet-profiler-core/v1-status (:profiler context)))
       context))

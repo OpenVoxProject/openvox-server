@@ -192,12 +192,12 @@
 
      (register-status
       "master"
-      (status-core/get-artifact-version "puppetlabs" "puppetserver")
+      (status-core/get-artifact-version "org.openvoxproject" "puppetserver")
       master-service-status-version
       (partial master-core/v1-status http-metrics http-client-metric-ids-for-status registry))
      (register-status
       "server"
-      (status-core/get-artifact-version "puppetlabs" "puppetserver")
+      (status-core/get-artifact-version "org.openvoxproject" "puppetserver")
       master-service-status-version
       (partial master-core/v1-status http-metrics http-client-metric-ids-for-status registry))
      (-> context
