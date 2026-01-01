@@ -1,4 +1,4 @@
-(def ps-version "8.11.1-SNAPSHOT")
+(def ps-version "8.12.0-SNAPSHOT")
 
 (def heap-size-from-profile-clj
   (let [profile-clj (io/file (System/getenv "HOME") ".lein" "profiles.clj")]
@@ -15,7 +15,7 @@
     heap-size-from-profile-clj
     default-heap-size))
 
-(defproject puppetlabs/puppetserver ps-version
+(defproject org.openvoxproject/puppetserver ps-version
   :description "OpenVox Server"
 
   :license {:name "Apache License, Version 2.0"
@@ -23,7 +23,7 @@
 
   :min-lein-version "2.9.1"
 
-  :parent-project {:coords [puppetlabs/clj-parent "7.3.35"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.1"]
                    :inherit [:managed-dependencies]}
 
   :dependencies [[org.clojure/clojure]
@@ -46,24 +46,24 @@
                  ;; send their logs to logstash, so we include it in the jar.
                  [net.logstash.logback/logstash-logback-encoder]
 
-                 [puppetlabs/jruby-utils]
-                 [puppetlabs/clj-shell-utils]
-                 [puppetlabs/trapperkeeper]
-                 [com.puppetlabs/trapperkeeper-webserver-jetty10]
-                 [puppetlabs/trapperkeeper-authorization]
-                 [puppetlabs/trapperkeeper-comidi-metrics]
-                 [puppetlabs/trapperkeeper-metrics]
-                 [puppetlabs/trapperkeeper-scheduler]
-                 [puppetlabs/trapperkeeper-status]
-                 [puppetlabs/trapperkeeper-filesystem-watcher]
-                 [puppetlabs/kitchensink]
-                 [puppetlabs/ssl-utils]
-                 [puppetlabs/ring-middleware]
-                 [puppetlabs/dujour-version-check]
-                 [puppetlabs/http-client]
-                 [puppetlabs/comidi]
-                 [puppetlabs/i18n]
-                 [puppetlabs/rbac-client]]
+                 [org.openvoxproject/jruby-utils]
+                 [org.openvoxproject/clj-shell-utils]
+                 [org.openvoxproject/trapperkeeper]
+                 [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                 [org.openvoxproject/trapperkeeper-authorization]
+                 [org.openvoxproject/trapperkeeper-comidi-metrics]
+                 [org.openvoxproject/trapperkeeper-metrics]
+                 [org.openvoxproject/trapperkeeper-scheduler]
+                 [org.openvoxproject/trapperkeeper-status]
+                 [org.openvoxproject/trapperkeeper-filesystem-watcher]
+                 [org.openvoxproject/kitchensink]
+                 [org.openvoxproject/ssl-utils]
+                 [org.openvoxproject/ring-middleware]
+                 [org.openvoxproject/dujour-version-check]
+                 [org.openvoxproject/http-client]
+                 [org.openvoxproject/comidi]
+                 [org.openvoxproject/i18n]
+                 [org.openvoxproject/rbac-client]]
 
   :main puppetlabs.trapperkeeper.main
 
@@ -75,7 +75,7 @@
   :test-paths ["test/unit" "test/integration"]
   :resource-paths ["resources" "src/ruby"]
 
-  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
+  :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
@@ -84,7 +84,7 @@
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [puppetlabs/i18n "0.9.2" :hooks false]]
+            [org.openvoxproject/i18n "0.9.4" :hooks false]]
 
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
@@ -114,15 +114,15 @@
 
   :profiles {:defaults {:source-paths  ["dev"]
                         :dependencies  [[org.clojure/tools.namespace]
-                                        [com.puppetlabs/trapperkeeper-webserver-jetty10 :classifier "test"]
-                                        [puppetlabs/trapperkeeper nil :classifier "test" :scope "test"]
-                                        [puppetlabs/trapperkeeper-metrics :classifier "test" :scope "test"]
-                                        [puppetlabs/kitchensink nil :classifier "test" :scope "test"]
+                                        [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
+                                        [org.openvoxproject/trapperkeeper nil :classifier "test" :scope "test"]
+                                        [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
+                                        [org.openvoxproject/kitchensink nil :classifier "test" :scope "test"]
                                         [ring-basic-authentication]
                                         [ring/ring-mock]
                                         [beckon]
                                         [lambdaisland/uri "1.19.155"]
-                                        [puppetlabs/rbac-client :classifier "test" :scope "test"]]}
+                                        [org.openvoxproject/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
              :dev [:defaults :dev-deps]
              :fips-deps {:dependencies [[org.bouncycastle/bcpkix-fips]
@@ -167,14 +167,14 @@
                                                ;; specified in both places. TODO: fix this.
                                                [org.clojure/clojure]
                                                [org.bouncycastle/bcpkix-jdk18on]
-                                               [puppetlabs/jruby-utils]
-                                               [puppetlabs/puppetserver ~ps-version]
-                                               [com.puppetlabs/trapperkeeper-webserver-jetty10]
-                                               [puppetlabs/trapperkeeper-metrics]]
-                      :plugins [[puppetlabs/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "3.0.1-SNAPSHOT")]]
+                                               [org.openvoxproject/jruby-utils]
+                                               [org.openvoxproject/puppetserver ~ps-version]
+                                               [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                                               [org.openvoxproject/trapperkeeper-metrics]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.1")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.bouncycastle/bcpkix-jdk18on]
-                                      [com.puppetlabs/trapperkeeper-webserver-jetty10]]
+                                      [org.openvoxproject/trapperkeeper-webserver-jetty10]]
                        :aot [puppetlabs.trapperkeeper.main
                              puppetlabs.trapperkeeper.services.status.status-service
                              puppetlabs.trapperkeeper.services.metrics.metrics-service
@@ -266,4 +266,3 @@
                                        (fn [new prev]
                                          (if (map? prev) [new prev] (conj prev new)))
                                        #(spit %1 (pr-str %2))]})
-
