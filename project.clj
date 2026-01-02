@@ -23,13 +23,14 @@
 
   :min-lein-version "2.9.1"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.1"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.6.3"]
                    :inherit [:managed-dependencies]}
 
   :dependencies [[org.clojure/clojure]
 
                  [slingshot]
                  [org.yaml/snakeyaml]
+                 [org.apache.commons/commons-lang3]
                  [commons-io]
 
                  [clj-time]
@@ -83,8 +84,7 @@
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [org.openvoxproject/i18n "0.9.4" :hooks false]]
-
+            [org.openvoxproject/i18n "1.0.2" :hooks false]]
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
                        :group "puppet"
@@ -133,10 +133,6 @@
                                                            {:major major
                                                             :minor minor})]
                                       (condp = (java.lang.Integer/parseInt major)
-                                        1 (if (= 8 (java.lang.Integer/parseInt minor))
-                                            ["-Djava.security.properties==./dev-resources/java.security.jdk8-fips"]
-                                            (throw unsupported-ex))
-                                        11 ["-Djava.security.properties==./dev-resources/java.security.jdk11on-fips"]
                                         17 ["-Djava.security.properties==./dev-resources/java.security.jdk11on-fips"]
                                         21 ["-Djava.security.properties==./dev-resources/java.security.jdk11on-fips"]
                                         (do)))}
