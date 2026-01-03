@@ -30,7 +30,6 @@
 
                  [slingshot]
                  [org.yaml/snakeyaml]
-                 [commons-lang]
                  [commons-io]
 
                  [clj-time]
