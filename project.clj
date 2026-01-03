@@ -23,7 +23,7 @@
 
   :min-lein-version "2.9.1"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.1"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.6.3"]
                    :inherit [:managed-dependencies]}
 
   :dependencies [[org.clojure/clojure]
