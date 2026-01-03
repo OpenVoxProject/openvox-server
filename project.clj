@@ -83,7 +83,7 @@
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [org.openvoxproject/i18n "0.9.4" :hooks false]]
+            [org.openvoxproject/i18n "1.0.2" :hooks false]]
 
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
