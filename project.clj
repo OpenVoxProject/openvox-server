@@ -145,7 +145,7 @@
                     ;; use core.async and need more than eight threads to run
                     ;; properly; this setting overrides the default value.  Without
                     ;; it the metrics tests will hang.
-                    :jvm-opts ["-Dclojure.core.async.pool-size=50"]
+                    :jvm-opts ["-Dclojure.core.async.pool-size=50", "-Xms4g", "-Xmx4g"]
                     ;; Use humane test output so you can actually see what the problem is
                     ;; when a test fails.
                     :dependencies [[pjstadig/humane-test-output "0.11.0"]]
