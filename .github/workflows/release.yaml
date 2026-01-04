@@ -1,26 +1,18 @@
 ---
-name: Release
+name: Release and publish package to clojars.org
+
+permissions:
+  contents: write
+  packages: write
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 
 jobs:
   release:
-    name: Release
-    runs-on: ubuntu-24.04
-    # Optional but recommended to use a specific environment
-    environment: release
-    # Prevent releases from forked repositories
-    if: github.repository_owner == 'OpenVoxProject' && !startsWith(github.ref_name, '99.')
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Create Release Page
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create  --repo ${{ github.repository }} ${{ github.ref_name }} --generate-notes
+    uses: 'openvoxproject/shared-actions/.github/workflows/clojure_release.yml@main'
+    secrets:
+      github_pat: ${{ secrets.OPENVOXBOT_COMMIT_AND_PRS }}
+      ssh_private_key: ${{ secrets.OPENVOXBOT_SSH_PRIVATE_KEY }}
+      clojars_username: ${{ secrets.CLOJARS_USERNAME }}
+      clojars_password: ${{ secrets.CLOJARS_PASSWORD }}
