@@ -115,7 +115,7 @@
                                         [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
                                         [org.openvoxproject/trapperkeeper nil :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
-                                        [org.openvoxproject/kitchensink nil :classifier "test" :scope "test"]
+                                        [org.openvoxproject/kitchensink 3.5.3 :classifier "test" :scope "test"]
                                         [ring-basic-authentication]
                                         [ring/ring-mock]
                                         [beckon]
