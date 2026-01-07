@@ -125,7 +125,10 @@ namespace :vox do
 
       libs_to_build_manually.each do |lib, config|
         puts "Checking out #{lib}"
-        run_command("git clone -b #{config[:branch]} #{config[:repo]} #{deps_tmp}/#{lib}", silent: false, print_command: true)
+        # to be able to checkout github refs, e.g. 66/merge, we need to do an explicit fetch
+        # this allows us to test on branches from pull requests
+        # we can probably switch to git clone --revision $ref $url in the future, but that requires a newer git. EL9 is too old
+        run_command("git clone --no-checkout #{config[:repo]} #{deps_tmp}/#{lib}; cd #{deps_tmp}/#{lib}; git fetch origin #{config[:branch]}; git checkout FETCH_HEAD", silent: false, print_command: true)
       end
 
       puts "Starting container"
