@@ -1,0 +1,23 @@
+INSTALL_DIR="/opt/puppetlabs/server/apps/puppetserver"
+
+if [ -n "$JRUBY_JAR" ]; then
+  echo "Warning: the JRUBY_JAR setting is no longer needed and will be ignored." 1>&2
+fi
+
+java_version=$($JAVA_BIN -version 2>&1 | head -1 | awk -F\" '{ print $2 }')
+java_major_version=$(echo $java_version | awk -F. '{ print $1 }')
+
+if [[ $java_major_version -ge 17 ]]; then
+
+	echo $JAVA_ARGS | grep "add-opens" &>/dev/null
+	if [[ 0 -ne $? ]]; then
+		export JAVA_ARGS="--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED ${JAVA_ARGS}"
+	fi
+
+	echo $JAVA_ARGS_CLI | grep "add-opens" &>/dev/null
+	if [[ 0 -ne $? ]]; then
+		export JAVA_ARGS_CLI="--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED ${JAVA_ARGS_CLI}"
+	fi
+fi
+
+CLASSPATH="${CLASSPATH}:/opt/puppetlabs/server/data/puppetserver/jars/*"
