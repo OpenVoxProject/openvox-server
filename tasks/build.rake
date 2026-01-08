@@ -72,6 +72,7 @@ end
 namespace :vox do
   desc 'Build openvox-server packages with Docker'
   task :build, [:tag] do |_, args|
+    fips = !ENV['FIPS'].nil?
     begin
       #abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
       if args[:tag].nil? || args[:tag].empty?
@@ -140,16 +141,35 @@ namespace :vox do
         run("cd /deps/#{lib} && lein install")
       end
 
-      fips = !ENV['FIPS'].nil?
       puts "Building openvox-server"
       ezbake_version_var = ENV['EZBAKE_VERSION'] ? "EZBAKE_VERSION=#{ENV['EZBAKE_VERSION']}" : ''
       run("cd /code && rm -rf output && bundle install --without test && lein install")
+
+      # When building for FIPS, we have to have the Bouncy Castle FIPS jars live on disk separate
+      # from the uberjar, due to signing of those jars. Ezbake doesn't have a great way to handle this,
+      # so we copy them from the local Maven cache inside the container to a place ezbake knows how to
+      # find them, and then have it build the RPM with it laying down those files in the right place.
+      if fips
+        puts "Copy Bouncy Castle FIPS jars into ezbake resource location"
+        dest = '/code/resources/ext/build-scripts/bc-fips-jars'
+        run("mkdir -p #{dest}")
+        cmd = "cd /code && lein with-profile fips classpath"
+        stdout, stderr, status = Open3.capture3("docker exec #{@container} /bin/bash --login -c '#{cmd}'")
+        unless status.success?
+          puts "Failed to get classpath for FIPS build: #{stderr}"
+          exit 1
+        end
+        classpath = stdout.strip
+        paths = classpath.split(':').select { |p| p =~ /bcpkix-fips|bc-fips|bctls-fips/ }
+        paths.each { |p| run("cp #{p} #{dest}/") }
+      end
       run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile #{fips ? 'fips,' : ''}user,ezbake,provided,internal ezbake local-build")
       run_command("sudo chown -R $USER output", print_command: true)
       Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
       Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}
     ensure
       teardown
+      FileUtils.rm_rf("#{__dir__}/../resources/ext/build-scripts/bc-fips-jars") if fips
     end
   end
 end

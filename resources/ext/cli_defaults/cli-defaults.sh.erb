@@ -20,4 +20,4 @@ if [[ $java_major_version -ge 17 ]]; then
 	fi
 fi
 
-CLASSPATH="${CLASSPATH}:/opt/puppetlabs/server/data/<%= EZBake::Config[:real_name] %>/jars/*"
+CLASSPATH="/opt/puppetlabs/server/data/<%= EZBake::Config[:real_name] %>/jars/*:${CLASSPATH}"
