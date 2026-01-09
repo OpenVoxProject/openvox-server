@@ -13,7 +13,7 @@ require 'tmpdir'
 # To be fixed one of these days. Relevant stuff:
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/tasks/build.rake
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/ext/fpm.rb
-deb_platforms = ENV['DEB_PLATFORMS'] || 'ubuntu-20.04,ubuntu-22.04,ubuntu-24.04,ubuntu-25.04,debian-11,debian-12,debian-13'
+deb_platforms = ENV['DEB_PLATFORMS'] || 'ubuntu-20.04,ubuntu-22.04,ubuntu-24.04,ubuntu-25.04,ubuntu-25.10,debian-11,debian-12,debian-13'
 rpm_platforms = ENV['RPM_PLATFORMS'] || 'el-8,el-9,el-10,sles-15,sles-16,amazon-2,amazon-2023,fedora-42,fedora-43'
 @debs = deb_platforms.split(',').map{ |p| "base-#{p.split('-').join}-i386.cow" }.join(' ')
 @rpms = rpm_platforms.split(',').map{ |p| "pl-#{p}-x86_64" }.join(' ')
