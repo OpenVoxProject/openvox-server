@@ -84,7 +84,7 @@
                  [prismatic/schema "1.1.12"]
                  [clj-commons/fs "1.6.312"]
                  [liberator "0.15.3"]
-                 [org.apache.commons/commons-exec "1.4.0"]
+                 [org.apache.commons/commons-exec "1.6.0"]
                  [io.dropwizard.metrics/metrics-core]
 
                  ;; We do not currently use this dependency directly, but
