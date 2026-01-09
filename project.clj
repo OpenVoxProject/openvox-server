@@ -15,6 +15,15 @@
     heap-size-from-profile-clj
     default-heap-size))
 
+(def slf4j-version "2.0.17")
+(def kitchensink-version "3.5.3")
+(def trapperkeeper-version "4.3.0")
+(def trapperkeeper-webserver-jetty10-version "1.1.0")
+(def trapperkeeper-metrics-version "2.1.0")
+(def rbac-client-version "1.2.0")
+(def i18n-version "1.0.2")
+(def logback-version "1.3.16")
+(def jackson-version "2.15.4")
 (defproject org.openvoxproject/puppetserver ps-version
   :description "OpenVox Server"
 
@@ -23,45 +32,83 @@
 
   :min-lein-version "2.9.1"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.6.4"]
-                   :inherit [:managed-dependencies]}
+  ;; These are to enforce consistent versions across dependencies of dependencies,
+  ;; and to avoid having to define versions in multiple places. If a component
+  ;; defined under :dependencies ends up causing an error due to :pedantic? :abort,
+  ;; because it is a dep of a dep with a different version, move it here.
+  :managed-dependencies [[org.clojure/clojure "1.12.4"]
+                         [org.slf4j/slf4j-api ~slf4j-version]
+                         [org.slf4j/jul-to-slf4j ~slf4j-version]
+                         [org.slf4j/log4j-over-slf4j ~slf4j-version]
+
+                         [ch.qos.logback/logback-classic ~logback-version]
+                         [ch.qos.logback/logback-core ~logback-version]
+                         [ch.qos.logback/logback-access ~logback-version]
+
+                         [com.fasterxml.jackson.core/jackson-core ~jackson-version]
+                         [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
+                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
+                         [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
+
+                         [ring/ring-core "1.8.2"]
+                         [ring/ring-codec "1.1.2"]
+                         [commons-codec "1.15"]
+                         [io.dropwizard.metrics/metrics-core "3.2.2"]
+                         [org.ow2.asm/asm "9.7.1"]
+
+                         [org.bouncycastle/bcpkix-jdk18on "1.83"]
+                         [org.bouncycastle/bcpkix-fips "1.0.8"]
+                         [org.bouncycastle/bc-fips "1.0.2.6"]
+                         [org.bouncycastle/bctls-fips "1.0.19"]
+
+                         [org.openvoxproject/kitchensink ~kitchensink-version]
+                         [org.openvoxproject/kitchensink ~kitchensink-version :classifier "test"]
+                         [org.openvoxproject/trapperkeeper ~trapperkeeper-version]
+                         [org.openvoxproject/trapperkeeper ~trapperkeeper-version :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version]
+                         [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version]
+                         [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version :classifier "test"]
+                         [org.openvoxproject/jruby-utils "5.3.1"]
+                         [org.openvoxproject/rbac-client ~rbac-client-version]
+                         [org.openvoxproject/rbac-client ~rbac-client-version :classifier "test"]]
 
   :dependencies [[org.clojure/clojure]
 
-                 [slingshot]
-                 [org.yaml/snakeyaml]
-                 [commons-io]
+                 [slingshot "0.12.2"]
+                 [org.yaml/snakeyaml "2.0"]
+                 [commons-io "2.20.0"]
 
-                 [clj-time]
+                 [clj-time "0.11.0"]
                  [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-                 [prismatic/schema]
-                 [clj-commons/fs]
-                 [liberator]
-                 [org.apache.commons/commons-exec]
+                 [prismatic/schema "1.1.12"]
+                 [clj-commons/fs "1.6.312"]
+                 [liberator "0.15.3"]
+                 [org.apache.commons/commons-exec "1.4.0"]
                  [io.dropwizard.metrics/metrics-core]
 
                  ;; We do not currently use this dependency directly, but
                  ;; we have documentation that shows how users can use it to
                  ;; send their logs to logstash, so we include it in the jar.
-                 [net.logstash.logback/logstash-logback-encoder]
+                 [net.logstash.logback/logstash-logback-encoder "7.3"]
 
                  [org.openvoxproject/jruby-utils]
-                 [org.openvoxproject/clj-shell-utils]
+                 [org.openvoxproject/clj-shell-utils "2.1.0"]
                  [org.openvoxproject/trapperkeeper]
                  [org.openvoxproject/trapperkeeper-webserver-jetty10]
-                 [org.openvoxproject/trapperkeeper-authorization]
-                 [org.openvoxproject/trapperkeeper-comidi-metrics]
+                 [org.openvoxproject/trapperkeeper-authorization "2.1.0"]
+                 [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.0"]
                  [org.openvoxproject/trapperkeeper-metrics]
-                 [org.openvoxproject/trapperkeeper-scheduler]
-                 [org.openvoxproject/trapperkeeper-status]
-                 [org.openvoxproject/trapperkeeper-filesystem-watcher]
+                 [org.openvoxproject/trapperkeeper-scheduler "1.3.0"]
+                 [org.openvoxproject/trapperkeeper-status "1.3.0"]
+                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.3.0"]
                  [org.openvoxproject/kitchensink]
-                 [org.openvoxproject/ssl-utils]
-                 [org.openvoxproject/ring-middleware]
-                 [org.openvoxproject/dujour-version-check]
-                 [org.openvoxproject/http-client]
-                 [org.openvoxproject/comidi]
-                 [org.openvoxproject/i18n]
+                 [org.openvoxproject/ssl-utils "3.6.1"]
+                 [org.openvoxproject/ring-middleware "2.1.0"]
+                 [org.openvoxproject/dujour-version-check "1.1.0"]
+                 [org.openvoxproject/http-client "2.2.0"]
+                 [org.openvoxproject/comidi "1.1.1"]
+                 [org.openvoxproject/i18n ~i18n-version]
                  [org.openvoxproject/rbac-client]]
 
   :main puppetlabs.trapperkeeper.main
@@ -79,11 +126,10 @@
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
 
-  :plugins [[lein-parent "0.3.9"]
-            [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
+  :plugins [[jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [org.openvoxproject/i18n "1.0.2" :hooks false]]
+            [org.openvoxproject/i18n ~i18n-version :hooks false]]
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
                        :group "puppet"
@@ -111,14 +157,14 @@
   :classifiers [["test" :testutils]]
 
   :profiles {:defaults {:source-paths  ["dev"]
-                        :dependencies  [[org.clojure/tools.namespace]
+                        :dependencies  [[org.clojure/tools.namespace "0.2.11"]
                                         [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
-                                        [org.openvoxproject/trapperkeeper nil :classifier "test" :scope "test"]
+                                        [org.openvoxproject/trapperkeeper :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
-                                        [org.openvoxproject/kitchensink nil :classifier "test" :scope "test"]
-                                        [ring-basic-authentication]
-                                        [ring/ring-mock]
-                                        [beckon]
+                                        [org.openvoxproject/kitchensink :classifier "test" :scope "test"]
+                                        [ring-basic-authentication "1.1.0"]
+                                        [ring/ring-mock "0.4.0"]
+                                        [beckon "0.1.1"]
                                         [lambdaisland/uri "1.19.155"]
                                         [org.openvoxproject/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
