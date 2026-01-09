@@ -79,7 +79,7 @@
                  [org.yaml/snakeyaml "2.0"]
                  [commons-io "2.20.0"]
 
-                 [clj-time "0.11.0"]
+                 [clj-time "0.15.2"]
                  [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
                  [prismatic/schema "1.1.12"]
                  [clj-commons/fs "1.6.312"]
