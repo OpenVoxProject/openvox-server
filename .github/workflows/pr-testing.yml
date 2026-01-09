@@ -85,11 +85,14 @@ jobs:
   build:
     name: build openvox-server
     runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
     steps:
       - name: checkout repo
         uses: actions/checkout@v6
         with:
           submodules: recursive
+          fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -99,6 +102,29 @@ jobs:
       # the container hardcodes the java version
       - name: build it
         run: bundle exec rake vox:build
+      - name: get version
+        id: version
+        run: |
+          DESCRIBE=$(git describe --abbrev=9)
+          echo "describe=${DESCRIBE//-/.}" >> $GITHUB_OUTPUT
+      - name: Upload build artifacts
+        id: upload
+        uses: actions/upload-artifact@v6
+        with:
+          name: openvoxdb-${{ steps.version.outputs.describe }}
+          path: output/
+          retention-days: 1 # quite low retention, because the artifacts are quite large
+          overwrite: true # overwrite old artifacts if a PR runs again (artifacts are per PR * per project)
+      - name: Add comment
+        uses: peter-evans/create-or-update-comment@v5
+        # Check if the event is not triggered by a fork
+        # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#restrictions-on-repository-forks
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |-
+            The rpm/deb packages and the JAR file for openvox-server are available in a zip archive:
+            ${{ steps.upload.outputs.artifact-url }}
 
   clojure-linting:
     name: Clojure Linting
