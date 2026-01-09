@@ -113,7 +113,7 @@
   :profiles {:defaults {:source-paths  ["dev"]
                         :dependencies  [[org.clojure/tools.namespace]
                                         [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
-                                        [org.openvoxproject/trapperkeeper nil :classifier "test" :scope "test"]
+                                        [org.openvoxproject/trapperkeeper 4.3.0 :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
                                         [org.openvoxproject/kitchensink nil :classifier "test" :scope "test"]
                                         [ring-basic-authentication]
