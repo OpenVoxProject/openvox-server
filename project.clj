@@ -92,7 +92,7 @@
 
                  [slingshot "0.12.2"]
                  [org.yaml/snakeyaml "2.0"]
-                 [commons-io "2.20.0"]
+                 [commons-io "2.21.0"]
 
                  [clj-time "0.15.2"]
                  [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
