@@ -24,6 +24,21 @@
 (def i18n-version "1.0.2")
 (def logback-version "1.3.16")
 (def jackson-version "2.15.4")
+
+(require '[clojure.string :as str]
+         '[leiningen.core.main :as main])
+(defn fail-if-logback->1-3!
+  "Fails the build if logback-version is > 1.3.x."
+  [logback-version]
+  (let [[x y] (->> (str/split (str logback-version) #"\.")
+                   (take 2)
+                   (map #(Integer/parseInt %)))]
+    (when (or (> x 1)
+              (and (= x 1) (> y 3)))
+      (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
+
+(fail-if-logback->1-3! logback-version)
+
 (defproject org.openvoxproject/puppetserver ps-version
   :description "OpenVox Server"
 
