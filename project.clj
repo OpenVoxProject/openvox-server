@@ -54,7 +54,7 @@
                          [ring/ring-codec "1.1.2"]
                          [commons-codec "1.15"]
                          [io.dropwizard.metrics/metrics-core "3.2.2"]
-                         [org.ow2.asm/asm "9.7.1"]
+                         [org.ow2.asm/asm "9.9.1"]
 
                          [org.bouncycastle/bcpkix-jdk18on "1.83"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
