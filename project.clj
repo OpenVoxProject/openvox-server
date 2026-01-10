@@ -172,7 +172,7 @@
   :classifiers [["test" :testutils]]
 
   :profiles {:defaults {:source-paths  ["dev"]
-                        :dependencies  [[org.clojure/tools.namespace "0.2.11"]
+                        :dependencies  [[org.clojure/tools.namespace "0.3.1"]
                                         [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
                                         [org.openvoxproject/trapperkeeper :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
