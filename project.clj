@@ -68,7 +68,7 @@
                          [ring/ring-core "1.8.2"]
                          [ring/ring-codec "1.1.2"]
                          [commons-codec "1.20.0"]
-                         [io.dropwizard.metrics/metrics-core "3.2.6"]
+                         [io.dropwizard.metrics/metrics-core "4.2.37"]
                          [org.ow2.asm/asm "9.9.1"]
 
                          [org.bouncycastle/bcpkix-jdk18on "1.83"]
