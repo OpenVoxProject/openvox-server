@@ -119,7 +119,7 @@
                  [org.openvoxproject/trapperkeeper-filesystem-watcher "1.3.0"]
                  [org.openvoxproject/kitchensink]
                  [org.openvoxproject/ssl-utils "3.6.1"]
-                 [org.openvoxproject/ring-middleware "2.1.0"]
+                 [org.openvoxproject/ring-middleware "2.1.2"]
                  [org.openvoxproject/dujour-version-check "1.1.0"]
                  [org.openvoxproject/http-client "2.2.0"]
                  [org.openvoxproject/comidi "1.1.1"]
