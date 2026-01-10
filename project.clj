@@ -91,7 +91,7 @@
   :dependencies [[org.clojure/clojure]
 
                  [slingshot "0.12.2"]
-                 [org.yaml/snakeyaml "2.0"]
+                 [org.yaml/snakeyaml "2.5"]
                  [commons-io "2.21.0"]
 
                  [clj-time "0.15.2"]
