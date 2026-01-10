@@ -122,7 +122,7 @@
                  [org.openvoxproject/ring-middleware "2.1.0"]
                  [org.openvoxproject/dujour-version-check "1.1.0"]
                  [org.openvoxproject/http-client "2.2.0"]
-                 [org.openvoxproject/comidi "1.1.1"]
+                 [org.openvoxproject/comidi "1.1.2"]
                  [org.openvoxproject/i18n ~i18n-version]
                  [org.openvoxproject/rbac-client]]
 
