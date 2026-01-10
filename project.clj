@@ -101,6 +101,7 @@
                  [liberator "0.15.3"]
                  [org.apache.commons/commons-exec "1.6.0"]
                  [io.dropwizard.metrics/metrics-core]
+                 [cheshire "5.13.0"]
 
                  ;; We do not currently use this dependency directly, but
                  ;; we have documentation that shows how users can use it to
