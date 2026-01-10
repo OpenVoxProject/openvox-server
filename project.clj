@@ -22,7 +22,7 @@
 (def trapperkeeper-metrics-version "2.1.0")
 (def rbac-client-version "1.2.0")
 (def i18n-version "1.0.2")
-(def logback-version "1.3.16")
+(def logback-version "1.5.24")
 (def jackson-version "2.15.4")
 
 (require '[clojure.string :as str]
