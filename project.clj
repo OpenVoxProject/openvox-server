@@ -96,7 +96,7 @@
 
                  [clj-time "0.15.2"]
                  [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-                 [prismatic/schema "1.1.12"]
+                 [prismatic/schema "1.4.1"]
                  [clj-commons/fs "1.6.312"]
                  [liberator "0.15.3"]
                  [org.apache.commons/commons-exec "1.6.0"]
