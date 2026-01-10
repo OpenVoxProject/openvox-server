@@ -116,7 +116,7 @@
                  [org.openvoxproject/trapperkeeper-metrics]
                  [org.openvoxproject/trapperkeeper-scheduler "1.3.0"]
                  [org.openvoxproject/trapperkeeper-status "1.3.0"]
-                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.3.0"]
+                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.1"]
                  [org.openvoxproject/kitchensink]
                  [org.openvoxproject/ssl-utils "3.6.1"]
                  [org.openvoxproject/ring-middleware "2.1.0"]
