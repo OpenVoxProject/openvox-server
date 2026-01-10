@@ -84,7 +84,7 @@
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version :classifier "test"]
                          [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version]
                          [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version :classifier "test"]
-                         [org.openvoxproject/jruby-utils "5.3.1"]
+                         [org.openvoxproject/jruby-utils "5.3.4"]
                          [org.openvoxproject/rbac-client ~rbac-client-version]
                          [org.openvoxproject/rbac-client ~rbac-client-version :classifier "test"]]
 
