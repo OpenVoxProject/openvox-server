@@ -178,7 +178,7 @@
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
                                         [org.openvoxproject/kitchensink :classifier "test" :scope "test"]
                                         [ring-basic-authentication "1.1.0"]
-                                        [ring/ring-mock "0.4.0"]
+                                        [ring/ring-mock "0.6.2"]
                                         [beckon "0.1.1"]
                                         [lambdaisland/uri "1.19.155"]
                                         [org.openvoxproject/rbac-client :classifier "test" :scope "test"]]}
