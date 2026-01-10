@@ -65,7 +65,7 @@
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
 
-                         [ring/ring-core "1.8.2"]
+                         [ring/ring-core "1.15.3"]
                          [ring/ring-codec "1.1.2"]
                          [commons-codec "1.20.0"]
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
