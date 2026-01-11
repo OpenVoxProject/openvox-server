@@ -20,7 +20,7 @@
 (def trapperkeeper-version "4.3.0")
 (def trapperkeeper-webserver-jetty10-version "1.1.0")
 (def trapperkeeper-metrics-version "2.1.0")
-(def rbac-client-version "1.2.0")
+(def rbac-client-version "1.2.2")
 (def i18n-version "1.0.2")
 (def logback-version "1.3.16")
 (def jackson-version "2.15.4")
