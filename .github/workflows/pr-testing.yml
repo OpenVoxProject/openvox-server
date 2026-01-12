@@ -42,7 +42,7 @@ jobs:
         with:
           ruby-version: '3.1'
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
+        uses: DeLaGuardo/setup-clojure@13.5
         with:
           lein: latest
       - name: setup gems
@@ -74,7 +74,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
+        uses: DeLaGuardo/setup-clojure@13.5
         with:
           lein: latest
       - name: setup gems
@@ -140,7 +140,7 @@ jobs:
       # newer versions cause lint errors
       # https://github.com/clj-kondo/clj-kondo/releases
       - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
+        uses: DeLaGuardo/setup-clojure@13.5
         with:
           clj-kondo: 2025.02.20
       - name: kondo lint
