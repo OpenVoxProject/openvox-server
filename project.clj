@@ -17,13 +17,13 @@
 
 (def slf4j-version "2.0.17")
 (def kitchensink-version "3.5.3")
-(def trapperkeeper-version "4.3.0")
+(def trapperkeeper-version "4.3.2")
 (def trapperkeeper-webserver-jetty10-version "1.1.0")
-(def trapperkeeper-metrics-version "2.1.0")
+(def trapperkeeper-metrics-version "2.1.1")
 (def rbac-client-version "1.2.0")
-(def i18n-version "1.0.2")
+(def i18n-version "1.0.3")
 (def logback-version "1.3.16")
-(def jackson-version "2.15.4")
+(def jackson-version "2.17.0")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
@@ -84,7 +84,7 @@
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version :classifier "test"]
                          [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version]
                          [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version :classifier "test"]
-                         [org.openvoxproject/jruby-utils "5.3.1"]
+                         [org.openvoxproject/jruby-utils "5.3.4"]
                          [org.openvoxproject/rbac-client ~rbac-client-version]
                          [org.openvoxproject/rbac-client ~rbac-client-version :classifier "test"]]
 
@@ -96,7 +96,7 @@
 
                  [clj-time "0.15.2"]
                  [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-                 [prismatic/schema "1.1.12"]
+                 [prismatic/schema "1.4.1"]
                  [clj-commons/fs "1.6.312"]
                  [liberator "0.15.3"]
                  [org.apache.commons/commons-exec "1.6.0"]
@@ -111,18 +111,18 @@
                  [org.openvoxproject/clj-shell-utils "2.1.0"]
                  [org.openvoxproject/trapperkeeper]
                  [org.openvoxproject/trapperkeeper-webserver-jetty10]
-                 [org.openvoxproject/trapperkeeper-authorization "2.1.0"]
+                 [org.openvoxproject/trapperkeeper-authorization "2.1.2"]
                  [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.0"]
                  [org.openvoxproject/trapperkeeper-metrics]
                  [org.openvoxproject/trapperkeeper-scheduler "1.3.0"]
                  [org.openvoxproject/trapperkeeper-status "1.3.0"]
-                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.3.0"]
+                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.1"]
                  [org.openvoxproject/kitchensink]
-                 [org.openvoxproject/ssl-utils "3.6.1"]
-                 [org.openvoxproject/ring-middleware "2.1.0"]
+                 [org.openvoxproject/ssl-utils "3.6.2"]
+                 [org.openvoxproject/ring-middleware "2.1.2"]
                  [org.openvoxproject/dujour-version-check "1.1.0"]
-                 [org.openvoxproject/http-client "2.2.0"]
-                 [org.openvoxproject/comidi "1.1.1"]
+                 [org.openvoxproject/http-client "2.2.2"]
+                 [org.openvoxproject/comidi "1.1.2"]
                  [org.openvoxproject/i18n ~i18n-version]
                  [org.openvoxproject/rbac-client]]
 
