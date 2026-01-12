@@ -19,7 +19,7 @@
 (def kitchensink-version "3.5.3")
 (def trapperkeeper-version "4.3.2")
 (def trapperkeeper-webserver-jetty10-version "1.1.2")
-(def trapperkeeper-metrics-version "2.1.1")
+(def trapperkeeper-metrics-version "2.1.3")
 (def rbac-client-version "1.2.0")
 (def i18n-version "1.0.3")
 (def logback-version "1.3.16")
