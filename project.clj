@@ -108,7 +108,7 @@
                  [net.logstash.logback/logstash-logback-encoder "7.3"]
 
                  [org.openvoxproject/jruby-utils]
-                 [org.openvoxproject/clj-shell-utils "2.1.0"]
+                 [org.openvoxproject/clj-shell-utils "2.1.1"]
                  [org.openvoxproject/trapperkeeper]
                  [org.openvoxproject/trapperkeeper-webserver-jetty10]
                  [org.openvoxproject/trapperkeeper-authorization "2.1.2"]
