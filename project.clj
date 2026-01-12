@@ -16,14 +16,9 @@
     default-heap-size))
 
 (def slf4j-version "2.0.17")
-(def kitchensink-version "3.5.5")
-(def trapperkeeper-version "4.3.2")
-(def trapperkeeper-webserver-jetty10-version "1.1.2")
-(def trapperkeeper-metrics-version "2.1.3")
-(def rbac-client-version "1.2.2")
 (def i18n-version "1.0.3")
 (def logback-version "1.3.16")
-(def jackson-version "2.17.0")
+(def jackson-version "2.20.1")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
@@ -47,84 +42,105 @@
 
   :min-lein-version "2.9.1"
 
-  ;; These are to enforce consistent versions across dependencies of dependencies,
-  ;; and to avoid having to define versions in multiple places. If a component
-  ;; defined under :dependencies ends up causing an error due to :pedantic? :abort,
-  ;; because it is a dep of a dep with a different version, move it here.
+  ;; Generally, try to keep version pins in :managed-dependencies and the libraries
+  ;; this project actually uses in :dependencies, inheriting the version from
+  ;; :managed-dependencies. This prevents endless version conflicts due to deps of deps.
+  ;; Renovate should keep the versions largely in sync between projects.
   :managed-dependencies [[org.clojure/clojure "1.12.4"]
-                         [org.slf4j/slf4j-api ~slf4j-version]
-                         [org.slf4j/jul-to-slf4j ~slf4j-version]
-                         [org.slf4j/log4j-over-slf4j ~slf4j-version]
-
+                         [org.clojure/tools.namespace "0.2.11"]
+                         [beckon "0.1.1"]
+                         [ch.qos.logback/logback-access ~logback-version]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
-                         [ch.qos.logback/logback-access ~logback-version]
-
+                         [clj-commons/fs "1.6.312"]
+                         [clj-time "0.15.2"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
-                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
-
-                         [ring/ring-core "1.8.2"]
-                         [ring/ring-codec "1.1.2"]
+                         ;; For some reason, this version is 2.20 without a .1. Update this back to
+                         ;; ~jackson-version when they match again.
+                         [com.fasterxml.jackson.core/jackson-annotations "2.20"]
                          [commons-codec "1.20.0"]
+                         [commons-io "2.21.0"]
+                         [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
-                         [org.ow2.asm/asm "9.9.1"]
-
+                         [lambdaisland/uri "1.19.155"]
+                         [liberator "0.15.3"]
+                         [net.logstash.logback/logstash-logback-encoder "7.3"]
+                         [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.83"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
                          [org.bouncycastle/bc-fips "1.0.2.6"]
                          [org.bouncycastle/bctls-fips "1.0.19"]
-
-                         [org.openvoxproject/kitchensink ~kitchensink-version]
-                         [org.openvoxproject/kitchensink ~kitchensink-version :classifier "test"]
-                         [org.openvoxproject/trapperkeeper ~trapperkeeper-version]
-                         [org.openvoxproject/trapperkeeper ~trapperkeeper-version :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version]
-                         [org.openvoxproject/trapperkeeper-webserver-jetty10 ~trapperkeeper-webserver-jetty10-version :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version]
-                         [org.openvoxproject/trapperkeeper-metrics ~trapperkeeper-metrics-version :classifier "test"]
-                         [org.openvoxproject/jruby-utils "5.3.4"]
-                         [org.openvoxproject/rbac-client ~rbac-client-version]
-                         [org.openvoxproject/rbac-client ~rbac-client-version :classifier "test"]]
+                         [org.openvoxproject/clj-shell-utils "2.1.1"]
+                         [org.openvoxproject/comidi "1.1.2"]
+                         [org.openvoxproject/dujour-version-check "1.1.2"]
+                         [org.openvoxproject/http-client "2.2.3"]
+                         [org.openvoxproject/i18n ~i18n-version]
+                         [org.openvoxproject/jruby-utils "5.3.5"]
+                         [org.openvoxproject/kitchensink "3.5.5"]
+                         [org.openvoxproject/kitchensink "3.5.5" :classifier "test"]
+                         [org.openvoxproject/rbac-client "1.2.3"]
+                         [org.openvoxproject/rbac-client "1.2.3" :classifier "test"]
+                         [org.openvoxproject/ring-middleware "2.1.3"]
+                         [org.openvoxproject/ssl-utils "3.6.2"]
+                         [org.openvoxproject/trapperkeeper "4.3.2"]
+                         [org.openvoxproject/trapperkeeper "4.3.2" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.1"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.1.5"]
+                         [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.1"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.1.5"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.1.5" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-scheduler "1.3.1"]
+                         [org.openvoxproject/trapperkeeper-status "1.3.1"]
+                         [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.3"]
+                         [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.3" :classifier "test"]
+                         [org.ow2.asm/asm "9.9.1"]
+                         [org.slf4j/jul-to-slf4j ~slf4j-version]
+                         [org.slf4j/log4j-over-slf4j ~slf4j-version]
+                         [org.slf4j/slf4j-api ~slf4j-version]
+                         [org.yaml/snakeyaml "2.0"]
+                         [pjstadig/humane-test-output "0.11.0"]
+                         [prismatic/schema "1.4.1"]
+                         [ring-basic-authentication "1.2.0"]
+                         [ring/ring-codec "1.1.2"]
+                         [ring/ring-core "1.8.2"]
+                         [ring/ring-mock "0.4.0"]
+                         [slingshot "0.12.2"]]
 
   :dependencies [[org.clojure/clojure]
-
-                 [slingshot "0.12.2"]
-                 [org.yaml/snakeyaml "2.0"]
-                 [commons-io "2.21.0"]
-
-                 [clj-time "0.15.2"]
-                 [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-                 [prismatic/schema "1.4.1"]
-                 [clj-commons/fs "1.6.312"]
-                 [liberator "0.15.3"]
-                 [org.apache.commons/commons-exec "1.6.0"]
+                 [clj-commons/fs]
+                 [clj-time]
+                 [commons-io]
+                 [grimradical/clj-semver :exclusions [org.clojure/clojure]]
                  [io.dropwizard.metrics/metrics-core]
-
+                 [liberator]
                  ;; We do not currently use this dependency directly, but
                  ;; we have documentation that shows how users can use it to
                  ;; send their logs to logstash, so we include it in the jar.
-                 [net.logstash.logback/logstash-logback-encoder "7.3"]
-
+                 [net.logstash.logback/logstash-logback-encoder]
+                 [org.apache.commons/commons-exec]
+                 [org.openvoxproject/clj-shell-utils]
+                 [org.openvoxproject/comidi]
+                 [org.openvoxproject/dujour-version-check]
+                 [org.openvoxproject/http-client]
                  [org.openvoxproject/jruby-utils]
-                 [org.openvoxproject/clj-shell-utils "2.1.1"]
-                 [org.openvoxproject/trapperkeeper]
-                 [org.openvoxproject/trapperkeeper-webserver-jetty10]
-                 [org.openvoxproject/trapperkeeper-authorization "2.1.4"]
-                 [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.0"]
-                 [org.openvoxproject/trapperkeeper-metrics]
-                 [org.openvoxproject/trapperkeeper-scheduler "1.3.1"]
-                 [org.openvoxproject/trapperkeeper-status "1.3.0"]
-                 [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.1"]
+                 [org.openvoxproject/i18n]
                  [org.openvoxproject/kitchensink]
-                 [org.openvoxproject/ssl-utils "3.6.2"]
-                 [org.openvoxproject/ring-middleware "2.1.2"]
-                 [org.openvoxproject/dujour-version-check "1.1.1"]
-                 [org.openvoxproject/http-client "2.2.2"]
-                 [org.openvoxproject/comidi "1.1.2"]
-                 [org.openvoxproject/i18n ~i18n-version]
-                 [org.openvoxproject/rbac-client]]
+                 [org.openvoxproject/rbac-client]
+                 [org.openvoxproject/ring-middleware]
+                 [org.openvoxproject/ssl-utils]
+                 [org.openvoxproject/trapperkeeper]
+                 [org.openvoxproject/trapperkeeper-authorization]
+                 [org.openvoxproject/trapperkeeper-comidi-metrics]
+                 [org.openvoxproject/trapperkeeper-filesystem-watcher]
+                 [org.openvoxproject/trapperkeeper-metrics]
+                 [org.openvoxproject/trapperkeeper-scheduler]
+                 [org.openvoxproject/trapperkeeper-status]
+                 [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                 [org.yaml/snakeyaml]
+                 [prismatic/schema]
+                 [slingshot]]
 
   :main puppetlabs.trapperkeeper.main
 
@@ -172,15 +188,15 @@
   :classifiers [["test" :testutils]]
 
   :profiles {:defaults {:source-paths  ["dev"]
-                        :dependencies  [[org.clojure/tools.namespace "0.2.11"]
+                        :dependencies  [[org.clojure/tools.namespace]
                                         [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
                                         [org.openvoxproject/trapperkeeper :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
                                         [org.openvoxproject/kitchensink :classifier "test" :scope "test"]
-                                        [ring-basic-authentication "1.2.0"]
-                                        [ring/ring-mock "0.4.0"]
-                                        [beckon "0.1.1"]
-                                        [lambdaisland/uri "1.19.155"]
+                                        [ring-basic-authentication]
+                                        [ring/ring-mock]
+                                        [beckon]
+                                        [lambdaisland/uri]
                                         [org.openvoxproject/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
              :dev [:defaults :dev-deps]
@@ -209,7 +225,7 @@
                     :jvm-opts ["-Dclojure.core.async.pool-size=50", "-Xms4g", "-Xmx4g"]
                     ;; Use humane test output so you can actually see what the problem is
                     ;; when a test fails.
-                    :dependencies [[pjstadig/humane-test-output "0.11.0"]]
+                    :dependencies [[pjstadig/humane-test-output]]
                     :injections [(require 'pjstadig.humane-test-output)
                                  (pjstadig.humane-test-output/activate!)]}
 
