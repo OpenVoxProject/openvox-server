@@ -111,7 +111,7 @@
                  [org.openvoxproject/clj-shell-utils "2.1.1"]
                  [org.openvoxproject/trapperkeeper]
                  [org.openvoxproject/trapperkeeper-webserver-jetty10]
-                 [org.openvoxproject/trapperkeeper-authorization "2.1.2"]
+                 [org.openvoxproject/trapperkeeper-authorization "2.1.4"]
                  [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.0"]
                  [org.openvoxproject/trapperkeeper-metrics]
                  [org.openvoxproject/trapperkeeper-scheduler "1.3.1"]
