@@ -121,7 +121,7 @@
                  [org.openvoxproject/ssl-utils "3.6.2"]
                  [org.openvoxproject/ring-middleware "2.1.2"]
                  [org.openvoxproject/dujour-version-check "1.1.1"]
-                 [org.openvoxproject/http-client "2.2.2"]
+                 [org.openvoxproject/http-client "2.2.3"]
                  [org.openvoxproject/comidi "1.1.2"]
                  [org.openvoxproject/i18n ~i18n-version]
                  [org.openvoxproject/rbac-client]]
