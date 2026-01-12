@@ -114,7 +114,7 @@
                  [org.openvoxproject/trapperkeeper-authorization "2.1.2"]
                  [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.0"]
                  [org.openvoxproject/trapperkeeper-metrics]
-                 [org.openvoxproject/trapperkeeper-scheduler "1.3.0"]
+                 [org.openvoxproject/trapperkeeper-scheduler "1.3.1"]
                  [org.openvoxproject/trapperkeeper-status "1.3.0"]
                  [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.1"]
                  [org.openvoxproject/kitchensink]
