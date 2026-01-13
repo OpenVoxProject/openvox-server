@@ -105,7 +105,7 @@
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.1.2"]
                          [ring/ring-core "1.8.2"]
-                         [ring/ring-mock "0.4.0"]
+                         [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
   :dependencies [[org.clojure/clojure]
