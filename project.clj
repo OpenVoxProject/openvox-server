@@ -52,6 +52,7 @@
                          [ch.qos.logback/logback-access ~logback-version]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
+                         [cheshire "5.13.0"]
                          [clj-commons/fs "1.6.312"]
                          [clj-time "0.15.2"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
@@ -105,7 +106,7 @@
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.1.2"]
                          [ring/ring-core "1.8.2"]
-                         [ring/ring-mock "0.4.0"]
+                         [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
   :dependencies [[org.clojure/clojure]
