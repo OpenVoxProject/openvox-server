@@ -99,7 +99,7 @@
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
                          [org.slf4j/slf4j-api ~slf4j-version]
-                         [org.yaml/snakeyaml "2.0"]
+                         [org.yaml/snakeyaml "2.5"]
                          [pjstadig/humane-test-output "0.11.0"]
                          [prismatic/schema "1.4.1"]
                          [ring-basic-authentication "1.2.0"]
