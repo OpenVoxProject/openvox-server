@@ -47,7 +47,8 @@
   ;; :managed-dependencies. This prevents endless version conflicts due to deps of deps.
   ;; Renovate should keep the versions largely in sync between projects.
   :managed-dependencies [[org.clojure/clojure "1.12.4"]
-                         [org.clojure/tools.namespace "0.2.11"]
+                         [org.clojure/tools.namespace "0.3.1"]
+                         [org.clojure/tools.reader "1.5.0"]
                          [beckon "0.1.1"]
                          [ch.qos.logback/logback-access ~logback-version]
                          [ch.qos.logback/logback-classic ~logback-version]
