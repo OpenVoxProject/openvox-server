@@ -66,7 +66,7 @@
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
                          [lambdaisland/uri "1.19.155"]
                          [liberator "0.15.3"]
-                         [net.logstash.logback/logstash-logback-encoder "7.3"]
+                         [net.logstash.logback/logstash-logback-encoder "7.4"]
                          [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.83"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
