@@ -52,6 +52,7 @@
                          [ch.qos.logback/logback-access ~logback-version]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
+                         [cheshire "5.13.0"]
                          [clj-commons/fs "1.6.312"]
                          [clj-time "0.15.2"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
