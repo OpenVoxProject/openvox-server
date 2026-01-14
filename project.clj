@@ -1,5 +1,3 @@
-(def ps-version "8.12.0-SNAPSHOT")
-
 (def heap-size-from-profile-clj
   (let [profile-clj (io/file (System/getenv "HOME") ".lein" "profiles.clj")]
     (if (.exists profile-clj)
@@ -34,7 +32,9 @@
 
 (fail-if-logback->1-3! logback-version)
 
-(defproject org.openvoxproject/puppetserver ps-version
+;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
+;; the ezbake dependency in sync.
+(defproject org.openvoxproject/puppetserver "8.12.0-SNAPSHOT"
   :description "OpenVox Server"
 
   :license {:name "Apache License, Version 2.0"
@@ -162,7 +162,8 @@
   :plugins [[jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [org.openvoxproject/i18n ~i18n-version :hooks false]]
+            [org.openvoxproject/i18n ~i18n-version :hooks false]
+            [lein-shell "0.5.0"]]
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
                        :group "puppet"
@@ -245,7 +246,9 @@
                                                [org.clojure/clojure]
                                                [org.bouncycastle/bcpkix-jdk18on]
                                                [org.openvoxproject/jruby-utils]
-                                               [org.openvoxproject/puppetserver ~ps-version]
+                                               ;; Do not modify this line. It is managed by the release process
+                                               ;; via the scripts/sync_ezbake_dep.rb script.
+                                               [org.openvoxproject/puppetserver "8.12.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                [org.openvoxproject/trapperkeeper-metrics]]
                       :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.1")]]
@@ -332,6 +335,21 @@
                  (if (>= 17 (java.lang.Integer/parseInt major))
                    ["--add-opens" "java.base/sun.nio.ch=ALL-UNNAMED" "--add-opens" "java.base/java.io=ALL-UNNAMED"]
                    [])))
+
+  ;; We define our own release tasks here, rather than the default that 'lein release' does,
+  ;; so that we can keep the necessary org.openvoxproject/puppetserver ezbake dependency in sync.
+  ;; This also make is always bump the minor version rather than patch, since we rarely end up
+  ;; releasing patch versions.
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["shell" "ruby" "scripts/sync_ezbake_dep.rb"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version" ":minor"]
+                  ["shell" "ruby" "scripts/sync_ezbake_dep.rb"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
 
   :repl-options {:init-ns dev-tools}
   :uberjar-exclusions  [#"META-INF/jruby.home/lib/ruby/stdlib/org/bouncycastle"
