@@ -1,0 +1,34 @@
+---
+name: Build openvox-server - FIPS platforms
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Tag to build'
+        required: true
+      rpm_platform_list:
+        description: 'A comma-separated list of rpm-based platforms to build for, excluding the architecture (e.g. redhatfips-8,redhatfips-9). Do not include spaces. If not provided, will use the default list of FIPS platforms supported by OpenVox Server and DB.'
+        required: false
+        type: string
+      ezbake-ref:
+        description: 'Branch/tag from ezbake that will be used for openvoxdb/server builds.'
+        type: string
+        default: 'main'
+      ezbake-ver:
+        description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version found in project.clj in this repo if not specified.'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake_fips.yml@main'
+    with:
+      ref: ${{ inputs.ref }}
+      rpm_platform_list: ${{ inputs.rpm_platform_list }}
+      ezbake-ref: ${{ inputs.ezbake-ref }}
+      ezbake-ver: ${{ inputs.ezbake-ver }}
+    secrets: inherit
