@@ -251,7 +251,7 @@
                                                [org.openvoxproject/puppetserver "8.12.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.1")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.2")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.bouncycastle/bcpkix-jdk18on]
                                       [org.openvoxproject/trapperkeeper-webserver-jetty10]]

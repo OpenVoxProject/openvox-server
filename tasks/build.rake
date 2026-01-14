@@ -13,16 +13,20 @@ require 'tmpdir'
 # To be fixed one of these days. Relevant stuff:
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/tasks/build.rake
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/ext/fpm.rb
+#
+# Note: This is not the canonical list of supported OpenVox platforms. Look at https://github.com/OpenVoxProject/shared-actions/blob/8f4d7e99f5e8a23f48e07124aa9adbb9768fabb9/.github/workflows/build_ezbake.yml#L36-L37
 deb_platforms = ENV['DEB_PLATFORMS'] || 'ubuntu-20.04,ubuntu-22.04,ubuntu-24.04,ubuntu-25.04,ubuntu-25.10,debian-11,debian-12,debian-13'
-rpm_platforms = ENV['RPM_PLATFORMS'] || 'el-8,el-9,el-10,sles-15,sles-16,amazon-2,amazon-2023,fedora-42,fedora-43'
 @debs = deb_platforms.split(',').map{ |p| "base-#{p.split('-').join}-i386.cow" }.join(' ')
-@rpms = rpm_platforms.split(',').map{ |p| "pl-#{p}-x86_64" }.join(' ')
+
+rpm_platforms = ENV['RPM_PLATFORMS'] || 'el-8,el-9,el-10,sles-15,sles-16,amazon-2,amazon-2023,fedora-42,fedora-43'
+rpm_fips, rpm_nonfips = rpm_platforms.split(',').partition { |p| p.start_with?('redhatfips') }
+@nonfips_rpms = rpm_nonfips.map{ |p| "pl-#{p}-x86_64" }.join(' ')
+@fips_rpms = rpm_fips.map{ |p| "pl-#{p}-x86_64" }.join(' ')
 
 # The deps must be built in this order due to dependencies between them.
 # There is a circular dependency between clj-http-client and trapperkeeper-webserver-jetty10,
 # but only for tests, so the build *should* work.
 DEP_BUILD_ORDER = [
-  'clj-parent',
   'clj-kitchensink',
   'clj-i18n',
   'comidi',
@@ -72,7 +76,6 @@ end
 namespace :vox do
   desc 'Build openvox-server packages with Docker'
   task :build, [:tag] do |_, args|
-    fips = !ENV['FIPS'].nil?
     begin
       #abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
       if args[:tag].nil? || args[:tag].empty?
@@ -145,11 +148,15 @@ namespace :vox do
       ezbake_version_var = ENV['EZBAKE_VERSION'] ? "EZBAKE_VERSION=#{ENV['EZBAKE_VERSION']}" : ''
       run("cd /code && rm -rf output && bundle install --without test && lein install")
 
+      unless @debs.empty? && @nonfips_rpms.empty?
+        run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@nonfips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build")
+      end
+      
       # When building for FIPS, we have to have the Bouncy Castle FIPS jars live on disk separate
       # from the uberjar, due to signing of those jars. Ezbake doesn't have a great way to handle this,
       # so we copy them from the local Maven cache inside the container to a place ezbake knows how to
       # find them, and then have it build the RPM with it laying down those files in the right place.
-      if fips
+      unless @fips_rpms.empty?
         puts "Copy Bouncy Castle FIPS jars into ezbake resource location"
         dest = '/code/resources/ext/build-scripts/bc-fips-jars'
         run("mkdir -p #{dest}")
@@ -162,14 +169,21 @@ namespace :vox do
         classpath = stdout.strip
         paths = classpath.split(':').select { |p| p =~ /bcpkix-fips|bc-fips|bctls-fips/ }
         paths.each { |p| run("cp #{p} #{dest}/") }
+
+        run("cd /code && COW= MOCK=\"#{@fips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile fips,user,ezbake,provided ezbake local-build")
       end
-      run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile #{fips ? 'fips,' : ''}user,ezbake,provided,internal ezbake local-build")
+
       run_command("sudo chown -R $USER output", print_command: true)
       Dir.glob('output/**/*i386*').each { |f| FileUtils.rm_rf(f) }
       Dir.glob('output/puppetserver-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('puppetserver','openvox-server'))}
+      # If this is a FIPS-only build, we don't want the upload task to overwrite the existing tarball on S3.
+      # This tarball should be basically identical, but we want to keep both for clarity.
+      if !@fips_rpms.empty? && @debs.empty? && @nonfips_rpms.empty?
+        Dir.glob('output/openvox-server-*.tar.gz').each { |f| FileUtils.mv(f, f.sub('.tar.gz','-fips_build.tar.gz'))}
+      end
     ensure
       teardown
-      FileUtils.rm_rf("#{__dir__}/../resources/ext/build-scripts/bc-fips-jars") if fips
+      FileUtils.rm_rf("#{__dir__}/../resources/ext/build-scripts/bc-fips-jars") unless @fips_rpms.empty?
     end
   end
 end
