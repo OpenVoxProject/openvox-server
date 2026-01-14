@@ -117,6 +117,7 @@ on master, puppet('config set --section master route_file /tmp/nonexistent.yaml'
 # restart master
 on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
 on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
+on(master, 'cat /var/log/puppetlabs/puppetserver/puppetserver.log')
 
 step "Start the Puppet master service..."
 with_puppet_running_on(master, master_opts) do

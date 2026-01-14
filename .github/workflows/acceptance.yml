@@ -97,7 +97,7 @@ permissions:
 
 jobs:
   acceptance:
-    uses: 'openvoxproject/shared-actions/.github/workflows/beaker_acceptance.yml@main'
+    uses: 'openvoxproject/shared-actions/.github/workflows/beaker_acceptance.yml@nicktest'
     with:
       suite-name: openvox-server
       ref: ${{ inputs.ref }}
