@@ -205,14 +205,18 @@
              :fips-deps {:dependencies [[org.bouncycastle/bcpkix-fips]
                                         [org.bouncycastle/bc-fips]
                                         [org.bouncycastle/bctls-fips]]
+                         :lein-ezbake {:vars {:java-args ~(str
+                                                            "-Djava.security.properties==/opt/puppetlabs/server/data/puppetserver/java.security.fips "
+                                                            "-Xms2g -Xmx2g "
+                                                            "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")}}
                          :jvm-opts ~(let [version (System/getProperty "java.specification.version")
                                           [major minor _] (clojure.string/split version #"\.")
                                           unsupported-ex (ex-info "Unsupported major Java version."
                                                            {:major major
                                                             :minor minor})]
                                       (condp = (java.lang.Integer/parseInt major)
-                                        17 ["-Djava.security.properties==./dev-resources/java.security.jdk11on-fips"]
-                                        21 ["-Djava.security.properties==./dev-resources/java.security.jdk11on-fips"]
+                                        17 ["-Djava.security.properties==./resources/ext/build-scripts/java.security.fips"]
+                                        21 ["-Djava.security.properties==./resources/ext/build-scripts/java.security.fips"]
                                         (do)))}
              :fips [:defaults :fips-deps]
 
