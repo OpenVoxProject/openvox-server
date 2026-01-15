@@ -25,6 +25,7 @@ jetty_confdir = master['puppetserver-confdir']
 # Register our cleanup steps early in a teardown so that they will happen even
 # if execution aborts part way.
 teardown do
+  on master, "cat /tmp/clojure*.edn"
   step "Restore /etc/hosts and puppetserver configs; Restart puppetserver"
   on master, "cp -p '#{backupdir}/hosts' /etc/hosts"
   on master, puppet('config set route_file /etc/puppetlabs/puppet/routes.yaml')
@@ -114,10 +115,19 @@ master_opts = {
 create_remote_file master, "#{jetty_confdir}/../services.d/ca.cfg", "puppetlabs.services.ca.certificate-authority-disabled-service/certificate-authority-disabled-service"
 # disable pdb connectivity
 on master, puppet('config set --section master route_file /tmp/nonexistent.yaml')
+
+on master, "ls -la /tmp/jetty_external_root_ca.*/master.crt"
+on master, "cat /tmp/jetty_external_root_ca.*/master.crt | head -5"
+on master, "cat #{jetty_confdir}/webserver.conf"
+on master, "getenforce"
+on master, "ls -laZ #{testdir}/master.crt"
+on master, "sudo -u puppet test -r #{testdir}/master.crt && echo 'readable' || echo 'NOT readable'"
+on master, "sudo -u puppet cat #{testdir}/master.crt > /dev/null && echo 'can cat' || echo 'CANNOT cat'"
+on master, "ls -la /tmp/ | grep jetty_external"
+on master, "sudo -u puppet ls #{testdir}/"
 # restart master
 on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
 on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
-on(master, 'cat /var/log/puppetlabs/puppetserver/puppetserver.log')
 
 step "Start the Puppet master service..."
 with_puppet_running_on(master, master_opts) do
