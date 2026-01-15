@@ -3,7 +3,8 @@ test_name "Ensure Puppet Server's HTTP client may use external cert chains" do
   ## This test currently fails on FIPS (see PE-34102). Remove this once that is resolved.
   skip_test if master.fips_mode?
 
-  reports_tmpdir = master.tmpdir('external-reports')
+  reports_tmpdir = "/var/reporting-live-from-beaker-im-ron-burgundy"
+  on master, "mkdir -p #{reports_tmpdir}"
   server_key = reports_tmpdir + '/server.key'
   server_cert = reports_tmpdir + '/server.crt'
   server_rb = reports_tmpdir + '/server.rb'
@@ -58,6 +59,7 @@ EOF
 
   teardown do
     on master, kill_server
+    on master, "rm -rf #{reports_tmpdir}"
   end
 
 
