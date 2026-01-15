@@ -15,7 +15,7 @@ install_gems () {
     gem_list+=("$gem_name:$gem_version")
   done < $gem_file
 
-  java -cp puppet-server-release.jar:jruby-9k.jar clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
+  java -cp ext/build-scripts/bc-nonfips-jars/*:puppet-server-release.jar:jruby-9k.jar clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
 }
 
 SOURCE="${BASH_SOURCE[0]}"

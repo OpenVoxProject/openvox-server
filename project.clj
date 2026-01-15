@@ -253,8 +253,19 @@
                                                [org.openvoxproject/trapperkeeper-metrics]]
                       :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.2")]]
                       :name "puppetserver"}
-             :uberjar {:dependencies [[org.bouncycastle/bcpkix-jdk18on]
-                                      [org.openvoxproject/trapperkeeper-webserver-jetty10]]
+
+             :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
+                                                    [org.bouncycastle/bcpkix-jdk18on]
+                                                    [org.openvoxproject/jruby-utils]
+                                                    ;; Do not modify this line. It is managed by the release process
+                                                    ;; via the scripts/sync_ezbake_dep.rb script.
+                                                    [org.openvoxproject/puppetserver "8.12.0-SNAPSHOT"]
+                                                    [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                                                    [org.openvoxproject/trapperkeeper-metrics]]
+                            :uberjar-exclusions [#"^org/bouncycastle/.*"]
+                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.2")]]
+                      :name "puppetserver"}
+             :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver-jetty10]]
                        :aot [puppetlabs.trapperkeeper.main
                              puppetlabs.trapperkeeper.services.status.status-service
                              puppetlabs.trapperkeeper.services.metrics.metrics-service

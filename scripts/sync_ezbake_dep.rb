@@ -10,7 +10,7 @@ abort("Couldn't find defproject version string in #{file}") unless v
 re = /\[org\.openvoxproject\/puppetserver\s+"[^"]+"\]/
 abort("Couldn't find literal [org.openvoxproject/puppetserver \"...\"] in #{file}") unless text.match?(re)
 
-text.sub!(re, %[[org.openvoxproject/puppetserver "#{v}"]])
+text.gsub!(re, %[[org.openvoxproject/puppetserver "#{v}"]])
 File.write(file, text)
 
 puts "Synced ezbake dep to #{v}"
