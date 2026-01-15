@@ -16,8 +16,10 @@ tag 'audit:medium',
 
 step "Copy certificates and configuration files to the master..."
 fixture_dir = File.expand_path('../fixtures', __FILE__)
-testdir = master.tmpdir('jetty_external_root_ca')
-backupdir = master.tmpdir('jetty_external_root_ca_backup')
+testdir = "/var/here-be-dragons"
+backupdir = "/var/here-be-backup-dragons"
+on master, "mkdir -p #{testdir}"
+on master, "mkdir -p #{backupdir}"
 fixtures = PuppetX::Acceptance::ExternalCertFixtures.new(fixture_dir, testdir)
 
 jetty_confdir = master['puppetserver-confdir']
@@ -37,6 +39,8 @@ teardown do
   on master, "\\cp -frp #{backupdir}/puppetserver/* #{jetty_confdir}/../"
   on(master, puppet_resource('service', master['puppetservice'], 'ensure=stopped'))
   on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
+  on master, "rm -rf #{testdir}"
+  on master, "rm -rf #{backupdir}"
 end
 
 # Backup files in scope for modification by test
