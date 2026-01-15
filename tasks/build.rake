@@ -160,7 +160,7 @@ namespace :vox do
         puts "Copy Bouncy Castle FIPS jars into ezbake resource location"
         dest = '/code/resources/ext/build-scripts/bc-fips-jars'
         run("mkdir -p #{dest}")
-        cmd = "cd /code && lein with-profile fips classpath"
+        cmd = "cd /code && lein with-profile ezbake-fips,fips classpath"
         stdout, stderr, status = Open3.capture3("docker exec #{@container} /bin/bash --login -c '#{cmd}'")
         unless status.success?
           puts "Failed to get classpath for FIPS build: #{stderr}"
@@ -170,7 +170,14 @@ namespace :vox do
         paths = classpath.split(':').select { |p| p =~ /bcpkix-fips|bc-fips|bctls-fips/ }
         paths.each { |p| run("cp #{p} #{dest}/") }
 
-        run("cd /code && COW= MOCK=\"#{@fips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile fips,user,ezbake,provided ezbake local-build")
+        # We also copy the non-FIPS jdk18on jars as well. This is only for the step where we install
+        # vendored gems during the packaging step and they are not included in the final package.
+        dest = '/code/resources/ext/build-scripts/bc-nonfips-jars'
+        run("mkdir -p #{dest}")
+        paths = classpath.split(':').select { |p| p =~ /jdk18on/ }
+        paths.each { |p| run("cp #{p} #{dest}/") }
+
+        run("cd /code && COW= MOCK=\"#{@fips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile fips,user,ezbake-fips,provided ezbake local-build")
       end
 
       run_command("sudo chown -R $USER output", print_command: true)
@@ -184,6 +191,7 @@ namespace :vox do
     ensure
       teardown
       FileUtils.rm_rf("#{__dir__}/../resources/ext/build-scripts/bc-fips-jars") unless @fips_rpms.empty?
+      FileUtils.rm_rf("#{__dir__}/../resources/ext/build-scripts/bc-nonfips-jars") unless @fips_rpms.empty?
     end
   end
 end
