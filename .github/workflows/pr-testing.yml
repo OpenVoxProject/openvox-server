@@ -115,14 +115,25 @@ jobs:
           path: output/
           retention-days: 1 # quite low retention, because the artifacts are quite large
           overwrite: true # overwrite old artifacts if a PR runs again (artifacts are per PR * per project)
-      - name: Add comment
-        uses: peter-evans/create-or-update-comment@v5
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v3
         # Check if the event is not triggered by a fork
         # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#restrictions-on-repository-forks
         if: github.event.pull_request.head.repo.full_name == github.repository
+        id: find-comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- build-artifacts -->'
+      - name: Add or update comment
+        uses: peter-evans/create-or-update-comment@v5
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
           body: |-
+            <!-- build-artifacts -->
             The rpm/deb packages and the JAR file for openvox-server are available in a zip archive:
             ${{ steps.upload.outputs.artifact-url }}
 
