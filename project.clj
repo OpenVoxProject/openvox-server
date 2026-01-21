@@ -214,15 +214,30 @@
                          :lein-ezbake {:vars {:java-args ~(str
                                                             "-Djava.security.properties==/opt/puppetlabs/server/data/puppetserver/java.security.fips "
                                                             "-Xms2g -Xmx2g "
-                                                            "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")}}
+                                                            "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")}
+                                       :classpath-jars [{:artifact org.bouncycastle/bc-fips
+                                                  :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
+                                                            :mode "0644"}}
+                                                 {:artifact org.bouncycastle/bcpkix-fips
+                                                  :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
+                                                            :mode "0644"}}
+                                                 {:artifact org.bouncycastle/bctls-fips
+                                                  :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
+                                                            :mode "0644"}}
+                                                 ;; Only used for installing vendored gems during packaging and not included
+                                                 ;; in the final package, thus no :install key.
+                                                 {:artifact org.bouncycastle/bcpkix-jdk18on}
+                                                 {:artifact org.bouncycastle/bcprov-jdk18on}]
+                                          :project-files [{:file "resources/ext/java.security.fips"
+                                                           :install {:path "/opt/puppetlabs/server/data/puppetserver"}}]}
                          :jvm-opts ~(let [version (System/getProperty "java.specification.version")
                                           [major minor _] (clojure.string/split version #"\.")
                                           unsupported-ex (ex-info "Unsupported major Java version."
                                                            {:major major
                                                             :minor minor})]
                                       (condp = (java.lang.Integer/parseInt major)
-                                        17 ["-Djava.security.properties==./resources/ext/build-scripts/java.security.fips"]
-                                        21 ["-Djava.security.properties==./resources/ext/build-scripts/java.security.fips"]
+                                        17 ["-Djava.security.properties==./resources/ext/java.security.fips"]
+                                        21 ["-Djava.security.properties==./resources/ext/java.security.fips"]
                                         (do)))}
              :fips [:defaults :fips-deps]
 
@@ -256,11 +271,16 @@
                                                [org.openvoxproject/puppetserver "8.13.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.2")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.3")]]
                       :name "puppetserver"}
 
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
+                                                    ;; The non-FIPS BC jar is only needed for installing vendored gems
+                                                    ;; at packaging time, and is not included in the final package.
                                                     [org.bouncycastle/bcpkix-jdk18on]
+                                                    [org.bouncycastle/bc-fips]
+                                                    [org.bouncycastle/bcpkix-fips]
+                                                    [org.bouncycastle/bctls-fips]
                                                     [org.openvoxproject/jruby-utils]
                                                     ;; Do not modify this line. It is managed by the release process
                                                     ;; via the scripts/sync_ezbake_dep.rb script.
@@ -268,7 +288,7 @@
                                                     [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
-                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.2")]]
+                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.3")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver-jetty10]]
                        :aot [puppetlabs.trapperkeeper.main

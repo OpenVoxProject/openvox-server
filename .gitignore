@@ -36,9 +36,4 @@ acceptance/scripts/hosts.cfg
 /resources/puppetlabs/puppetserver/*.class
 /dev-resources/i18n/bin
 
-# Ignore temp directory where BC jars go during build
-# in case it doesn't get cleaned up.
-resources/ext/build-scripts/bc-fips-jars
-resources/ext/build-scripts/bc-nonfips-jars
-
 .DS_Store
