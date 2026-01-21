@@ -106,7 +106,12 @@
                          [prismatic/schema "1.4.1"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
-                         [ring/ring-core "1.15.3"]
+                         ;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
+                         ;; response headers automatically rather than transferring it chunked,
+                         ;; and also string flushing behavior is changed, and some part of the system
+                         ;; does not handle one or both of these correctly. We need to debug this and
+                         ;; fix it before upgrading.
+                         [ring/ring-core "1.14.2"]
                          [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
