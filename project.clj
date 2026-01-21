@@ -171,6 +171,7 @@
             [lein-shell "0.5.0"]]
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
+                       :service-port 8140
                        :group "puppet"
                        :numeric-uid-gid 52
                        :build-type "foss"
