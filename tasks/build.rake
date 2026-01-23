@@ -152,31 +152,7 @@ namespace :vox do
         run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@nonfips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build")
       end
       
-      # When building for FIPS, we have to have the Bouncy Castle FIPS jars live on disk separate
-      # from the uberjar, due to signing of those jars. Ezbake doesn't have a great way to handle this,
-      # so we copy them from the local Maven cache inside the container to a place ezbake knows how to
-      # find them, and then have it build the RPM with it laying down those files in the right place.
       unless @fips_rpms.empty?
-        puts "Copy Bouncy Castle FIPS jars into ezbake resource location"
-        dest = '/code/resources/ext/build-scripts/bc-fips-jars'
-        run("mkdir -p #{dest}")
-        cmd = "cd /code && lein with-profile ezbake-fips,fips classpath"
-        stdout, stderr, status = Open3.capture3("docker exec #{@container} /bin/bash --login -c '#{cmd}'")
-        unless status.success?
-          puts "Failed to get classpath for FIPS build: #{stderr}"
-          exit 1
-        end
-        classpath = stdout.strip
-        paths = classpath.split(':').select { |p| p =~ /bcpkix-fips|bc-fips|bctls-fips/ }
-        paths.each { |p| run("cp #{p} #{dest}/") }
-
-        # We also copy the non-FIPS jdk18on jars as well. This is only for the step where we install
-        # vendored gems during the packaging step and they are not included in the final package.
-        dest = '/code/resources/ext/build-scripts/bc-nonfips-jars'
-        run("mkdir -p #{dest}")
-        paths = classpath.split(':').select { |p| p =~ /jdk18on/ }
-        paths.each { |p| run("cp #{p} #{dest}/") }
-
         run("cd /code && COW= MOCK=\"#{@fips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile fips,user,ezbake-fips,provided ezbake local-build")
       end
 
