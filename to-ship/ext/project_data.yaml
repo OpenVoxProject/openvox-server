@@ -1,0 +1,71 @@
+---
+project: 'puppetserver'
+author: 'Vox Pupuli'
+email: 'openvox@voxpupuli.org'
+homepage: 'https://github.com/openvoxproject/ezbake'
+summary: 'OpenVox Server'
+description: 'OpenVox Server (puppetlabs/puppetserver 8.11.0,org.clojure/clojure 1.11.2,org.bouncycastle/bcpkix-jdk18on 1.78.1,puppetlabs/jruby-utils 5.2.0,puppetlabs/puppetserver 8.11.0,com.puppetlabs/trapperkeeper-webserver-jetty10 1.0.18,puppetlabs/trapperkeeper-metrics 2.0.4)'
+version_file: 'version'
+# files and gem_files are space separated lists
+files:
+  - ext
+  - "*.md"
+  - puppet-server-release.jar
+  - version
+  - Gemfile
+  - Rakefile
+  - Makefile.erb
+  - puppet
+  - install.sh.erb
+  - ext/fpm.rb
+templates:
+  - source: ext/redhat/ezbake.service.erb
+    target: ext/redhat/puppetserver.service
+  - source: ext/default.erb
+    target: ext/debian/puppetserver.default_file
+  - source: ext/debian/ezbake.init.erb
+    target: ext/debian/puppetserver.init_script
+  - source: ext/debian/ezbake.service.erb
+    target: ext/debian/puppetserver.service_file
+  - source: ext/ezbake.logrotate.conf.erb
+    target: ext/puppetserver.logrotate.conf
+  - source: ext/ezbake.logrotate-legacy.conf.erb
+    target: ext/puppetserver.logrotate-legacy.conf
+  - source: ext/ezbake.tmpfiles.conf.erb
+    target: ext/puppetserver.tmpfiles.conf
+  - source: ext/ezbake.needrestart.conf.erb
+    target: ext/puppetserver.needrestart.conf
+  - ext/redhat/preinst.erb
+  - ext/redhat/postinst.erb
+  - ext/redhat/prerm.erb
+  - ext/redhat/postrm.erb
+  - ext/redhat/init.erb
+  - ext/redhat/init.suse.erb
+  - ext/debian/postrm.erb
+  - ext/debian/preinst.erb
+  - ext/debian/prerm.erb
+  - ext/debian/postinst.erb
+  - ext/config/user/conf.d/*.erb
+  - ext/bin/*.erb
+  - ext/cli/apps/*.erb
+  - ext/cli/*.erb
+  - ext/cli_defaults/*.erb
+  - ext/default.erb
+  - ext/ezbake-functions.sh.erb
+  - Makefile.erb
+  - install.sh.erb
+  - controller.sh.erb
+tar_excludes:
+  - .gitignore
+build_pe: false
+apt_repo_name: openvox8
+apt_nonfinal_repo_name: openvox8-nightly
+yum_repo_name: openvox8
+yum_nonfinal_repo_name: openvox8-nightly
+repo_name: openvox8
+nonfinal_repo_name: openvox8-nightly
+gem_files:
+gem_require_path:
+gem_test_files:
+gem_executables:
+gem_default_executables:
