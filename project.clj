@@ -207,7 +207,8 @@
                                         [lambdaisland/uri]
                                         [org.openvoxproject/rbac-client :classifier "test" :scope "test"]]}
              :dev-deps {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
-             :dev [:defaults :dev-deps]
+             :dev-settings {:injections [(require 'test-summary)]}
+             :dev [:defaults :dev-deps :dev-settings]
              :fips-deps {:dependencies [[org.bouncycastle/bcpkix-fips]
                                         [org.bouncycastle/bc-fips]
                                         [org.bouncycastle/bctls-fips]]
