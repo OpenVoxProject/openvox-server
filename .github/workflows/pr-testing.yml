@@ -111,7 +111,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v6
         with:
-          name: openvoxdb-${{ steps.version.outputs.describe }}
+          name: openvox-server-${{ steps.version.outputs.describe }}.zip
           path: output/
           retention-days: 1 # quite low retention, because the artifacts are quite large
           overwrite: true # overwrite old artifacts if a PR runs again (artifacts are per PR * per project)
