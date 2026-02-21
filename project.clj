@@ -15,7 +15,7 @@
 
 (def slf4j-version "2.0.17")
 (def i18n-version "1.0.3")
-(def logback-version "1.3.16")
+(def logback-version "1.5.32")
 (def jackson-version "2.20.1")
 
 (require '[clojure.string :as str]
