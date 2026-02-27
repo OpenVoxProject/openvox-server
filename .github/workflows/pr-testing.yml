@@ -109,7 +109,7 @@ jobs:
           echo "describe=${DESCRIBE//-/.}" >> $GITHUB_OUTPUT
       - name: Upload build artifacts
         id: upload
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: openvox-server-${{ steps.version.outputs.describe }}.zip
           path: output/
