@@ -17,6 +17,12 @@
 (def i18n-version "1.0.3")
 (def logback-version "1.3.16")
 (def jackson-version "2.21.1")
+;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
+;; response headers automatically rather than transferring it chunked,
+;; and also string flushing behavior is changed, and some part of the system
+;; does not handle one or both of these correctly. We need to debug this and
+;; fix it before upgrading.
+(def ring-core-version "1.14.2")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
@@ -31,6 +37,18 @@
       (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
 
 (fail-if-logback->1-3! logback-version)
+
+(defn fail-if-ring-core->1-14!
+  "Fails the build if ring-core version is > 1.14.x."
+  [ring-core-version]
+  (let [[x y] (->> (str/split (str ring-core-version) #"\.")
+                (take 2)                                    ;; keep major and minor versions
+                (map #(Integer/parseInt %)))]
+    (when (or (> x 1)                                       ;; major version is greater than 1
+            (and (= x 1) (> y 14)))                         ;; major version is 1 and minor version is greater than 14
+      (main/abort (format "ring-core version %s is not supported. Must be 1.14.x until performance regression is fixed (#197)." ring-core-version)))))
+
+(fail-if-ring-core->1-14! ring-core-version)
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -106,12 +124,7 @@
                          [prismatic/schema "1.4.1"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
-                         ;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
-                         ;; response headers automatically rather than transferring it chunked,
-                         ;; and also string flushing behavior is changed, and some part of the system
-                         ;; does not handle one or both of these correctly. We need to debug this and
-                         ;; fix it before upgrading.
-                         [ring/ring-core "1.14.2"]
+                         [ring/ring-core ~ring-core-version]
                          [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
