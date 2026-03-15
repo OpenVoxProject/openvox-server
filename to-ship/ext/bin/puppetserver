@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#set default privileges to -rw-r-----
+umask 027
+
+set -a
+if [ -r "/etc/default/puppetserver" ] ; then
+    . /etc/default/puppetserver
+elif [ -r "/etc/sysconfig/puppetserver" ] ; then
+    . /etc/sysconfig/puppetserver
+elif [ `uname` == "OpenBSD" ] ; then
+    JAVA_BIN=$(javaPathHelper -c puppetserver)
+    JAVA_ARGS="-Xms2g -Xmx2g -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
+    TK_ARGS=""
+    USER="_puppet"
+    INSTALL_DIR="/opt/puppetlabs/server/apps/puppetserver"
+    CONFIG="/etc/puppetlabs/puppetserver/conf.d"
+else
+    echo "You seem to be missing some important configuration files; could not find /etc/default/puppetserver or /etc/sysconfig/puppetserver" >&2
+    exit 1
+fi
+set +a
+
+CLI_DIR="${INSTALL_DIR}/cli"
+CLI_APP_DIR="${CLI_DIR}/apps"
+APPS=`ls ${CLI_APP_DIR} 2>/dev/null`
+
+#############
+# FUNCTIONS #
+#############
+
+# Display usage then exit
+function usage {
+
+    if [ "$APPS" == "" ]; then
+        echo "ERROR: No sub-commands found in ${CLI_APP_DIR}"
+        exit 1
+    fi
+
+    cat <<EOD
+usage: $(basename $0) ([--help] | [--version]) <command> [<args>]
+
+The most commonly used puppetserver commands are:
+EOD
+
+    # Iterate and display commands in the CLI_APP_DIR
+    for f in $APPS; do
+        echo "   $f"
+    done
+
+    cat << EOD
+
+See '$(basename $0) <command> -h' for more information on a specific command.
+EOD
+    exit 0
+}
+
+function show_version {
+    cat <<EOD
+puppetserver version: 8.11.0
+EOD
+    exit 0
+}
+
+# Execute the subcommand if available.
+#
+# $1 - subcommand
+# $n - arguments
+#
+# Example:
+#
+#   execsubcommand export -o test.dump -H 1.1.1.1
+#
+function execsubcommand {
+    sub=$1
+    shift
+    cmd="${CLI_APP_DIR}/${sub}"
+
+    if [ -e ${cmd} ]; then
+        exec "${cmd}" "$@"
+    else
+        echo "puppetserver: '${sub}' is not a puppetserver command. See '$(basename $0) --help'."
+    fi
+}
+
+########
+# MAIN #
+########
+
+if [ -z $1 ] || [ $1 = "--help" ] || [ $1 = "-h" ]; then
+    usage
+fi
+if [ $1 = "--version" ] || [ $1 = "-v" ]; then
+    show_version
+fi
+
+execsubcommand "$@"
