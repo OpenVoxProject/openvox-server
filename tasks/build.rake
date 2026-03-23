@@ -49,27 +49,27 @@ DEP_BUILD_ORDER = [
 ].freeze
 
 def image_exists
-  !`docker images -q #{@image}`.strip.empty?
+  !`${DOCKER_BIN-docker} images -q #{@image} --format='{{json .ID}}'`.strip.empty?
 end
 
 def container_exists
-  !`docker container ls --all --filter 'name=#{@container}' --format '{{json .ID}}'`.strip.empty?
+  !`${DOCKER_BIN-docker} container ls --all --filter 'name=#{@container}' --format '{{json .ID}}'`.strip.empty?
 end
 
 def teardown
   if container_exists
     puts "Stopping #{@container}"
-    run_command("docker stop #{@container}", silent: false, print_command: true)
-    run_command("docker rm #{@container}", silent: false, print_command: true)
+    run_command("${DOCKER_BIN-docker} stop #{@container}", silent: false, print_command: true)
+    run_command("${DOCKER_BIN-docker} rm #{@container}", silent: false, print_command: true)
   end
 end
 
 def start_container(ezbake_dir)
-  run_command("docker run -d --name #{@container} -v .:/code -v #{ezbake_dir}:/deps #{@image} /bin/sh -c 'tail -f /dev/null'", silent: false, print_command: true)
+  run_command("${DOCKER_BIN-docker} run -d --name #{@container} -v .:/code -v #{ezbake_dir}:/deps #{@image} /bin/sh -c 'tail -f /dev/null'", silent: false, print_command: true)
 end
 
 def run(cmd)
-  run_command("docker exec #{@container} /bin/bash --login -c '#{cmd}'", silent: false, print_command: true)
+  run_command("${DOCKER_BIN-docker} exec #{@container} /bin/bash --login -c '#{cmd}'", silent: false, print_command: true)
 end
 
 namespace :vox do
@@ -88,7 +88,7 @@ namespace :vox do
       # delete all containers and do `docker rmi ezbake-builder`
       unless image_exists
         puts "Building ezbake-builder image"
-        run_command("docker build -t ezbake-builder .", silent: false, print_command: true)
+        run_command("${DOCKER_BIN-docker} build -t ezbake-builder .", silent: false, print_command: true)
       end
 
       libs_to_build_manually = {}
