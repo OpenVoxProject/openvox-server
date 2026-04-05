@@ -54,7 +54,7 @@ def image_exists
 end
 
 def container_exists
-  !`docker container ls --all --filter 'name=#{@container}' --format json`.strip.empty?
+  !`docker container ls --all --filter 'name=#{@container}' --format '{{json .ID}}'`.strip.empty?
 end
 
 def teardown
