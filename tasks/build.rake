@@ -40,7 +40,6 @@ DEP_BUILD_ORDER = [
   'ring-middleware',
   'jruby-utils',
   'clj-shell-utils',
-  'dujour-version-check',
   'clj-rbac-client',
   'trapperkeeper-authorization',
   'trapperkeeper-metrics',
