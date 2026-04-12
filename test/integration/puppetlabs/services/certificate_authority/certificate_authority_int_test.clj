@@ -1,8 +1,6 @@
 (ns puppetlabs.services.certificate-authority.certificate-authority-int-test
   (:require
     [cheshire.core :as json]
-    [clj-time.core :as time]
-    [clj-time.format :as time-format]
     [clojure.java.io :as io]
     [clojure.test :refer [deftest is testing use-fixtures]]
     [me.raynes.fs :as fs]
@@ -25,7 +23,8 @@
     [ring.mock.request :as mock]
     [ring.util.codec :as ring-codec]
     [schema.test :as schema-test])
-  (:import (java.util Date Random)
+  (:import (java.time ZoneOffset ZonedDateTime)
+           (java.util Date Random)
            (java.util.concurrent TimeUnit)
            (javax.net.ssl SSLException)))
 
@@ -1159,11 +1158,10 @@
                       :headers {"Accept" "application/json"}})]
        (is (= 200 (:status response)))
        (let [body (json/parse-string (:body response))
-             ca-exp (get-in body ["ca-certs" "Puppet CA: localhost"])
-             crl-exp (get-in body ["crls" "Puppet CA: localhost"])
-             formatter (time-format/formatter "YYY-MM-dd'T'HH:mm:ssz")]
-         (is (time/after? (time-format/parse formatter ca-exp) (time/now)))
-         (is (time/after? (time-format/parse formatter crl-exp) (time/now))))))))
+              ca-exp (get-in body ["ca-certs" "Puppet CA: localhost"])
+              crl-exp (get-in body ["crls" "Puppet CA: localhost"])]
+          (is (.isAfter (ZonedDateTime/parse ca-exp ca/inventory-date-formatter) (ZonedDateTime/now ZoneOffset/UTC)))
+          (is (.isAfter (ZonedDateTime/parse crl-exp ca/inventory-date-formatter) (ZonedDateTime/now ZoneOffset/UTC))))))))
 
 (deftest update-crl-endpoint-test
   (bootstrap/with-puppetserver-running-with-mock-jrubies

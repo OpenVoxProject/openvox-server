@@ -73,7 +73,6 @@
                          [ch.qos.logback/logback-core ~logback-version]
                          [cheshire "5.13.0"]
                          [clj-commons/fs "1.6.312"]
-                         [clj-time "0.15.2"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
@@ -129,7 +128,6 @@
 
   :dependencies [[org.clojure/clojure]
                  [clj-commons/fs]
-                 [clj-time]
                  [commons-io]
                  [grimradical/clj-semver :exclusions [org.clojure/clojure]]
                  [io.dropwizard.metrics/metrics-core]

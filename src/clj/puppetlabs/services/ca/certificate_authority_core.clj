@@ -1,8 +1,6 @@
 (ns puppetlabs.services.ca.certificate-authority-core
   (:require [bidi.schema :as bidi-schema]
             [cheshire.core :as cheshire]
-            [clj-time.core :as time]
-            [clj-time.format :as time-format]
             [clojure.java.io :as io]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
@@ -27,7 +25,9 @@
   (:import (clojure.lang IFn)
            (java.io ByteArrayInputStream InputStream StringWriter)
            (java.security.cert X509Certificate)
-           (org.joda.time DateTime)))
+           (java.time ZonedDateTime)
+           (java.time.format DateTimeFormatterBuilder DateTimeParseException TextStyle)
+           (java.util Locale)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Constants
@@ -39,16 +39,30 @@
 ;;; 'handler' functions for HTTP endpoints
 
 
-(schema/defn format-http-date :- (schema/maybe DateTime)
-  "Formats an http-date into joda time.  Returns nil for malformed or nil
-   http-dates"
+(def http-date-formatter
+  ;; RFC 822 / RFC 7231 http-date without the day-of-week field.
+  ;; appendGenericZoneText handles GMT, UTC, and named zones natively.
+  ;; The day-of-week prefix is stripped before parsing (see format-http-date)
+  ;; to avoid day-of-week/date conflicts in java.time's strict resolver.
+  (-> (DateTimeFormatterBuilder.)
+      (.parseCaseInsensitive)
+      (.appendPattern "dd MMM uuuu HH:mm:ss ")
+      (.appendGenericZoneText TextStyle/SHORT)
+      (.toFormatter Locale/US)
+      (.withZone ca/utc-zone)))
+
+(schema/defn format-http-date :- (schema/maybe ZonedDateTime)
+  "Parses an RFC 822 http-date into a ZonedDateTime. Returns nil for malformed
+   or nil http-dates."
   [http-date :- (schema/maybe schema/Str)]
   (when http-date
     (try
-      (time-format/parse
-        (time-format/formatters :rfc822)
-        (string/replace http-date #"GMT" "+0000"))
-      (catch IllegalArgumentException _
+      (ZonedDateTime/parse
+        ;; Strip optional leading day-of-week (e.g. "Wed, ") to avoid
+        ;; day-of-week conflicts for far-future dates in java.time.
+        (string/replace http-date #"^[A-Za-z]+,\s*" "")
+        http-date-formatter)
+      (catch DateTimeParseException _
         nil))))
 
 (defn handle-get-certificate
@@ -58,7 +72,7 @@
               last-modified-date-time (format-http-date last-modified-val)
               cert-last-modified-date-time (ca/get-file-last-modified certificate-path)]
           (if (or (nil? last-modified-date-time)
-                  (time/after? cert-last-modified-date-time last-modified-date-time))
+                  (.isAfter cert-last-modified-date-time last-modified-date-time))
             (rr/response (slurp certificate-path))
             (-> (rr/response nil)
                 (rr/status 304))))
@@ -108,8 +122,8 @@
     ;; window of time between when the last-modified is read and when the crl content is potentially read.
     (common/with-safe-read-lock lock descriptor timeout
         (if (or (nil? agent-crl-last-modified-date-time)
-                (time/after? (ca/get-file-last-modified path lock descriptor timeout)
-                             agent-crl-last-modified-date-time))
+                (.isAfter (ca/get-file-last-modified path lock descriptor timeout)
+                          agent-crl-last-modified-date-time))
           (-> (ca/get-certificate-revocation-list path lock descriptor timeout)
               (rr/response)
               (rr/content-type "text/plain"))

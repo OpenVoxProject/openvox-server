@@ -7,14 +7,12 @@
             [puppetlabs.trapperkeeper.services.status.status-core :as status-core]
             [puppetlabs.comidi :as comidi]
             [puppetlabs.i18n.core :refer [trs]]
-            [clj-time.core :as time]
-            [clj-time.format :as time-format]
             [puppetlabs.services.protocols.jruby-puppet :as jruby-protocol])
   (:import (com.codahale.metrics MetricRegistry Gauge Counter Histogram Meter Timer)
            (clojure.lang Atom IFn)
+           (java.time ZoneOffset ZonedDateTime)
+           (java.time.format DateTimeFormatter)
            (java.util.concurrent TimeUnit)
-           (org.joda.time DateTime)
-           (org.joda.time.format DateTimeFormatter)
            (org.slf4j MDC)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -121,19 +119,19 @@
 ;;; Private
 
 (schema/def ^:always-validate datetime-formatter :- DateTimeFormatter
-  "The date/time formatter used to produce timestamps using clj-time.
-  This matches the format used by PuppetDB."
-  (time-format/formatters :date-time))
+  "The date/time formatter used to produce timestamps.
+  This matches the format used by OpenVoxDB."
+  DateTimeFormatter/ISO_OFFSET_DATE_TIME)
 
 (schema/defn ^:always-validate format-date-time :- schema/Str
-  "Given a DateTime object, return a human-readable, formatted string."
-  [date-time :- DateTime]
-  (time-format/unparse datetime-formatter date-time))
+  "Given a ZonedDateTime object, return a human-readable, formatted string."
+  [date-time :- ZonedDateTime]
+  (.format datetime-formatter date-time))
 
 (schema/defn ^:always-validate timestamp :- schema/Str
   "Returns a nicely-formatted string of the current date/time."
   []
-  (format-date-time (time/now)))
+  (format-date-time (ZonedDateTime/now ZoneOffset/UTC)))
 
 (schema/defn timestamped-reason :- TimestampedReason
   [reason :- jruby-schemas/JRubyEventReason]
