@@ -1,8 +1,5 @@
 (ns puppetlabs.puppetserver.certificate-authority
-  (:require [clj-time.coerce :as time-coerce]
-            [clj-time.core :as time]
-            [clj-time.format :as time-format]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as str]
             [clojure.tools.logging :as log]
@@ -23,12 +20,13 @@
            (java.security PrivateKey PublicKey)
            (java.security.cert CRLException CertPathValidatorException X509CRL X509Certificate)
            (java.text SimpleDateFormat)
-           (java.time LocalDateTime ZoneId)
-           (java.util Date)
+           (java.time Instant LocalDateTime ZoneId ZoneOffset ZonedDateTime)
+           (java.time.format DateTimeFormatterBuilder TextStyle)
+           (java.time.temporal ChronoUnit)
+           (java.util Date Locale)
            (java.util.concurrent.locks ReentrantReadWriteLock)
            (org.apache.commons.io IOUtils)
-           (org.bouncycastle.pkcs PKCS10CertificationRequest)
-           (org.joda.time DateTime)))
+           (org.bouncycastle.pkcs PKCS10CertificationRequest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Public utilities
@@ -394,11 +392,11 @@
    and the dates will be based on the current time. Returns a map in the
    form {:not-before Date :not-after Date}."
   [ca-ttl :- schema/Int]
-  (let [now        (time/now)
-        not-before (time/minus now (time/days 1))
-        not-after  (time/plus now (time/seconds ca-ttl))]
-    {:not-before (.toDate not-before)
-     :not-after  (.toDate not-after)}))
+  (let [now        (ZonedDateTime/now ZoneOffset/UTC)
+        not-before (.minus now 1 ChronoUnit/DAYS)
+        not-after  (.plus now ca-ttl ChronoUnit/SECONDS)]
+    {:not-before (Date/from (.toInstant not-before))
+     :not-after  (Date/from (.toInstant not-after))}))
 
 
 (schema/defn settings->cadir-paths
@@ -660,20 +658,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Inventory File
 
+(def utc-zone (ZoneId/of "UTC"))
+
 (def inventory-date-formatter
-  (time-format/formatter "YYY-MM-dd'T'HH:mm:ssz"))
+  (-> (DateTimeFormatterBuilder.)
+      (.appendPattern "uuuu-MM-dd'T'HH:mm:ss")
+      (.appendGenericZoneText TextStyle/SHORT)
+      (.toFormatter Locale/US)
+      (.withZone utc-zone)))
 
 (schema/defn format-date-time :- schema/Str
   "Formats a date-time into the format expected by the ruby puppet code."
   [date-time :- Date]
-  (time-format/unparse
-    inventory-date-formatter
-    (time-coerce/from-date date-time)))
+  (.format inventory-date-formatter
+           (ZonedDateTime/ofInstant (.toInstant date-time) ZoneOffset/UTC)))
 
-(schema/defn parse-date-time :- DateTime
-  "parses a date-time string into a DateTime instance"
+(schema/defn parse-date-time :- ZonedDateTime
+  "parses a date-time string into a ZonedDateTime instance"
   [date-time :- schema/Str]
-  (time-format/parse inventory-date-formatter date-time))
+  (ZonedDateTime/parse date-time inventory-date-formatter))
 
 (def buffer-copy-size (* 64 1024))
 
@@ -804,18 +807,18 @@
     false))
 
 (schema/defn is-not-expired? :- schema/Bool
-  [now :- DateTime
+  [now :- ZonedDateTime
    [_serial _not-before not-after _row-subject] :- [schema/Str]]
   (if-let [not-after-date (parse-date-time not-after)]
-    (time/before? now not-after-date)
+    (.isBefore now not-after-date)
     ;; lack of an end date means we can't tell if it is expired or not, so assume it isn't.
     false))
 
 (schema/defn is-expired? :- schema/Bool
-  [now :- DateTime
+  [now :- ZonedDateTime
    [_serial _not-before not-after _row-subject] :- [schema/Str]]
   (if-let [not-after-date (parse-date-time not-after)]
-    (time/after? now not-after-date)
+    (.isAfter now not-after-date)
     ;; lack of an end date means we can't tell if it is expired or not, so assume it isn't.
     false))
 
@@ -848,7 +851,7 @@
     (log/trace (i18n/trs "Extracting expired serials from inventory file {0}" cert-inventory))
     (if (fs/exists? cert-inventory)
       (with-open [inventory-reader (io/reader cert-inventory)]
-        (let [now (time/now)]
+        (let [now (ZonedDateTime/now ZoneOffset/UTC)]
           (doall
             (->>
               (line-seq inventory-reader)
@@ -870,7 +873,7 @@
       (with-open [inventory-reader (io/reader cert-inventory)]
         (let [inventory-rows (map extract-inventory-row-contents (line-seq inventory-reader))
               cn-subject (utils/cn certname)
-              now (time/now)]
+              now (ZonedDateTime/now ZoneOffset/UTC)]
           (doall
             (->> inventory-rows
                  (filter (partial is-subject-in-inventory-row? cn-subject))
@@ -1823,19 +1826,19 @@
     (slurp cacrl)))
 
 (schema/defn ^:always-validate
-  get-file-last-modified :- DateTime
-  "Given a path to a file, return a Joda DateTime instance of when the file was last modified.
+  get-file-last-modified :- ZonedDateTime
+  "Given a path to a file, return a ZonedDateTime instance of when the file was last modified.
    an optional lock, description, and timeout may be passed to serialize access to files."
   ([path :- schema/Str]
    (let [last-modified-milliseconds (.lastModified (io/file path))]
-        (time-coerce/from-long last-modified-milliseconds)))
+        (ZonedDateTime/ofInstant (Instant/ofEpochMilli last-modified-milliseconds) ZoneOffset/UTC)))
   ([path :- schema/Str
     lock :- ReentrantReadWriteLock
     lock-descriptor :- schema/Str
     lock-timeout :- PosInt]
    (common/with-safe-read-lock lock lock-descriptor lock-timeout
      (let [last-modified-milliseconds (.lastModified (io/file path))]
-          (time-coerce/from-long last-modified-milliseconds)))))
+          (ZonedDateTime/ofInstant (Instant/ofEpochMilli last-modified-milliseconds) ZoneOffset/UTC)))))
 
 (schema/defn ^:always-validate reject-delta-crl
   [crl :- CertificateRevocationList]

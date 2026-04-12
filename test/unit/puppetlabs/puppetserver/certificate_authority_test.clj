@@ -1,7 +1,5 @@
 (ns puppetlabs.puppetserver.certificate-authority-test
-  (:require [clj-time.coerce :as time-coerce]
-            [clj-time.core :as time]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as string]
             [clojure.test :refer [deftest is testing use-fixtures]]
@@ -27,11 +25,11 @@
            (java.security MessageDigest PublicKey)
            (java.security.cert X509CRL X509Certificate)
            (java.time LocalDateTime ZoneOffset ZonedDateTime)
+           (java.time.temporal ChronoUnit)
            (java.util Date)
            (java.util.concurrent TimeUnit)
            (java.util.concurrent.locks ReentrantReadWriteLock)
-           (org.bouncycastle.asn1.x509 SubjectPublicKeyInfo)
-           (org.joda.time DateTime Period)))
+           (org.bouncycastle.asn1.x509 SubjectPublicKeyInfo)))
 
 (use-fixtures :once schema-test/validate-schemas)
 (use-fixtures :each #(logutils/with-test-logging (%)))
@@ -53,6 +51,11 @@
 (def autosign-confs-dir (str test-resources-dir "/autosign_confs"))
 (def autosign-exes-dir (str test-resources-dir "/autosign_exes"))
 (def csr-attributes-dir (str test-resources-dir "/csr_attributes"))
+
+(defn within-seconds?
+  "True if actual is within tolerance-seconds of expected."
+  [expected actual tolerance-seconds]
+  (< (Math/abs (.between ChronoUnit/SECONDS expected actual)) tolerance-seconds))
 (def bundle-dir (str test-pems-dir "/bundle"))
 (def bundle-cadir (str bundle-dir "/ca"))
 
@@ -439,22 +442,19 @@
              (ca/get-certificate-request csrdir "test-agent"))))))
 
 (deftest autosign-certificate-request!-test
-  (let [now                (time/epoch)
-        two-years          (* 60 60 24 365 2)
-        settings           (-> (testutils/ca-sandbox! cadir)
-                               (assoc :ca-ttl two-years))
-        csr                (-> (:csrdir settings)
-                               (ca/path-to-cert-request "test-agent")
-                               (utils/pem->csr))
+  (let [two-years-in-seconds  (* 60 60 24 365 2)
+        settings              (-> (testutils/ca-sandbox! cadir)
+                                  (assoc :ca-ttl two-years-in-seconds))
+        csr                   (-> (:csrdir settings)
+                                  (ca/path-to-cert-request "test-agent")
+                                  (utils/pem->csr))
         expected-cert-path (ca/path-to-cert (:signeddir settings) "test-agent")
         old-fn @common/action-registration-function
         call-results (atom [])
-        new-fn (fn [value] (swap! call-results conj value))]
+        new-fn             (fn [value] (swap! call-results conj value))
+        before-sign        (ZonedDateTime/now ZoneOffset/UTC)]
     (reset! common/action-registration-function new-fn)
-    ;; Fix the value of "now" so we can reliably test the dates
-    (time/do-at now
-      (ca/autosign-certificate-request! "test-agent" csr settings (constantly nil)))
-
+    (ca/autosign-certificate-request! "test-agent" csr settings (constantly nil))
     (testing "requests are autosigned and saved to disk"
       (is (fs/exists? expected-cert-path)))
 
@@ -466,20 +466,18 @@
         (testutils/assert-issuer cert "CN=Puppet CA: localhost"))
 
       (testing "certificate has not-before/not-after dates based on $ca-ttl"
-        (let [not-before (time-coerce/from-date (.getNotBefore cert))
-              not-after (time-coerce/from-date (.getNotAfter cert))]
+        (let [not-before (ZonedDateTime/ofInstant (.toInstant (.getNotBefore cert)) ZoneOffset/UTC)
+              not-after  (ZonedDateTime/ofInstant (.toInstant (.getNotAfter cert)) ZoneOffset/UTC)]
           (testing "not-before is 1 day before now"
-            (is (= (time/minus now (time/days 1)) not-before)))
+              (is (within-seconds? (.minus before-sign 1 ChronoUnit/DAYS) not-before 60)))
           (testing "not-after is 2 years from now"
-            (is (= (time/plus now (time/years 2)) not-after)))))
-
+              (is (within-seconds? (.plus before-sign two-years-in-seconds ChronoUnit/SECONDS) not-after 60)))))
       (testing "correctly reports node activity"
         (is (= [{:type :add,
                  :targets ["test-agent"],
                  :meta {:type :certificate}}]
-               @call-results)))
-      (reset! common/action-registration-function old-fn))))
-
+                @call-results))))
+    (reset! common/action-registration-function old-fn)))
 (deftest autosign-without-capub
   (testing "The CA public key file is not necessary to autosign"
     (let [settings  (testutils/ca-sandbox! cadir)
@@ -1347,12 +1345,14 @@
         subject-pub  (utils/get-public-key subject-keys)
         subject      "subject"
         subject-dn   (utils/cn subject)
-        not-after    (-> (DateTime/now)
-                         (.plus (Period/years 5))
-                         (.toDate))
-        not-before   (-> (DateTime/now)
-                         (.plus (Period/years 5))
-                         (.toDate))
+        not-after    (-> (ZonedDateTime/now ZoneOffset/UTC)
+                         (.plus 5 ChronoUnit/YEARS)
+                         (.toInstant)
+                         (Date/from))
+        not-before   (-> (ZonedDateTime/now ZoneOffset/UTC)
+                         (.plus 5 ChronoUnit/YEARS)
+                         (.toInstant)
+                         (Date/from))
         cn           (utils/cn "Root CA")
         cert         (utils/sign-certificate cn (utils/get-private-key issuer-keys)
                                              666 not-before not-after cn issuer-pub
@@ -1852,12 +1852,14 @@
           ca-key-pair  (utils/generate-key-pair 512)
           ca-priv-key  (utils/get-private-key ca-key-pair)
           ca-pub-key   (utils/get-public-key ca-key-pair)
-          not-after    (-> (DateTime/now)
-                           (.plus (Period/years 5))
-                           (.toDate))
-          not-before   (-> (DateTime/now)
-                           (.plus (Period/years 5))
-                           (.toDate))
+          not-after    (-> (ZonedDateTime/now ZoneOffset/UTC)
+                           (.plus 5 ChronoUnit/YEARS)
+                           (.toInstant)
+                           (Date/from))
+          not-before   (-> (ZonedDateTime/now ZoneOffset/UTC)
+                           (.plus 5 ChronoUnit/YEARS)
+                           (.toInstant)
+                           (Date/from))
           cn           (utils/cn "Root CA")
           cert         (utils/sign-certificate cn ca-priv-key
                                                666 not-before not-after cn ca-pub-key
@@ -2177,7 +2179,7 @@
                         public-key
                         (.getThisUpdate crl)
                         ;; create a date 5 days from now using java.time
-                        (-> (ZonedDateTime/now)
+                        (-> (ZonedDateTime/now ZoneOffset/UTC)
                             (.plusDays 5)
                             (.toInstant)
                             (Date/from))
