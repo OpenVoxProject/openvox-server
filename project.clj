@@ -22,7 +22,7 @@
 ;; and also string flushing behavior is changed, and some part of the system
 ;; does not handle one or both of these correctly. We need to debug this and
 ;; fix it before upgrading.
-(def ring-core-version "1.14.2")
+(def ring-core-version "1.15.4")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
