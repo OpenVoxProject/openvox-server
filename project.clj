@@ -95,7 +95,7 @@
                          [org.openvoxproject/comidi "1.1.2"]
                          [org.openvoxproject/http-client "2.2.3"]
                          [org.openvoxproject/i18n ~i18n-version]
-                         [org.openvoxproject/jruby-utils "5.3.6"]
+                         [org.openvoxproject/jruby-utils "5.3.7"]
                          [org.openvoxproject/kitchensink "3.5.6"]
                          [org.openvoxproject/kitchensink "3.5.6" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.2.6"]
