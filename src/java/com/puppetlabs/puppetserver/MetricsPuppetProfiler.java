@@ -44,7 +44,7 @@ public class MetricsPuppetProfiler implements PuppetProfiler {
     @Override
     public void finish(Object context, String message, String[] metric_id) {
         if (shouldTime(metric_id)) {
-          Long elapsed = System.currentTimeMillis() - (Long)context;
+          long elapsed = System.currentTimeMillis() - (Long)context;
 	    Map<String, Timer> metricsByID = getOrCreateTimersByIDs(metric_id);
             for (Timer t : metricsByID.values()) {
                 t.update(elapsed, TimeUnit.MILLISECONDS);
