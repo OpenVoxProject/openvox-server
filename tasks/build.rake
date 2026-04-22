@@ -15,7 +15,7 @@ require 'tmpdir'
 #   https://github.com/puppetlabs/ezbake/blob/aeb7735a16d2eecd389a6bd9e5c0cfc7c62e61a5/resources/puppetlabs/lein-ezbake/template/global/ext/fpm.rb
 #
 # Note: This is not the canonical list of supported OpenVox platforms. Look at https://github.com/OpenVoxProject/shared-actions/blob/8f4d7e99f5e8a23f48e07124aa9adbb9768fabb9/.github/workflows/build_ezbake.yml#L36-L37
-deb_platforms = ENV['DEB_PLATFORMS'] || 'ubuntu-20.04,ubuntu-22.04,ubuntu-24.04,ubuntu-25.04,ubuntu-25.10,debian-11,debian-12,debian-13'
+deb_platforms = ENV['DEB_PLATFORMS'] || 'ubuntu-20.04,ubuntu-22.04,ubuntu-24.04,ubuntu-25.04,ubuntu-25.10,ubuntu-26.04,debian-11,debian-12,debian-13'
 @debs = deb_platforms.split(',').map{ |p| "base-#{p.split('-').join}-i386.cow" }.join(' ')
 
 rpm_platforms = ENV['RPM_PLATFORMS'] || 'el-8,el-9,el-10,sles-15,sles-16,amazon-2,amazon-2023,fedora-42,fedora-43'
