@@ -280,7 +280,7 @@
                                                [org.openvoxproject/puppetserver "8.13.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.3")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.4")]]
                       :name "puppetserver"}
 
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
@@ -297,7 +297,7 @@
                                                     [org.openvoxproject/trapperkeeper-webserver-jetty10]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
-                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.3")]]
+                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.4")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver-jetty10]]
                        :aot [puppetlabs.trapperkeeper.main
