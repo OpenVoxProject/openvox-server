@@ -80,7 +80,7 @@
                          ;; ~jackson-version when they match again.
                          [com.fasterxml.jackson.core/jackson-annotations "2.21"]
                          [commons-codec "1.21.0"]
-                         [commons-io "2.21.0"]
+                         [commons-io "2.22.0"]
                          [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
                          [lambdaisland/uri "1.19.155"]
