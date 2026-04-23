@@ -31,5 +31,5 @@ group :release, optional: true do
   # usually we pin to  ~> 2.1, but some of the EoL beaker 6 dependencies require ancient faraday versions
   # it's all a huge pain and the beaker setup needs to be reworked
   gem 'faraday-retry', '< 3', require: false
-  gem 'github_changelog_generator', '~> 1.18.0', require: false
+  gem 'github_changelog_generator', '~> 1.18', require: false
 end
