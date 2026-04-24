@@ -101,7 +101,7 @@
                          [org.openvoxproject/rbac-client "1.2.7"]
                          [org.openvoxproject/rbac-client "1.2.7" :classifier "test"]
                          [org.openvoxproject/ring-middleware "2.1.6"]
-                         [org.openvoxproject/ssl-utils "3.6.3"]
+                         [org.openvoxproject/ssl-utils "3.6.4"]
                          [org.openvoxproject/trapperkeeper "4.3.4"]
                          [org.openvoxproject/trapperkeeper "4.3.4" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.4"]
