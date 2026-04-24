@@ -287,9 +287,6 @@
                                                     ;; The non-FIPS BC jar is only needed for installing vendored gems
                                                     ;; at packaging time, and is not included in the final package.
                                                     [org.bouncycastle/bcpkix-jdk18on]
-                                                    [org.bouncycastle/bc-fips]
-                                                    [org.bouncycastle/bcpkix-fips]
-                                                    [org.bouncycastle/bctls-fips]
                                                     [org.openvoxproject/jruby-utils]
                                                     ;; Do not modify this line. It is managed by the release process
                                                     ;; via the scripts/sync_ezbake_dep.rb script.
