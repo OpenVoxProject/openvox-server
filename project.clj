@@ -110,7 +110,7 @@
                          [org.openvoxproject/trapperkeeper-metrics "2.1.8"]
                          [org.openvoxproject/trapperkeeper-metrics "2.1.8" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-scheduler "1.3.2"]
-                         [org.openvoxproject/trapperkeeper-status "1.3.2"]
+                         [org.openvoxproject/trapperkeeper-status "1.3.4"]
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.7"]
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.7" :classifier "test"]
                          [org.ow2.asm/asm "9.9.1"]
