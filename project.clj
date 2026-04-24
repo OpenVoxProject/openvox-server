@@ -91,7 +91,7 @@
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
                          [org.bouncycastle/bc-fips "1.0.2.6"]
                          [org.bouncycastle/bctls-fips "1.0.19"]
-                         [org.openvoxproject/clj-shell-utils "2.1.1"]
+                         [org.openvoxproject/clj-shell-utils "2.1.2"]
                          [org.openvoxproject/comidi "1.1.3"]
                          [org.openvoxproject/http-client "2.2.5"]
                          [org.openvoxproject/i18n ~i18n-version]
