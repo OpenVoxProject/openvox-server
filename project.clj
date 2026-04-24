@@ -14,7 +14,7 @@
     default-heap-size))
 
 (def slf4j-version "2.0.17")
-(def i18n-version "1.0.3")
+(def i18n-version "1.0.4")
 (def logback-version "1.3.16")
 (def jackson-version "2.21.2")
 ;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
