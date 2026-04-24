@@ -109,7 +109,7 @@
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.2"]
                          [org.openvoxproject/trapperkeeper-metrics "2.1.7"]
                          [org.openvoxproject/trapperkeeper-metrics "2.1.7" :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-scheduler "1.3.1"]
+                         [org.openvoxproject/trapperkeeper-scheduler "1.3.2"]
                          [org.openvoxproject/trapperkeeper-status "1.3.2"]
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.7"]
                          [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.7" :classifier "test"]
