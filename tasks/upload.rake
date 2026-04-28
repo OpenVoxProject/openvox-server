@@ -36,6 +36,16 @@ namespace :vox do
       glob += "#{os}*"
     end
     files = Dir.glob(glob)
+
+    # Tarballs use a different version format than RPM/DEB packages.
+    # ezbake generates the tarball name from the git tag (e.g. 8.13.0.SNAPSHOT.2026...)
+    # while RPM/DEB use the version-release format (e.g. 8.13.0-0.1SNAPSHOT.2026...).
+    # Match tarballs separately by version to cover both formats.
+    unless os
+      tarball_files = Dir.glob("#{__dir__}/../output/openvox-server-#{version}*.tar.gz")
+      files = (files + tarball_files).uniq
+    end
+
     abort 'No files for the given tag found in the output directory.' if files.empty?
 
     path = "s3://#{bucket}/#{component}/#{tag}"
