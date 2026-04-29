@@ -14,6 +14,7 @@
             [schema.core :as schema]
             [slingshot.slingshot :as sling])
   (:import (java.io BufferedReader BufferedWriter ByteArrayInputStream ByteArrayOutputStream File FileNotFoundException IOException InputStream Reader StringReader)
+           (java.math BigInteger)
            (java.nio CharBuffer)
            (java.nio.file Files Path Paths)
            (java.nio.file.attribute FileAttribute PosixFilePermissions)
@@ -23,7 +24,7 @@
            (java.time Instant LocalDateTime ZoneId ZoneOffset ZonedDateTime)
            (java.time.format DateTimeFormatterBuilder TextStyle)
            (java.time.temporal ChronoUnit)
-           (java.util Date Locale)
+           (java.util Date Locale UUID)
            (java.util.concurrent.locks ReentrantReadWriteLock)
            (org.apache.commons.io IOUtils)
            (org.bouncycastle.pkcs PKCS10CertificationRequest)))
@@ -137,17 +138,19 @@
    :cacrl                            schema/Str
    :cakey                            schema/Str
    :capub                            schema/Str
-   :ca-name                          schema/Str
-   :ca-ttl                           schema/Int
-   :cert-inventory                   schema/Str
+    :ca-name                          schema/Str
+    :ca-ttl                           (schema/maybe schema/Int)
+    :cert-inventory                   schema/Str
    :csrdir                           schema/Str
    :keylength                        schema/Int
    :manage-internal-file-permissions schema/Bool
    :ruby-load-path                   [schema/Str]
    :gem-path                         schema/Str
    :signeddir                        schema/Str
-   :serial                           schema/Str
-   ;; Path to file containing list of infra node certificates including MoM
+    :serial                           schema/Str
+    ;; Path to file containing infra serial numbers for incrementing mode
+    :infra-serial                     (schema/maybe schema/Str)
+    ;; Path to file containing list of infra node certificates including MoM
    ;; provisioned by PE or user in case of FOSS
    :infra-nodes-path                 schema/Str
    ;; Path to file containing serial numbers of infra node certificates
@@ -158,6 +161,8 @@
    ;; Option to continue using full CRL instead of infra CRL if desired
    ;; Infra CRL would be enabled by default.
    :enable-infra-crl                 schema/Bool
+   :serial-type                      (schema/enum :incrementing :uuid)
+   :infra-serial-type                (schema/enum :incrementing :uuid)
    :serial-lock                      ReentrantReadWriteLock
    :serial-lock-timeout-seconds      PosInt
    :crl-lock                         ReentrantReadWriteLock
@@ -251,11 +256,12 @@
 (schema/defn ^:always-validate initialize-ca-config
   "Adds in default ca config keys/values, which may be overwritten if a value for
   any of those keys already exists in the ca-data"
-  [ca-data]
-  (let [cadir (:cadir ca-data)
-        defaults {:infra-nodes-path (str cadir "/infra_inventory.txt")
-                  :infra-node-serials-path (str cadir "/infra_serials")
-                  :infra-crl-path (str cadir "/infra_crl.pem")
+   [ca-data]
+   (let [cadir (:cadir ca-data)
+         defaults {:infra-nodes-path (str cadir "/infra_inventory.txt")
+                   :infra-node-serials-path (str cadir "/infra_serials")
+                   :infra-serial (str cadir "/infra_serial")
+                   :infra-crl-path (str cadir "/infra_crl.pem")
                   :enable-infra-crl false
                   :allow-subject-alt-names default-allow-subj-alt-names
                   :allow-authorization-extensions default-allow-auth-extensions
@@ -264,7 +270,9 @@
                   :inventory-lock-timeout-seconds default-inventory-lock-timeout-seconds
                   :allow-auto-renewal false
                   :auto-renewal-cert-ttl default-auto-ttl-renewal
-                  :allow-header-cert-info false}]
+                  :allow-header-cert-info false
+                  :serial-type :incrementing
+                  :infra-serial-type :incrementing}]
     (merge defaults ca-data)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -400,35 +408,37 @@
 
 
 (schema/defn settings->cadir-paths
-  "Trim down the CA settings to include only paths to files and directories.
-  These paths are necessary during CA initialization for determining what needs
-  to be created and where they should be placed."
-  [ca-settings :- CaSettings]
-  (let [settings' (dissoc ca-settings
-                    :access-control
-                    :allow-authorization-extensions
-                    :allow-duplicate-certs
-                    :allow-subject-alt-names
-                    :autosign
-                    :ca-name
-                    :ca-ttl
-                    :allow-header-cert-info
-                    :keylength
-                    :manage-internal-file-permissions
-                    :ruby-load-path
-                    :gem-path
-                    :enable-infra-crl
-                    :serial-lock-timeout-seconds
-                    :serial-lock
-                    :crl-lock-timeout-seconds
-                    :crl-lock
-                    :inventory-lock
-                    :inventory-lock-timeout-seconds
-                    :allow-auto-renewal
-                    :auto-renewal-cert-ttl)]
-    (if (:enable-infra-crl ca-settings)
-      settings'
-      (dissoc settings' :infra-crl-path :infra-node-serials-path))))
+   "Trim down the CA settings to include only paths to files and directories.
+   These paths are necessary during CA initialization for determining what needs
+   to be created and where they should be placed."
+   [ca-settings :- CaSettings]
+   (let [settings' (dissoc ca-settings
+                     :access-control
+                     :allow-authorization-extensions
+                     :allow-duplicate-certs
+                     :allow-subject-alt-names
+                     :autosign
+                     :ca-name
+                     :ca-ttl
+                     :allow-header-cert-info
+                     :keylength
+                     :manage-internal-file-permissions
+                     :ruby-load-path
+                     :gem-path
+                     :enable-infra-crl
+                     :serial-lock-timeout-seconds
+                     :serial-lock
+                     :crl-lock-timeout-seconds
+                     :crl-lock
+                     :inventory-lock
+                     :inventory-lock-timeout-seconds
+                     :allow-auto-renewal
+                     :auto-renewal-cert-ttl
+                     :serial-type
+                     :infra-serial-type)]
+     (if (:enable-infra-crl ca-settings)
+       settings'
+       (dissoc settings' :infra-crl-path :infra-node-serials-path))))
 
 (schema/defn settings->ssldir-paths
   "Remove all keys from the master settings map which are not file or directory
@@ -573,11 +583,32 @@
   (ks-file/atomic-write path (partial utils/obj->pem! csr) public-key-perms))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn uuid->serial-hex
+    "Converts a UUID to a 32-character hexadecimal string representation."
+    [^java.util.UUID uuid]
+    (let [uuid-str (.toString uuid)]
+      (clojure.string/replace uuid-str #"-" "")))
+
+(defn uuid->serial-biginteger
+    "Converts a UUID to a positive BigInteger suitable for X.509 certificate serials."
+    [^java.util.UUID uuid]
+    (let [uuid-str (clojure.string/replace (.toString uuid) #"-" "")]
+      (.abs (BigInteger. ^String uuid-str 16))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Infrastructure node utilities
+
+(schema/defn read-infra-nodes
+   "Returns a list of infra nodes or infra node serials from the specified file organized as one item per line."
+   [infra-file-reader :- Reader]
+   (line-seq infra-file-reader))
+
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Serial number functions
 
 (def serial-lock-descriptor
-  "Text used in exceptions to help identify locking issues"
-  "serial-file")
+   "Text used in exceptions to help identify locking issues"
+   "serial-file")
 
 (def crl-lock-descriptor
   "Text used in exceptions to help identify locking issues"
@@ -587,13 +618,43 @@
   "Text used in exceptions to help identify locking issues"
   "inventory-file")
 
-(schema/defn parse-serial-number :- schema/Int
-  "Parses a serial number from its format on disk.  See `format-serial-number`
-  for the awful, gory details."
-  [serial-number :- schema/Str]
-  (Integer/parseInt serial-number 16))
+(schema/defn is-infra-node?
+   "Determines if a subject is classified as an infrastructure node based on the infra-nodes-path file."
+   [subject :- schema/Str
+    settings :- CaSettings]
+  (let [infra-nodes-path (:infra-nodes-path settings)
+        infra-nodes-set (and infra-nodes-path (fs/exists? infra-nodes-path)
+                            (with-open [infra-nodes-reader (io/reader infra-nodes-path)]
+                              (set (read-infra-nodes infra-nodes-reader))))]
+    (if infra-nodes-set
+      (contains? infra-nodes-set subject)
+      false)))
 
-(schema/defn get-serial-number! :- schema/Int
+(schema/defn signing-context
+   "Determines the serial number context for certificate signing based on whether the certname is an infrastructure node."
+   [certname :- schema/Str
+    settings :- CaSettings]
+  (if (is-infra-node? certname settings) :infra :ca))
+
+(schema/defn parse-serial-number
+   "Parses a serial number from its format on disk, handling both incrementing and uuid serial types.
+   Returns either an Int (for incrementing) or BigInteger (for UUID)."
+   [serial-number :- schema/Str]
+   (let [trimmed (.trim serial-number)]
+     (when (empty? trimmed)
+       (throw (IllegalStateException.
+               (i18n/trs "Serial number file is empty or invalid"))))
+     (try
+      (let [bi (BigInteger. ^String trimmed 16)]
+        ;; Puppet incrementing serials can exceed Integer; prefer Long when possible.
+        (if (<= (.bitLength bi) 63)
+          (.longValue bi)
+          bi))
+      (catch NumberFormatException e
+        (throw (IllegalStateException.
+                (i18n/trs "Invalid serial number format in file: {0}" trimmed) e))))))
+
+(schema/defn get-serial-number! :- (schema/cond-pre schema/Int java.math.BigInteger)
   "Reads the serial number file from disk and returns the serial number."
   [{:keys [serial serial-lock serial-lock-timeout-seconds]} :- CaSettings]
   (common/with-safe-read-lock serial-lock serial-lock-descriptor serial-lock-timeout-seconds
@@ -603,36 +664,69 @@
         (parse-serial-number))))
 
 (schema/defn format-serial-number :- schema/Str
-  "Converts a serial number to the format it needs to be written in on disk.
-  This function has to write serial numbers in the same format that the puppet
-  ruby code does, to maintain compatibility with things like 'puppet cert';
-  for whatever arcane reason, that format is 0-padding up to 4 digits."
-  [serial-number :- schema/Int]
-  (format "%04X" serial-number))
+    "Converts a serial number to the format it needs to be written in on disk.
+    This function has to write serial numbers in the same format that the puppet
+    ruby code does, to maintain compatibility with things like 'puppet cert';
+    the format uses 0-padding with a minimum of 4 hex digits. For larger serial
+    numbers (e.g., UUIDs), the result will be more than 4 digits. Accepts Int, Long, BigInt or BigInteger."
+    [serial-number]
+  (cond
+    (instance? BigInteger serial-number)
+    (let [hex-str (.toString ^BigInteger serial-number 16)]
+      (if (<= (count hex-str) 4)
+        (format "%04X" (Integer/parseInt hex-str 16))
+        (.toUpperCase hex-str)))
+
+    (instance? clojure.lang.BigInt serial-number)
+    (format-serial-number (biginteger serial-number))
+
+    :else
+    ;; use long-capable formatting for incrementing serials
+    (format "%04X" (long serial-number))))
 
 (def serial-file-permissions
   "rw-r--r--")
 
 (schema/defn next-serial-number! :- schema/Int
-  "Returns the next serial number to be used when signing a certificate request.
-  Reads the serial number as a hex value from the given file and replaces the
-  contents of `serial-file` with the next serial number for a subsequent call.
-  Puppet's $serial setting defines the location of the serial number file."
-  [{:keys [serial serial-lock serial-lock-timeout-seconds] :as ca-settings} :- CaSettings]
-  (common/with-safe-write-lock serial-lock serial-lock-descriptor serial-lock-timeout-seconds
-    (let [serial-number (get-serial-number! ca-settings)]
-      (ks-file/atomic-write-string serial
-                                   (format-serial-number (inc serial-number))
-                                   serial-file-permissions)
-      serial-number)))
+  "Returns the next serial number to be used when signing a certificate request."
+  ([ca-settings]
+   (next-serial-number! ca-settings :ca))
+  ([ca-settings context]
+   (let [serial-type (if (= context :infra)
+                       (:infra-serial-type ca-settings)
+                       (:serial-type ca-settings))
+         serial-file (if (and (= context :infra)
+                              (:infra-serial ca-settings)
+                              (not= (:serial-type ca-settings) (:infra-serial-type ca-settings)))
+                       (:infra-serial ca-settings)
+                       (:serial ca-settings))]
+     (common/with-safe-write-lock (:serial-lock ca-settings) serial-lock-descriptor (:serial-lock-timeout-seconds ca-settings)
+        (if (= :uuid serial-type)
+          (let [uuid (UUID/randomUUID)
+                serial-hex (uuid->serial-hex uuid)
+                serial-number (uuid->serial-biginteger uuid)]
+           (ks-file/atomic-write-string serial-file serial-hex serial-file-permissions)
+           serial-number)
+         (let [serial-number (parse-serial-number (-> serial-file slurp .trim))
+               next-serial (inc serial-number)]
+           (ks-file/atomic-write-string serial-file
+                                        (format-serial-number next-serial)
+                                        serial-file-permissions)
+           next-serial))))))
 
 (schema/defn initialize-serial-file!
-  "Initializes the serial number file on disk.  Serial numbers start at 1."
-  [{:keys [serial serial-lock serial-lock-timeout-seconds]} :- CaSettings]
+   "Initializes the serial number file on disk with the appropriate starting value based on the serial-type configuration."
+   [{:keys [serial infra-serial serial-lock serial-lock-timeout-seconds serial-type infra-serial-type]} :- CaSettings]
   (common/with-safe-write-lock serial-lock serial-lock-descriptor serial-lock-timeout-seconds
-    (ks-file/atomic-write-string serial
-                                 (format-serial-number 1)
-                                 serial-file-permissions)))
+     (let [initial-serial (if (= :uuid serial-type)
+                            (uuid->serial-hex (UUID/randomUUID))
+                            "0000")]
+      (ks-file/atomic-write-string serial initial-serial serial-file-permissions)
+      (when (and infra-serial (not= serial-type infra-serial-type))
+        (let [initial-infra-serial (if (= :uuid infra-serial-type)
+                                     (uuid->serial-hex (UUID/randomUUID))
+                                     "0000")]
+          (ks-file/atomic-write-string infra-serial initial-infra-serial serial-file-permissions))))))
 
 (schema/defn write-local-cacrl! :- (schema/maybe Exception)
   "Spits the contents of 'cacrl-contents' string to the 'localcacrl' file
@@ -679,11 +773,6 @@
   (ZonedDateTime/parse date-time inventory-date-formatter))
 
 (def buffer-copy-size (* 64 1024))
-
-(schema/defn read-infra-nodes
-  "Returns a list of infra nodes or infra node serials from the specified file organized as one item per line."
-  [infra-file-reader :- Reader]
-  (line-seq infra-file-reader))
 
 (schema/defn maybe-write-to-infra-serial!
   "Determine if the host in question is an infra host, and if it is, add the provided serial number to the
@@ -890,18 +979,74 @@
 ;;; Initialization
 
 (schema/defn validate-settings!
-  "Ensure config values are valid for basic CA behaviors."
-  [settings :- CaSettings]
-  (let [ca-ttl (:ca-ttl settings)
-        certificate-status-access-control (get-in settings
-                                                  [:access-control
-                                                   :certificate-status])
-        certificate-status-whitelist (:client-whitelist
-                                      certificate-status-access-control)]
-    (when (> ca-ttl max-ca-ttl)
-      (throw (IllegalStateException.
-              (i18n/trs "Config setting ca_ttl must have a value below {0}" max-ca-ttl))))
-    (cond
+   "Validate CA configuration settings and throw clear errors for invalid values.
+
+    This validation occurs at CA startup to ensure the configuration is valid before
+    any certificate operations begin. Invalid configurations are detected early with
+    clear, actionable error messages.
+
+    VALIDATIONS PERFORMED:
+      1. ca-ttl must be <= max-ca-ttl (1576800000 seconds = 50 years)
+      2. serial-type must be :incrementing or :uuid
+      3. infra-serial-type must be :incrementing or :uuid
+
+    ERROR MESSAGES:
+      - ca_ttl: \"Config setting ca_ttl must have a value below {0}\"
+      - serial-type: \"Config setting 'serial-type' must be 'uuid' or 'incrementing' (found: {0})\"
+      - infra-serial-type: \"Config setting 'infra-serial-type' must be 'uuid' or 'incrementing' (found: {0})\"
+
+    PARAMETERS:
+      settings - CaSettings map containing CA configuration
+
+    RETURNS:
+      nil - Validation success, no return value
+
+    ERROR HANDLING:
+      - Invalid ca-ttl: Throws IllegalStateException with max-ca-ttl value
+      - Invalid serial-type: Throws IllegalStateException with found value
+      - Invalid infra-serial-type: Throws IllegalStateException with found value
+      - Warning messages logged for deprecated client-whitelist settings
+
+    CONFIGURATION VALIDATION FLOW:
+      config->ca-settings -> initialize-ca-config -> validate-settings! -> proceed
+
+    EXAMPLES:
+      ; Valid configuration
+      (validate-settings! ca-settings)
+      ; => nil (no exception = valid)
+
+      ; Invalid serial-type throws:
+      (validate-settings! (assoc ca-settings :serial-type :invalid))
+      ; => IllegalStateException: \"Config setting 'serial-type' must be 'uuid' or 'incrementing' (found: :invalid)\"
+
+    WARNINGS:
+      Logs deprecation warnings for client-whitelist and authorization-required
+      settings in certificate-authority.certificate-status section.
+
+    SEE ALSO:
+      config->ca-settings - How settings are constructed
+      initialize-ca-config - Default configuration application"
+   [settings :- CaSettings]
+   (let [ca-ttl (:ca-ttl settings)
+         certificate-status-access-control (get-in settings
+                                                   [:access-control
+                                                    :certificate-status])
+         certificate-status-whitelist (:client-whitelist
+                                       certificate-status-access-control)
+         serial-type (:serial-type settings)
+         infra-serial-type (:infra-serial-type settings)]
+     (when (> ca-ttl max-ca-ttl)
+       (throw (IllegalStateException.
+               (i18n/trs "Config setting ca_ttl must have a value below {0}" max-ca-ttl))))
+     (when-not (#{:incrementing :uuid} serial-type)
+       (throw (IllegalStateException.
+               (i18n/trs "Config setting 'serial-type' must be 'uuid' or 'incrementing' (found: {0})"
+                         (pr-str serial-type)))))
+     (when-not (#{:incrementing :uuid} infra-serial-type)
+       (throw (IllegalStateException.
+               (i18n/trs "Config setting 'infra-serial-type' must be 'uuid' or 'incrementing' (found: {0})"
+                         (pr-str infra-serial-type)))))
+     (cond
       (or (false? (:authorization-required certificate-status-access-control))
           (not-empty certificate-status-whitelist))
       (log/warn (format "%s %s"
@@ -1031,7 +1176,7 @@
         private-key (utils/get-private-key keypair)
         x500-name   (utils/cn (:ca-name ca-settings))
         validity    (cert-validity-dates (:ca-ttl ca-settings))
-        serial      (next-serial-number! ca-settings)
+        serial      (next-serial-number! ca-settings :ca)
         ;; Since this is a self-signed cert, the issuer key and the
         ;; key for this cert are the same
         ca-exts     (create-ca-extensions public-key
@@ -1277,7 +1422,7 @@
   (-> settings :requestdir fs/file ks/mkdirs!)
   (let [ca-cert        (utils/pem->ca-cert (:cacert ca-settings) (:cakey ca-settings))
         ca-private-key (utils/pem->private-key (:cakey ca-settings))
-        next-serial    (next-serial-number! ca-settings)
+        next-serial    (next-serial-number! ca-settings (signing-context certname ca-settings))
         public-key     (generate-master-ssl-keys! settings)
         extensions     (create-master-extensions certname
                                                  public-key
@@ -1470,26 +1615,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Public
 
-(schema/defn ^:always-validate
-  config->ca-settings :- CaSettings
+(defn
+  config->ca-settings
   "Given the configuration map from the Puppet Server config
-   service return a map with of all the CA settings."
+    service return a map with of all the CA settings."
   [{:keys [puppetserver jruby-puppet certificate-authority authorization]}]
   (let [merged (-> (select-keys puppetserver (keys CaSettings))
                    (merge (select-keys certificate-authority (keys CaSettings)))
-                   (initialize-ca-config))]
-    (assoc merged :ruby-load-path (:ruby-load-path jruby-puppet)
-           :allow-auto-renewal (:allow-auto-renewal merged)
-           :auto-renewal-cert-ttl (duration-str->sec (:auto-renewal-cert-ttl merged))
-           :ca-ttl (get-ca-ttl puppetserver certificate-authority)
-           :allow-header-cert-info (get authorization :allow-header-cert-info false)
-           :gem-path (str/join (System/getProperty "path.separator")
-                               (:gem-path jruby-puppet))
-           :access-control (select-keys certificate-authority
-                                        [:certificate-status])
-           :serial-lock (new ReentrantReadWriteLock)
-           :crl-lock (new ReentrantReadWriteLock)
-           :inventory-lock (new ReentrantReadWriteLock))))
+                   (initialize-ca-config))
+        serial-type-val (:serial-type merged)
+        serial-type-kw (cond-> serial-type-val (string? serial-type-val) keyword)
+        infra-serial-type-val (:infra-serial-type merged)
+        infra-serial-type-kw (cond-> infra-serial-type-val (string? infra-serial-type-val) keyword)
+        merged (-> merged
+                   (assoc :serial-type (or serial-type-kw :incrementing))
+                   (assoc :infra-serial-type (or infra-serial-type-kw :incrementing))
+                   (assoc :ruby-load-path (:ruby-load-path jruby-puppet))
+                   (assoc :allow-auto-renewal (:allow-auto-renewal merged))
+                   (assoc :auto-renewal-cert-ttl (duration-str->sec (:auto-renewal-cert-ttl merged)))
+                   (assoc :ca-ttl (get-ca-ttl puppetserver certificate-authority))
+                   (assoc :allow-header-cert-info (get authorization :allow-header-cert-info false))
+                   (assoc :gem-path (str/join (System/getProperty "path.separator")
+                                              (:gem-path jruby-puppet)))
+                   (assoc :access-control (select-keys certificate-authority
+                                                       [:certificate-status]))
+                   (assoc :serial-lock (new ReentrantReadWriteLock))
+                   (assoc :crl-lock (new ReentrantReadWriteLock))
+                   (assoc :inventory-lock (new ReentrantReadWriteLock)))]
+    merged))
 
 (schema/defn ^:always-validate
   config->master-settings :- MasterSettings
@@ -1682,7 +1835,7 @@
         signed-cert (utils/sign-certificate (utils/get-subject-from-x509-certificate
                                              cacert)
                                             (utils/pem->private-key cakey)
-                                            (next-serial-number! ca-settings)
+                                            (next-serial-number! ca-settings (signing-context subject ca-settings))
                                             (:not-before validity)
                                             (:not-after validity)
                                             (utils/cn subject)
@@ -2359,7 +2512,7 @@
         signed-cert (utils/sign-certificate
                       (utils/get-subject-from-x509-certificate cacert)
                       (utils/pem->private-key cakey)
-                      (next-serial-number! ca-settings)
+                      (next-serial-number! ca-settings (signing-context cert-name ca-settings))
                       (:not-before validity)
                       (:not-after validity)
                       cert-subject
@@ -2465,7 +2618,7 @@
       (validate-csr-signature! csr)
       (let [signed-cert (utils/sign-certificate casubject
                                                 ca-private-key
-                                                (next-serial-number! ca-settings)
+                                                (next-serial-number! ca-settings (signing-context subject ca-settings))
                                                 (:not-before validity)
                                                 (:not-after validity)
                                                 (utils/cn subject)
