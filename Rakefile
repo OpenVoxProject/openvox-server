@@ -339,7 +339,7 @@ else
     config.exclude_labels = %w[dependencies duplicate question invalid wontfix wont-fix modulesync skip-changelog]
     # this is probably the worst way to do this
     # ideally there would be a VERSION file and clojure and Rake would read it
-    config.future_release = File.readlines('project.clj').first.scan(/".*"/).first.gsub('"', '')
+    config.future_release = '8.13.0'
     # we limit the changelog to all new openvox releases, to skip perforce onces
     # otherwise the changelog generate takes a lot amount of time
     config.since_tag = '8.7.0'
