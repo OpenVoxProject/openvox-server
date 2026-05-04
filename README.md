@@ -98,7 +98,8 @@ Visit our [GitHub Issues](https://github.com/OpenVoxProject/openvox-server/issue
 
 ## License
 
-Copyright © 2013-2018 Puppet, 2024 OpenVox Project contributors
+Copyright © 2013-2018 Puppet
+Copyright © 2024 OpenVox Project contributors
 
 Distributed under the [Apache License, Version
 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
