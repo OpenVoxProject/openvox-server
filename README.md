@@ -77,7 +77,7 @@ If want to play with our code, these documents should prove useful:
 - [OpenVox Server subcommands](https://docs.openvoxproject.org/openvox-server/latest/subcommands.html)
 
 OpenVox Server also uses the
-[Trapperkeeper](https://github.com/puppetlabs/trapperkeeper) Clojure framework.
+[Trapperkeeper](https://github.com/OpenVoxProject/trapperkeeper) Clojure framework.
 
 ## Testing
 
