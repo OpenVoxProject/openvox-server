@@ -1,105 +1,105 @@
-# Puppet Server
+# OpenVox Server
 
-[Puppet Server](https://puppet.com/docs/puppet/latest/server/about_server.html)
-implements Puppet's server-side components for managing
-[Puppet](https://puppet.com/docs/puppet/) agents in a distributed,
-service-oriented architecture. Puppet Server is built on top of the same
-technologies that make [PuppetDB](https://puppet.com/docs/puppetdb/)
+[OpenVox Server](https://docs.openvoxproject.org/openvox-server/latest/services_master_puppetserver.html)
+implements OpenVox's server-side components for managing
+[OpenVox](https://docs.openvoxproject.org/openvox/latest/) agents in a distributed,
+service-oriented architecture. OpenVox Server is built on top of the same
+technologies that make [OpenVoxDB](https://docs.openvoxproject.org/openvoxdb/latest/)
 successful, and which allow us to greatly improve performance, scalability,
 advanced metrics collection, and fine-grained control over the Ruby runtime.
 
 ## Release notes
 
-For information about the current and most recent versions of Puppet Server,
-see the [release notes](https://puppet.com/docs/puppet/latest/server/release_notes.html).
+For information about the current and most recent versions of OpenVox Server,
+see the [release notes](https://docs.openvoxproject.org/openvox-server/latest/release_notes.html).
 
-## Installing Puppet Server
+## Installing OpenVox Server
 
-See [Installing Puppet Server from Packages](https://puppet.com/docs/puppet/latest/server/install_from_packages.html)
+See [Installing OpenVox Server from Packages](https://docs.openvoxproject.org/openvox-server/latest/install_from_packages.html)
 for complete installation requirements and instructions.
 
-## Ruby and Puppet Server
+## Ruby and OpenVox Server
 
-Puppet Server uses its own JRuby interpreter, which doesn't load gems or other
-code from your system Ruby. If you want Puppet Server to load additional gems,
-use the Puppet Server-specific `gem` command to install them. See [Puppet
-Server and Gems](https://puppet.com/docs/puppet/latest/server/gems.html) for more
-information about gems and Puppet Server.
+OpenVox Server uses its own JRuby interpreter, which doesn't load gems or other
+code from your system Ruby. If you want OpenVox Server to load additional gems,
+use the OpenVox Server-specific `gem` command to install them. See [OpenVox
+Server and Gems](https://docs.openvoxproject.org/openvox-server/latest/gems.html) for more
+information about gems and OpenVox Server.
 
 ## Configuration
 
-Puppet Server honors almost all settings in `puppet.conf` and should pick them
+OpenVox Server honors almost all settings in `puppet.conf` and should pick them
 up automatically. However, we have also introduced some new settings specific
-to Puppet Server. See the [Configuration](https://puppet.com/docs/puppet/latest/server/configuration.html)
+to OpenVox Server. See the [Configuration](https://docs.openvoxproject.org/openvox-server/latest/configuration.html)
 documentation for details.
 
-For more information on the differences between Puppet Server's support for
+For more information on the differences between OpenVox Server's support for
 `puppet.conf` settings and the Ruby master's, see our documentation of
-[differences in `puppet.conf`](https://puppet.com/docs/puppet/latest/server/puppet_conf_setting_diffs.html).
+[differences in `puppet.conf`](https://docs.openvoxproject.org/openvox-server/latest/puppet_conf_setting_diffs.html).
 
 ### Certificate authority configuration
 
-Puppet can use its built-in certificate authority (CA) and public key
+OpenVox can use its built-in certificate authority (CA) and public key
 infrastructure (PKI) tools or use an existing external CA for all of its
 secure socket layer (SSL) communications. See certificate authority
-[docs](https://puppet.com/docs/puppet/latest/ssl_certificates.html) for details.
+[docs](https://docs.openvoxproject.org/openvox-server/latest/config_file_ca.html) for details.
 
 ### SSL configuration
 
 In network configurations that require external SSL termination, you need to do
-a few things differently in Puppet Server. See
-[External SSL Termination](https://puppet.com/docs/puppet/latest/server/external_ssl_termination.html)
+a few things differently in OpenVox Server. See
+[External SSL Termination](https://docs.openvoxproject.org/openvox-server/latest/external_ssl_termination.html)
 for details.
 
 ## Command-line utilities
 
-Puppet Server provides several command-line utilities for development and
+OpenVox Server provides several command-line utilities for development and
 debugging purposes. These commands are all aware of
-[`puppetserver.conf`](https://puppet.com/docs/puppet/latest/server/configuration.html),
-as well as the gems and Ruby code specific to Puppet Server and Puppet, while
+[`puppetserver.conf`](https://docs.openvoxproject.org/openvox-server/latest/configuration.html),
+as well as the gems and Ruby code specific to OpenVox Server and OpenVox, while
 keeping them isolated from your system Ruby.
 
-For more information, see [Puppet Server
-Subcommands](https://puppet.com/docs/puppet/latest/server/subcommands.html).
+For more information, see [OpenVox Server
+Subcommands](https://docs.openvoxproject.org/openvox-server/latest/subcommands.html).
 
 ## Known issues
 
 As this application is still in development, there are a few [known
-issues](https://puppet.com/docs/puppet/latest/server/known_issues.html) 
+issues](https://docs.openvoxproject.org/openvox-server/latest/known_issues.html)
 that you should be aware of.
 
 ## Developer documentation
 
 If want to play with our code, these documents should prove useful:
 
--   [Running Puppet Server from source](https://puppet.com/docs/puppet/latest/server/dev_running_from_source.html)
--   [Debugging](https://puppet.com/docs/puppet/latest/server/dev_debugging.html)
--   [Puppet Server subcommands](https://puppet.com/docs/puppet/latest/server/subcommands.html)
+- [Running OpenVox Server from source](https://docs.openvoxproject.org/openvox-server/latest/dev_running_from_source.html)
+- [Debugging](https://docs.openvoxproject.org/openvox-server/latest/dev_debugging.html)
+- [OpenVox Server subcommands](https://docs.openvoxproject.org/openvox-server/latest/subcommands.html)
 
-Puppet Server also uses the
+OpenVox Server also uses the
 [Trapperkeeper](https://github.com/puppetlabs/trapperkeeper) Clojure framework.
 
 ## Testing
 
 To run lein tests, do the following:
 
--   Clone the repo with the `--recursive` flag, or after cloning, do `git submodule init && git submodule update`
--   Run `./dev-setup`
--   Run `lein test`
+- Clone the repo with the `--recursive` flag, or after cloning, do `git submodule init && git submodule update`
+- Run `./dev-setup`
+- Run `lein test`
 
 ## Branching strategy
 
-Puppet Server's branching strategy is documented on the [GitHub repo
-wiki](https://github.com/puppetlabs/puppetserver/wiki/Branching-Strategy).
+OpenVox Server's branching strategy is documented on the [GitHub repo
+wiki](https://github.com/OpenVoxProject/openvox-server/wiki/Branching-Strategy).
 
 ## Issue tracker
 
 Have feature requests, found a bug, or want to see what issues are in flight?
-Visit our [JIRA project](https://tickets.puppetlabs.com/browse/SERVER).
+Visit our [GitHub Issues](https://github.com/OpenVoxProject/openvox-server/issues).
 
 ## License
 
-Copyright © 2013---2018 Puppet
+Copyright © 2013-2018 Puppet, 2024 OpenVox Project contributors
 
 Distributed under the [Apache License, Version
 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
@@ -126,6 +126,4 @@ the way.
 
 ## Maintenance
 
-Maintainers: See the [MAINTAINERS file](./MAINTAINERS)
-
-Tickets: For issues in o/s only: https://tickets.puppetlabs.com/browse/SERVER. For issues in PE: https://tickets.puppetlabs.com/browse/PE. Set component = Puppet Server
+Tickets: [https://github.com/OpenVoxProject/openvox-server/issues](https://github.com/OpenVoxProject/openvox-server/issues)
