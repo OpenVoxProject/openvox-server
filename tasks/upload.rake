@@ -50,7 +50,7 @@ namespace :vox do
 
     path = "s3://#{bucket}/#{component}/#{tag}"
     files.each do |f|
-      run_command("#{s3} cp #{f} #{path}/#{File.basename(f)}", silent: false)
+      run_command("#{s3} cp #{f} #{path}/#{File.basename(f)} --no-progress", silent: false)
     end
   end
 end
