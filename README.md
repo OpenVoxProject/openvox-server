@@ -70,7 +70,7 @@ that you should be aware of.
 
 ## Developer documentation
 
-If want to play with our code, these documents should prove useful:
+If you want to play with our code, these documents should prove useful:
 
 - [Running OpenVox Server from source](https://docs.openvoxproject.org/openvox-server/latest/dev_running_from_source.html)
 - [Debugging](https://docs.openvoxproject.org/openvox-server/latest/dev_debugging.html)
