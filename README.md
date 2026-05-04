@@ -29,8 +29,7 @@ information about gems and OpenVox Server.
 ## Configuration
 
 OpenVox Server honors almost all settings in `puppet.conf` and should pick them
-up automatically. However, we have also introduced some new settings specific
-to OpenVox Server. See the [Configuration](https://docs.openvoxproject.org/openvox-server/latest/configuration.html)
+up automatically. See the [Configuration](https://docs.openvoxproject.org/openvox-server/latest/configuration.html)
 documentation for details.
 
 For more information on the differences between OpenVox Server's support for
