@@ -271,8 +271,8 @@
   (testing "requests fail without an SSL client"
     (with-webserver-with-protocols nil nil
       (with-scripting-container sc
-        (with-http-client sc {}
-          (let [url (str "http://localhost:10080")]
+         (with-http-client sc {}
+           (let [url "http://localhost:10080"]
             (logutils/with-test-logging
              (let [ex-class (if (SSLUtils/isFIPS)
                               ConnectionClosedException
@@ -286,8 +286,8 @@
   (testing "Can connect via TLSv1.3 by default"
     (with-webserver-with-protocols ["TLSv1.3"] nil
       (with-scripting-container sc
-        (with-http-client sc {:cipher-suites ["TLS_AES_256_GCM_SHA384" "TLS_AES_128_GCM_SHA256"]}
-          (let [url (str "https://localhost:10080")]
+         (with-http-client sc {:cipher-suites ["TLS_AES_256_GCM_SHA384" "TLS_AES_128_GCM_SHA256"]}
+           (let [url "https://localhost:10080"]
             (.runScriptlet sc (format "$response = $c.get(URI('%s'))" url))
             (is (= 200 (.runScriptlet sc "$response.code")))
             (is (= "hi" (.runScriptlet sc "$response.body"))))))))
@@ -296,7 +296,7 @@
     (with-webserver-with-protocols ["TLSv1.2"] nil
       (with-scripting-container sc
         (with-http-client sc {}
-          (let [url (str "https://localhost:10080")]
+          (let [url "https://localhost:10080"]
             (.runScriptlet sc (format "$response = $c.get(URI('%s'))" url))
             (is (= 200 (.runScriptlet sc "$response.code")))
             (is (= "hi" (.runScriptlet sc "$response.body")))))))))
@@ -361,9 +361,9 @@
       (jetty10/with-test-webserver ring-app-alternate port
         (with-webserver-with-protocols nil nil
           (with-scripting-container sc
-            (with-http-client sc {}
-              (let [url (str "https://localhost:10080")]
-                (.runScriptlet sc (format "$response = $c.get(URI('%s'))" url))
+             (with-http-client sc {}
+               (let [url "https://localhost:10080"]
+                 (.runScriptlet sc (format "$response = $c.get(URI('%s'))" url))
                 (is (= 200 (.runScriptlet sc "$response.code")))
                 (is (= "hi" (.runScriptlet sc "$response.body")))
                 (.runScriptlet sc (str "$c = Puppet::Server::HttpClient.new;"

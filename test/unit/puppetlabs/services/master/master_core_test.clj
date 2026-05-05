@@ -329,7 +329,7 @@
 
 (deftest validate-memory-requirements!-test
   (testing "when ram is more than 2 TB"
-    (with-redefs [meminfo-content #(str "MemTotal:       2319453408 kB")
+    (with-redefs [meminfo-content #(identity "MemTotal:       2319453408 kB")
                   max-heap-size 2097152]
       (is (nil? (validate-memory-requirements!))
           "fails to parse large ram info")))
@@ -339,13 +339,13 @@
       (is (nil? (validate-memory-requirements!))
           "nil when /proc/meminfo does not exist")))
   (testing "when ram is > 1.1 times JVM max heap"
-    (with-redefs [meminfo-content #(str "MemTotal:        3878212 kB\n")
-                  max-heap-size 2097152]
+     (with-redefs [meminfo-content #(identity "MemTotal:        3878212 kB\n")
+                   max-heap-size 2097152]
       (is (nil? (validate-memory-requirements!))
           "nil when ram is > 1.1 times JVM max heap")))
   (testing "when ram is < 1.1 times JVM max heap"
-    (with-redefs [meminfo-content #(str "MemTotal:        1878212 kB\n")
-                  max-heap-size 2097152]
+     (with-redefs [meminfo-content #(identity "MemTotal:        1878212 kB\n")
+                   max-heap-size 2097152]
       (assert-failure-msg #"RAM (.*) JVM heap"
                           "mentions RAM and JVM Heap size")
       (assert-failure-msg #"JAVA_ARGS"
