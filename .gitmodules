@@ -1,6 +1,6 @@
 [submodule "ruby/puppet"]
 	path = ruby/puppet
-	url = https://github.com/openvoxproject/puppet.git
+	url = https://github.com/openvoxproject/openvox.git
 [submodule "ruby/hiera"]
 	path = ruby/hiera
 	url = https://github.com/openvoxproject/hiera.git
@@ -9,4 +9,4 @@
 	url = https://github.com/openvoxproject/puppet-resource_api.git
 [submodule "ruby/facter"]
 	path = ruby/facter
-	url = https://github.com/openvoxproject/facter.git
+	url = https://github.com/openvoxproject/openfact.git
