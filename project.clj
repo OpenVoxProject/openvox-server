@@ -184,13 +184,13 @@
                        :numeric-uid-gid 52
                        :build-type "foss"
                        :package-name "openvox-server"
-                       :puppet-platform-version 8
+                       :puppet-platform-version 9
                        :java-args ~(str "-Xms2g -Xmx2g "
                                      "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"
                                      "/opt/puppetlabs/server/data/puppetserver/yaml"]
-                       :repo-target "openvox8"
-                       :nonfinal-repo-target "openvox8-nightly"
+                       :repo-target "openvox9"
+                       :nonfinal-repo-target "openvox9-nightly"
                        :bootstrap-source :services-d
                        :logrotate-enabled false
                        :replaces-pkgs [{:package "puppetserver" :version ""}]}
