@@ -4,6 +4,13 @@ name: Build openvox-server
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'The release branch to build from.'
+        type: choice
+        options:
+          - main
+          - '8.x'
+        default: 'main'
       ref:
         description: 'Tag to build'
         required: true
@@ -32,6 +39,7 @@ jobs:
   build:
     uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake.yml@main'
     with:
+      branch: ${{ inputs.branch }}
       ref: ${{ inputs.ref }}
       deb_platform_list: ${{ inputs.deb_platform_list }}
       rpm_platform_list: ${{ inputs.rpm_platform_list }}
