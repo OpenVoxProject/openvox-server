@@ -93,26 +93,26 @@
                          [org.bouncycastle/bctls-fips "1.0.19"]
                          [org.openvoxproject/clj-shell-utils "2.1.2"]
                          [org.openvoxproject/comidi "1.1.3"]
-                         [org.openvoxproject/http-client "2.2.8"]
+                         [org.openvoxproject/http-client "2.3.0"]
                          [org.openvoxproject/i18n ~i18n-version]
                          [org.openvoxproject/jruby-utils "5.3.8"]
                          [org.openvoxproject/kitchensink "3.5.7"]
                          [org.openvoxproject/kitchensink "3.5.7" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.2.10"]
                          [org.openvoxproject/rbac-client "1.2.10" :classifier "test"]
-                         [org.openvoxproject/ring-middleware "2.1.8"]
+                         [org.openvoxproject/ring-middleware "2.2.0"]
                          [org.openvoxproject/ssl-utils "3.6.4"]
                          [org.openvoxproject/trapperkeeper "4.3.5"]
                          [org.openvoxproject/trapperkeeper "4.3.5" :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-comidi-metrics "1.0.7"]
-                         [org.openvoxproject/trapperkeeper-authorization "2.1.10"]
+                         [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.0"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.2.0"]
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.2"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.1.11"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.1.11" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.2.0"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.2.0" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-scheduler "1.3.2"]
-                         [org.openvoxproject/trapperkeeper-status "1.3.5"]
-                         [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.8"]
-                         [org.openvoxproject/trapperkeeper-webserver-jetty10 "1.1.8" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-status "1.4.0"]
+                         [org.openvoxproject/trapperkeeper-webserver "10.0.0"]
+                         [org.openvoxproject/trapperkeeper-webserver "10.0.0" :classifier "test"]
                          [org.ow2.asm/asm "9.9.1"]
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
@@ -153,7 +153,7 @@
                  [org.openvoxproject/trapperkeeper-metrics]
                  [org.openvoxproject/trapperkeeper-scheduler]
                  [org.openvoxproject/trapperkeeper-status]
-                 [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                 [org.openvoxproject/trapperkeeper-webserver]
                  [org.yaml/snakeyaml]
                  [prismatic/schema]
                  [slingshot]]
@@ -206,7 +206,7 @@
 
   :profiles {:defaults {:source-paths  ["dev"]
                         :dependencies  [[org.clojure/tools.namespace]
-                                        [org.openvoxproject/trapperkeeper-webserver-jetty10 :classifier "test"]
+                                        [org.openvoxproject/trapperkeeper-webserver :classifier "test"]
                                         [org.openvoxproject/trapperkeeper :classifier "test" :scope "test"]
                                         [org.openvoxproject/trapperkeeper-metrics :classifier "test" :scope "test"]
                                         [org.openvoxproject/kitchensink :classifier "test" :scope "test"]
@@ -278,7 +278,7 @@
                                                ;; Do not modify this line. It is managed by the release process
                                                ;; via the scripts/sync_ezbake_dep.rb script.
                                                [org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"]
-                                               [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                                               [org.openvoxproject/trapperkeeper-webserver]
                                                [org.openvoxproject/trapperkeeper-metrics]]
                       :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.5")]]
                       :name "puppetserver"}
@@ -291,18 +291,18 @@
                                                     ;; Do not modify this line. It is managed by the release process
                                                     ;; via the scripts/sync_ezbake_dep.rb script.
                                                     [org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"]
-                                                    [org.openvoxproject/trapperkeeper-webserver-jetty10]
+                                                    [org.openvoxproject/trapperkeeper-webserver]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
                             :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.5")]]
                       :name "puppetserver"}
-             :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver-jetty10]]
+             :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver]]
                        :aot [puppetlabs.trapperkeeper.main
                              puppetlabs.trapperkeeper.services.status.status-service
                              puppetlabs.trapperkeeper.services.metrics.metrics-service
                              puppetlabs.services.protocols.jruby-puppet
                              puppetlabs.trapperkeeper.services.watcher.filesystem-watch-service
-                             puppetlabs.trapperkeeper.services.webserver.jetty10-service
+                             puppetlabs.trapperkeeper.services.webserver.jetty-service
                              puppetlabs.trapperkeeper.services.webrouting.webrouting-service
                              puppetlabs.services.legacy-routes.legacy-routes-core
                              puppetlabs.services.protocols.jruby-metrics
