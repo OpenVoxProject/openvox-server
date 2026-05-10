@@ -24,7 +24,7 @@ rpm_fips, rpm_nonfips = rpm_platforms.split(',').partition { |p| p.start_with?('
 @fips_rpms = rpm_fips.map{ |p| "pl-#{p}-x86_64" }.join(' ')
 
 # The deps must be built in this order due to dependencies between them.
-# There is a circular dependency between clj-http-client and trapperkeeper-webserver-jetty10,
+# There is a circular dependency between clj-http-client and trapperkeeper-webserver,
 # but only for tests, so the build *should* work.
 DEP_BUILD_ORDER = [
   'clj-kitchensink',
@@ -36,11 +36,10 @@ DEP_BUILD_ORDER = [
   'trapperkeeper',
   'trapperkeeper-filesystem-watcher',
   'clj-http-client',
-  'trapperkeeper-webserver-jetty10',
+  'trapperkeeper-webserver',
   'ring-middleware',
   'jruby-utils',
   'clj-shell-utils',
-  'clj-rbac-client',
   'trapperkeeper-authorization',
   'trapperkeeper-metrics',
   'trapperkeeper-scheduler',
