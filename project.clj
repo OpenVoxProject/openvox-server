@@ -105,7 +105,7 @@
                          [org.openvoxproject/trapperkeeper "4.3.5"]
                          [org.openvoxproject/trapperkeeper "4.3.5" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.0"]
-                         [org.openvoxproject/trapperkeeper-authorization "2.2.0"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.3.0"]
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.2"]
                          [org.openvoxproject/trapperkeeper-metrics "2.2.0"]
                          [org.openvoxproject/trapperkeeper-metrics "2.2.0" :classifier "test"]
