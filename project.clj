@@ -17,13 +17,6 @@
 (def i18n-version "1.0.4")
 (def logback-version "1.5.32")
 (def jackson-version "2.21.3")
-;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
-;; response headers automatically rather than transferring it chunked,
-;; and also string flushing behavior is changed, and some part of the system
-;; does not handle one or both of these correctly. We need to debug this and
-;; fix it before upgrading.
-;; FIXME: validate that we did not re-introduce the above issue and remove comment
-(def ring-core-version "1.15.3")
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -98,7 +91,7 @@
                          [prismatic/schema "1.4.1"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
-                         [ring/ring-core ~ring-core-version]
+                         [ring/ring-core "1.15.3"]
                          [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
