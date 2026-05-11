@@ -20,7 +20,7 @@
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
-(defproject org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"
+(defproject org.openvoxproject/puppetserver "9.0.0-SNAPSHOT"
   :description "OpenVox Server"
 
   :license {:name "Apache License, Version 2.0"
@@ -246,7 +246,7 @@
                                                [org.openvoxproject/jruby-utils]
                                                ;; Do not modify this line. It is managed by the release process
                                                ;; via the scripts/sync_ezbake_dep.rb script.
-                                               [org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"]
+                                               [org.openvoxproject/puppetserver "9.0.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver]
                                                [org.openvoxproject/trapperkeeper-metrics]]
                       :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.5")]]
@@ -259,7 +259,7 @@
                                                     [org.openvoxproject/jruby-utils]
                                                     ;; Do not modify this line. It is managed by the release process
                                                     ;; via the scripts/sync_ezbake_dep.rb script.
-                                                    [org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"]
+                                                    [org.openvoxproject/puppetserver "9.0.0-SNAPSHOT"]
                                                     [org.openvoxproject/trapperkeeper-webserver]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
