@@ -26,7 +26,7 @@
   :license {:name "Apache License, Version 2.0"
               :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
 
-  :min-lein-version "2.9.1"
+  :min-lein-version "2.12.0"
 
   ;; Generally, try to keep version pins in :managed-dependencies and the libraries
   ;; this project actually uses in :dependencies, inheriting the version from
