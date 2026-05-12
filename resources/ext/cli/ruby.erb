@@ -14,13 +14,13 @@ fi
 
 LOGBACK_CONFIG="${CONFIG%/conf.d}/logback.xml"
 if [ -f "${LOGBACK_CONFIG}" ]; then
-    LOGBACK_JAVA_ARG="-Dlogback.configurationFile=${LOGBACK_CONFIG}"
+    LOGBACK_JAVA_ARGS="-Dlogback.configurationFile=${LOGBACK_CONFIG} -Dlogappender=F1"
 else
-    LOGBACK_JAVA_ARG="-Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener"
+    LOGBACK_JAVA_ARGS="-Dlogback.statusListenerClass=ch.qos.logback.core.status.NopStatusListener"
 fi
 
 "${JAVA_BIN}" $JAVA_ARGS_CLI \
-    "${LOGBACK_JAVA_ARG}" \
+    ${LOGBACK_JAVA_ARGS} \
     -cp "$CLASSPATH" \
     clojure.main -m puppetlabs.puppetserver.cli.ruby \
     --config "${CONFIG}" -- "$@"
