@@ -102,7 +102,7 @@
     service-and-deps
     (-> required-config
         (assoc :my-config {:foo "bar"}))
-    (testing (str "certificate-authority settings work")
+    (testing "certificate-authority settings work"
       (with-test-logging
         (ks-testutils/with-no-jvm-shutdown-hooks
           (let [config (-> (jruby-testutils/jruby-puppet-tk-config
@@ -133,7 +133,7 @@
     service-and-deps
     (-> required-config
         (assoc :my-config {:foo "bar"}))
-    (testing (str "certificate-authority settings work")
+    (testing "certificate-authority settings work"
       (with-test-logging
         (ks-testutils/with-no-jvm-shutdown-hooks
           (let [config (-> (jruby-testutils/jruby-puppet-tk-config
