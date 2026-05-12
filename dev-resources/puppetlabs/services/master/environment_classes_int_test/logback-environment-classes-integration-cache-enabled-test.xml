@@ -1,4 +1,4 @@
-<configuration scan="true">
+<configuration>
     <appender name="F1" class="ch.qos.logback.core.FileAppender">
         <file>./target/environment-classes-integration-cache-enabled.log</file>
         <append>true</append>

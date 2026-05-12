@@ -1,4 +1,4 @@
-<configuration scan="true">
+<configuration>
     <appender name="F1" class="ch.qos.logback.core.FileAppender">
         <file>./target/test-restart-comes-back.log</file>
         <append>true</append>
