@@ -13,7 +13,7 @@
     heap-size-from-profile-clj
     default-heap-size))
 
-(def slf4j-version "2.0.17")
+(def slf4j-version "2.0.18")
 (def i18n-version "1.0.4")
 (def logback-version "1.5.32")
 (def jackson-version "2.21.3")
