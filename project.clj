@@ -13,42 +13,10 @@
     heap-size-from-profile-clj
     default-heap-size))
 
-(def slf4j-version "2.0.17")
+(def slf4j-version "2.0.18")
 (def i18n-version "1.0.4")
-(def logback-version "1.3.16")
+(def logback-version "1.5.32")
 (def jackson-version "2.21.3")
-;; DO NOT UPGRADE PAST 1.14+! In 1.15.x, Content-Length is added to the
-;; response headers automatically rather than transferring it chunked,
-;; and also string flushing behavior is changed, and some part of the system
-;; does not handle one or both of these correctly. We need to debug this and
-;; fix it before upgrading.
-(def ring-core-version "1.14.2")
-
-(require '[clojure.string :as str]
-         '[leiningen.core.main :as main])
-(defn fail-if-logback->1-3!
-  "Fails the build if logback-version is > 1.3.x."
-  [logback-version]
-  (let [[x y] (->> (str/split (str logback-version) #"\.")
-                   (take 2)
-                   (map #(Integer/parseInt %)))]
-    (when (or (> x 1)
-              (and (= x 1) (> y 3)))
-      (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
-
-(fail-if-logback->1-3! logback-version)
-
-(defn fail-if-ring-core->1-14!
-  "Fails the build if ring-core version is > 1.14.x."
-  [ring-core-version]
-  (let [[x y] (->> (str/split (str ring-core-version) #"\.")
-                (take 2)                                    ;; keep major and minor versions
-                (map #(Integer/parseInt %)))]
-    (when (or (> x 1)                                       ;; major version is greater than 1
-            (and (= x 1) (> y 14)))                         ;; major version is 1 and minor version is greater than 14
-      (main/abort (format "ring-core version %s is not supported. Must be 1.14.x until performance regression is fixed (#197)." ring-core-version)))))
-
-(fail-if-ring-core->1-14! ring-core-version)
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -58,17 +26,18 @@
   :license {:name "Apache License, Version 2.0"
               :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
 
-  :min-lein-version "2.9.1"
+  :min-lein-version "2.12.0"
 
   ;; Generally, try to keep version pins in :managed-dependencies and the libraries
   ;; this project actually uses in :dependencies, inheriting the version from
   ;; :managed-dependencies. This prevents endless version conflicts due to deps of deps.
   ;; Renovate should keep the versions largely in sync between projects.
-  :managed-dependencies [[org.clojure/clojure "1.12.4"]
-                         [org.clojure/tools.namespace "0.3.1"]
+  :managed-dependencies [[org.clojure/clojure "1.12.5"]
+                         [org.clojure/tools.namespace "1.5.1"]
                          [org.clojure/tools.reader "1.6.0"]
                          [beckon "0.1.1"]
-                         [ch.qos.logback/logback-access ~logback-version]
+                         [ch.qos.logback.access/logback-access-common "2.0.12"]
+                         [ch.qos.logback.access/logback-access-jetty12 "2.0.12"]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
                          [cheshire "6.2.0"]
@@ -85,35 +54,35 @@
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
                          [lambdaisland/uri "1.19.155"]
                          [liberator "0.15.3"]
-                         [net.logstash.logback/logstash-logback-encoder "7.4"]
+                         [net.logstash.logback/logstash-logback-encoder "9.0"]
                          [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.84"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
                          [org.bouncycastle/bc-fips "1.0.2.6"]
                          [org.bouncycastle/bctls-fips "1.0.19"]
-                         [org.openvoxproject/clj-shell-utils "2.1.2"]
+                         [org.openvoxproject/clj-shell-utils "2.2.0"]
                          [org.openvoxproject/comidi "1.1.3"]
                          [org.openvoxproject/http-client "2.3.0"]
                          [org.openvoxproject/i18n ~i18n-version]
-                         [org.openvoxproject/jruby-utils "5.3.8"]
+                         [org.openvoxproject/jruby-utils "5.4.0"]
                          [org.openvoxproject/kitchensink "3.5.7"]
                          [org.openvoxproject/kitchensink "3.5.7" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.3.0"]
                          [org.openvoxproject/rbac-client "1.3.0" :classifier "test"]
                          [org.openvoxproject/ring-middleware "2.2.0"]
                          [org.openvoxproject/ssl-utils "3.6.4"]
-                         [org.openvoxproject/trapperkeeper "4.3.5"]
-                         [org.openvoxproject/trapperkeeper "4.3.5" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper "5.0.0"]
+                         [org.openvoxproject/trapperkeeper "5.0.0" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.0"]
-                         [org.openvoxproject/trapperkeeper-authorization "2.2.0"]
-                         [org.openvoxproject/trapperkeeper-filesystem-watcher "1.5.2"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.2.0"]
-                         [org.openvoxproject/trapperkeeper-metrics "2.2.0" :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-scheduler "1.3.2"]
-                         [org.openvoxproject/trapperkeeper-status "1.4.0"]
-                         [org.openvoxproject/trapperkeeper-webserver "10.0.0"]
-                         [org.openvoxproject/trapperkeeper-webserver "10.0.0" :classifier "test"]
-                         [org.ow2.asm/asm "9.9.1"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.3.0"]
+                         [org.openvoxproject/trapperkeeper-filesystem-watcher "1.6.0"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.3.0"]
+                         [org.openvoxproject/trapperkeeper-metrics "2.3.0" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper-scheduler "1.4.0"]
+                         [org.openvoxproject/trapperkeeper-status "1.5.0"]
+                         [org.openvoxproject/trapperkeeper-webserver "12.0.2"]
+                         [org.openvoxproject/trapperkeeper-webserver "12.0.2" :classifier "test"]
+                         [org.ow2.asm/asm "9.10"]
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
                          [org.slf4j/slf4j-api ~slf4j-version]
@@ -122,7 +91,7 @@
                          [prismatic/schema "1.4.1"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
-                         [ring/ring-core ~ring-core-version]
+                         [ring/ring-core "1.15.4"]
                          [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
@@ -280,7 +249,7 @@
                                                [org.openvoxproject/puppetserver "8.14.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.5")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.7")]]
                       :name "puppetserver"}
 
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
@@ -294,7 +263,7 @@
                                                     [org.openvoxproject/trapperkeeper-webserver]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
-                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.5")]]
+                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.7.7")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver]]
                        :aot [puppetlabs.trapperkeeper.main

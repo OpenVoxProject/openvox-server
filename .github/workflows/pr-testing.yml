@@ -96,10 +96,26 @@ jobs:
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '4.0'
           bundler-cache: true
-      # uses the Dockerfile to build openvox-server in a container
-      # the container hardcodes the java version
+      - id: docker-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: /tmp/ezbake-builder.tar
+          key: docker-ezbake-${{ hashFiles('Dockerfile') }}
+      - name: load or build docker image
+        run: |
+          if [[ -f /tmp/ezbake-builder.tar ]]; then
+            docker load -i /tmp/ezbake-builder.tar
+          else
+            docker build -t ezbake-builder .
+            docker save ezbake-builder -o /tmp/ezbake-builder.tar
+          fi
+      - uses: actions/cache/save@v5
+        if: always() && steps.docker-cache.outputs.cache-hit != 'true'
+        with:
+          path: /tmp/ezbake-builder.tar
+          key: docker-ezbake-${{ hashFiles('Dockerfile') }}
       - name: build it
         run: bundle exec rake vox:build
       - name: get version
