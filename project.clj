@@ -82,7 +82,7 @@
                          [org.openvoxproject/trapperkeeper-status "1.5.0"]
                          [org.openvoxproject/trapperkeeper-webserver "12.0.2"]
                          [org.openvoxproject/trapperkeeper-webserver "12.0.2" :classifier "test"]
-                         [org.ow2.asm/asm "9.9.1"]
+                         [org.ow2.asm/asm "9.10"]
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
                          [org.slf4j/slf4j-api ~slf4j-version]
