@@ -364,7 +364,10 @@
 
   :repl-options {:init-ns dev-tools}
   :uberjar-exclusions  [#"META-INF/jruby.home/lib/ruby/stdlib/org/bouncycastle"
-                        #"META-INF/jruby.home/lib/ruby/stdlib/org/yaml/snakeyaml"]
+                        #"META-INF/jruby.home/lib/ruby/stdlib/org/yaml/snakeyaml"
+                        #"META-INF/jruby.home/bin/(jruby\.dll|jruby\.exe|jrubyw\.exe)"
+                        #"META-INF/jruby.home/lib/ruby/stdlib/rdoc(/.*)?"
+                        #"META-INF/jruby.home/lib/ruby/stdlib/rdoc\.rb"]
 
   ;; This is used to merge the locales.clj of all the dependencies into a single
   ;; file inside the uberjar
