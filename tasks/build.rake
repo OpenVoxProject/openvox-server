@@ -144,7 +144,7 @@ namespace :vox do
 
       puts "Building openvox-server"
       ezbake_version_var = ENV['EZBAKE_VERSION'] ? "EZBAKE_VERSION=#{ENV['EZBAKE_VERSION']}" : ''
-      run("cd /code && rm -rf output && bundle config set without test && bundle install && lein install")
+      run("cd /code && rm -rf output && bundle update --bundler && bundle config set without test && bundle install && lein install")
 
       unless @debs.empty? && @nonfips_rpms.empty?
         run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@nonfips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build")
