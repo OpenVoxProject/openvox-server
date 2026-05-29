@@ -108,7 +108,7 @@ Distributed under the [Apache License, Version
 
 ### Cursive Clojure
 
-[Cursive](https://cursiveclojure.com/) is a Clojure IDE based on [IntelliJ
+[Cursive](https://cursive-ide.com/) is a Clojure IDE based on [IntelliJ
 IDEA](http://www.jetbrains.com/idea/download/index.html). Several of us at
 Puppet use it regularly and couldn't live without it. It's got some really great
 editing, refactoring, and debugging features, and the author, Colin Fleming, has
