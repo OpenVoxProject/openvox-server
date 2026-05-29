@@ -48,7 +48,7 @@ DEP_BUILD_ORDER = [
 ].freeze
 
 def image_exists
-  !`docker images -q #{@image}`.strip.empty?
+  !`docker images -q #{@image} --format='{{json .ID}}'`.strip.empty?
 end
 
 def container_exists
