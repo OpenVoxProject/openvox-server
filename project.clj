@@ -47,7 +47,7 @@
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
                          ;; For some reason, this version is 2.20 without a .1. Update this back to
                          ;; ~jackson-version when they match again.
-                         [com.fasterxml.jackson.core/jackson-annotations "2.21"]
+                         [com.fasterxml.jackson.core/jackson-annotations "2.22"]
                          [commons-codec "1.22.0"]
                          [commons-io "2.22.0"]
                          [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
