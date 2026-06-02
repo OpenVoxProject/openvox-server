@@ -81,18 +81,19 @@
   [version]
   (cond
     (re-matches #"1\.[1234567]($|(\..*))" version) :unsupported
-    (re-matches #"1\.[89]($|(\..*))" version) :deprecated
-    (re-matches #"10($|(\..*))" version) :deprecated
-    (re-matches #"11($|(\..*))" version) :official
-    (re-matches #"17($|(\..*))" version) :official
+    (re-matches #"1\.[89]($|(\..*))" version) :unsupported
+    (re-matches #"10($|(\..*))" version) :unsupported
+    (re-matches #"11($|(\..*))" version) :unsupported
+    (re-matches #"17($|(\..*))" version) :unsupported
     (re-matches #"21($|(\..*))" version) :official
+    (re-matches #"25($|(\..*))" version) :official
     :else :unknown))
 
 (defn log-java-deprecation-message [version]
   (let [status (jdk-support-status version)]
     (case status
-      (:unknown) (log/warn (i18n/trs "JDK {0} is neither tested nor supported. Please use JDK 11, 17 or 21" version))
-      (:deprecated) (log/warn (i18n/trs "JDK {0} is deprecated, please upgrade to JDK 11, 17 or 21" version))
+      (:unknown) (log/warn (i18n/trs "JDK {0} is neither tested nor supported. Please use JDK 21 or 25" version))
+      (:deprecated) (log/warn (i18n/trs "JDK {0} is deprecated, please upgrade to JDK 21 or 25" version))
       (:official) nil
       (:unsupported) (log/warn (i18n/trs "Puppetserver doesn't support JDK {0}" version)))))
 
