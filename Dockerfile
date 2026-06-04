@@ -7,6 +7,7 @@ RUN dnf install -y --enablerepo=crb \
     automake \
     bison \
     bzip2 \
+    cpio \
     gcc-c++ \
     git \
     java-21-openjdk-devel \
@@ -25,6 +26,11 @@ RUN dnf install -y --enablerepo=crb \
     wget \
     zlib \
     zlib-devel
+
+# Extract SLES RPM macros to aid in the expansion of macros on SLES
+RUN wget -q https://download.opensuse.org/distribution/leap/15.6/repo/oss/noarch/systemd-rpm-macros-15-150000.7.39.1.noarch.rpm -O /tmp/suse-macros.rpm && \
+    rpm2cpio /tmp/suse-macros.rpm | cpio -idmv -D / && \
+    rm /tmp/suse-macros.rpm
 
 ADD --chmod=0755 https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein /usr/local/bin/lein
 
