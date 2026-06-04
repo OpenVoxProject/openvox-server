@@ -16,7 +16,7 @@
 (def slf4j-version "2.0.18")
 (def i18n-version "1.0.4")
 (def logback-version "1.5.34")
-(def jackson-version "2.21.4")
+(def jackson-version "2.22.0")
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
