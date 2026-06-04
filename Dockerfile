@@ -10,7 +10,7 @@ RUN dnf install -y --enablerepo=crb \
     cpio \
     gcc-c++ \
     git \
-    java-21-openjdk-devel \
+    java-21-openjdk-headless \
     libffi-devel \
     libtool \
     libyaml-devel \
@@ -22,7 +22,6 @@ RUN dnf install -y --enablerepo=crb \
     rpm-build \
     ruby \
     sqlite-devel \
-    vim \
     wget \
     zlib \
     zlib-devel
