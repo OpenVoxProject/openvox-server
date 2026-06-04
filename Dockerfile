@@ -22,7 +22,6 @@ RUN dnf install -y --enablerepo=crb \
     rpm-build \
     ruby \
     sqlite-devel \
-    vim \
     wget \
     zlib \
     zlib-devel
