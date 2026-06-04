@@ -28,9 +28,11 @@ RUN dnf install -y --enablerepo=crb \
     zlib-devel
 
 # Extract SLES RPM macros to aid in the expansion of macros on SLES
-RUN wget -q https://download.opensuse.org/distribution/leap/15.6/repo/oss/noarch/systemd-rpm-macros-15-150000.7.39.1.noarch.rpm -O /tmp/suse-macros.rpm && \
-    rpm2cpio /tmp/suse-macros.rpm | cpio -idmv -D / && \
-    rm /tmp/suse-macros.rpm
+# Isolate the target SUSE/SLES 15 systemd RPM macros to avoid EL10 host collision
+RUN mkdir -p /opt/suse-rpm-macros && \
+    wget -q https://download.opensuse.org/distribution/leap/15.6/repo/oss/noarch/systemd-rpm-macros-15-150000.7.39.1.noarch.rpm -O /tmp/suse-rpm-macros.rpm && \
+    rpm2cpio /tmp/suse-rpm-macros.rpm | cpio -idmv -D /opt/suse-rpm-macros && \
+    rm /tmp/suse-rpm-macros.rpm
 
 ADD --chmod=0755 https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein /usr/local/bin/lein
 
