@@ -14,10 +14,7 @@ end
 step 'Update EL postgresql repos' do
   # work around for testing on rhel and the repos on the image not finding the pg packages it needs
   if master.platform =~ /el-/
-    major_version = case master.platform
-      when /-8/ then 8
-      when /-9/ then 9
-      end
+    major_version = host.platform.split('-')[1]
 
     on master, "dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-#{major_version}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
     on master, "dnf -qy module disable postgresql"
