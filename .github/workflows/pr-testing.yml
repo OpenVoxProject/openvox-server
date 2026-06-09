@@ -96,7 +96,7 @@ jobs:
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 10
+          ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 9
           bundler-cache: true
       - id: docker-cache
         uses: actions/cache/restore@v5
