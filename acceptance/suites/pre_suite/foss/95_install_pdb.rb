@@ -17,7 +17,9 @@ step 'Update EL postgresql repos' do
     major_version = master.platform.split('-')[1]
 
     on master, "dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-#{major_version}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
-    on master, "dnf -qy module disable postgresql"
+    # The built-in postgres modules pre-empt the postgresql.org repos.
+    # Modules were introduced in EL 8, and deprecated in EL 10.
+    on master, "dnf -qy module disable postgresql" if %w[8 9].include?(major_version)
   end
 end
 
