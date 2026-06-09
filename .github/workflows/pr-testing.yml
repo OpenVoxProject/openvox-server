@@ -96,7 +96,7 @@ jobs:
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '4.0'
+          ruby-version: '3.2' # should match the Ruby used in Dockerfile. Currently Ruby 3.2 from RVM
           bundler-cache: true
       - id: docker-cache
         uses: actions/cache/restore@v5
