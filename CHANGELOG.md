@@ -2,7 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-## [8.13.0](https://github.com/openvoxproject/openvox-server/tree/8.13.0) (2026-04-30)
+## [8.14.0](https://github.com/openvoxproject/openvox-server/tree/8.14.0) (2026-06-12)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.13.0...8.14.0)
+
+**Implemented enhancements:**
+
+- Backport Jetty 12 and dep bumps to 8.x [\#320](https://github.com/OpenVoxProject/openvox-server/pull/320) ([nmburgan](https://github.com/nmburgan))
+- Migrate config to use trapperkeeper-webserver [\#302](https://github.com/OpenVoxProject/openvox-server/pull/302) ([nmburgan](https://github.com/nmburgan))
+
+**Fixed bugs:**
+
+- \[Bug\]: Update to 8.13.0 breaks ruby function openssl EC use [\#322](https://github.com/OpenVoxProject/openvox-server/issues/322)
+- \[Maintenance\]: Performance issues with ring-core 1.15.x need investigation [\#197](https://github.com/OpenVoxProject/openvox-server/issues/197)
+- add jruby-openssl 0.16.0 to vendored gems [\#325](https://github.com/OpenVoxProject/openvox-server/pull/325) ([corporate-gadfly](https://github.com/corporate-gadfly))
+
+**Merged pull requests:**
+
+- \[Backport 8.x\] More EL-10 Postgres acceptance test fixes [\#360](https://github.com/OpenVoxProject/openvox-server/pull/360) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] CI: test building on Fedora 44 [\#355](https://github.com/OpenVoxProject/openvox-server/pull/355) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- ezbake: Update 2.7.4 -\> 2.7.5 [\#292](https://github.com/OpenVoxProject/openvox-server/pull/292) ([corporate-gadfly](https://github.com/corporate-gadfly))
+
+## [8.13.0](https://github.com/openvoxproject/openvox-server/tree/8.13.0) (2026-05-04)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.12.1...8.13.0)
 
