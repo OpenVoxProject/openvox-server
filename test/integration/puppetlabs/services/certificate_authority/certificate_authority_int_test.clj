@@ -1133,7 +1133,7 @@
               (is (= 204 (:status response)))
               (is (re-find msg-matcher (:message (first activity-events))))
               (is (= 2 (count @reported-activity)))))
-              
+
               (fs/delete saved-csr))))))
 
 (deftest ca-expirations-endpoint-test
@@ -1194,7 +1194,7 @@
                       :body "Bad data"})]
        (is (= 400 (:status response)))))))
 
-(deftest ca-bulk-signing-endpoint-test 
+(deftest ca-bulk-signing-endpoint-test
   (testing "ca bulk signing endpoint "
     (bootstrap/with-puppetserver-running-with-mock-jrubies
       "JRuby mocking is safe here because all of the requests are to the CA
@@ -1207,7 +1207,7 @@
         :ssl-key (str bootstrap/server-conf-dir "/ssl/private_keys/localhost.pem")
         :ssl-ca-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
         :ssl-crl-path (str bootstrap/server-conf-dir "/ssl/crl.pem")}}
-      
+
       (testing "returns 200 with valid payload"
         ;; note- more extensive testing of the behavior is done with the testing in sign-multiple-certificate-signing-requests!-test
         (let [certname (ks/rand-str :alpha-lower 16)
@@ -1220,7 +1220,7 @@
               _ (generate-a-csr certname [] [])
               _ (generate-a-csr certname-with-bad-extension [{:oid "1.9.9.9.9.9.0" :value "true" :critical false}] [])
               response (http-client/post
-                        "https://localhost:8140/puppet-ca/v1/sign" 
+                        "https://localhost:8140/puppet-ca/v1/sign"
                         {:body (json/encode {:certnames [certname certname-no-exist certname-with-bad-extension]})
                          :ssl-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
                          :ssl-key (str bootstrap/server-conf-dir "/ca/ca_key.pem")
@@ -1793,8 +1793,8 @@
                       ca-key (str bootstrap/server-conf-dir "/ca/ca_key.pem")
                       ca-crl (str bootstrap/server-conf-dir "/ca/ca_crl.pem")
                       ca-cert' (ssl-utils/pem->ca-cert ca-cert ca-key)
-                      revoke-response (http-client/put
-                                        (str "https://localhost:8140/puppet-ca/v1/clean")
+                       revoke-response (http-client/put
+                                         "https://localhost:8140/puppet-ca/v1/clean"
                                         {:body (json/encode {:certnames [random-certname]})
                                          :ssl-cert    (str bootstrap/server-conf-dir "/ssl/certs/localhost.pem")
                                          :ssl-key     (str bootstrap/server-conf-dir "/ssl/private_keys/localhost.pem")
@@ -1939,8 +1939,101 @@
                                  (merge request-opts
                                         {:headers {"content-type" "application/json" "X-Authentication" "test"}}))]
                   (is (= 204 (:status response))))))
-            (testing "getting the cert returns a 404"
-              (let [response (http-client/get status-url
-                         (merge request-opts
-                                {:headers {"content-type" "application/json" "X-Authentication" "test"}}))]
-                (is (= 404 (:status response)))))))))))
+             (testing "getting the cert returns a 404"
+               (let [response (http-client/get status-url
+                          (merge request-opts
+                                 {:headers {"content-type" "application/json" "X-Authentication" "test"}}))]
+                 (is (= 404 (:status response)))))))))))
+
+(deftest uuid-serial-certificate-signing-int-test
+  (testutils/with-config-dirs
+    {(str test-resources-dir "/infracrl_test/master/conf/ssl") (str bootstrap/server-conf-dir "/ssl")
+     (str test-resources-dir "/infracrl_test/master/conf/ca") (str bootstrap/server-conf-dir "/ca")}
+      (testutils/with-stub-puppet-conf
+    (bootstrap/with-puppetserver-running-with-config
+      app
+      (bootstrap/load-dev-config-with-overrides
+       {:certificate-authority {:serial-type "uuid"}
+        :jruby-puppet
+        {:gem-path [(ks/absolute-path jruby-testutils/gem-path)]}
+        :webserver
+        {:ssl-cert (str bootstrap/server-conf-dir "/ssl/certs/localhost.pem")
+         :ssl-key (str bootstrap/server-conf-dir "/ssl/private_keys/localhost.pem")
+         :ssl-ca-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+         :ssl-crl-path (str bootstrap/server-conf-dir "/ssl/crl.pem")}})
+      (let [request-dir (str bootstrap/server-conf-dir "/ca/requests")
+            key-pair (ssl-utils/generate-key-pair)
+            subjectDN (ssl-utils/cn "test-uuid-node")
+            csr (ssl-utils/generate-certificate-request key-pair subjectDN)
+            csr-file (ks/temp-file "test_uuid_csr.pem")
+            saved-csr (str request-dir "/test-uuid-node.pem")
+            url "https://localhost:8140/puppet-ca/v1/certificate_request/test-uuid-node"
+            request-opts {:ssl-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+                          :ssl-key (str bootstrap/server-conf-dir "/ca/ca_key.pem")
+                          :ssl-ca-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+                          :as :text
+                          :headers {"content-type" "text/plain"}}]
+        (ssl-utils/obj->pem! csr csr-file)
+        (http-client/put url (merge request-opts {:body (slurp csr-file)}))
+        (is (fs/exists? saved-csr))
+        (let [cert-pem (slurp saved-csr)
+              cert (ssl-utils/pem->cert cert-pem)
+              serial (.getSerialNumber cert)]
+          (is (instance? java.math.BigInteger serial)
+              "Serial should be BigInteger")
+          (is (> (.bitLength serial) 100)
+              "UUID serial should be at least 100+ bits"))
+        (fs/delete csr-file))))))
+
+(deftest mixed-serial-modes-int-test
+  (testutils/with-config-dirs
+    {(str test-resources-dir "/infracrl_test/master/conf/ssl") (str bootstrap/server-conf-dir "/ssl")
+     (str test-resources-dir "/infracrl_test/master/conf/ca") (str bootstrap/server-conf-dir "/ca")}
+      (testutils/with-stub-puppet-conf
+    (bootstrap/with-puppetserver-running-with-config
+      app
+      (bootstrap/load-dev-config-with-overrides
+       {:certificate-authority {:serial-type "incrementing"
+                                :infra-serial-type "uuid"}
+        :jruby-puppet
+        {:gem-path [(ks/absolute-path jruby-testutils/gem-path)]}
+        :webserver
+        {:ssl-cert (str bootstrap/server-conf-dir "/ssl/certs/localhost.pem")
+         :ssl-key (str bootstrap/server-conf-dir "/ssl/private_keys/localhost.pem")
+         :ssl-ca-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+         :ssl-crl-path (str bootstrap/server-conf-dir "/ssl/crl.pem")}})
+       (let [infra-nodes-path (str bootstrap/server-conf-dir "/ca/infra_inventory.txt")
+             regular-key (ssl-utils/generate-key-pair)
+            infra-key (ssl-utils/generate-key-pair)
+            regular-subject (ssl-utils/cn "regular-node")
+            infra-subject (ssl-utils/cn "infra-mom")
+            regular-csr (ssl-utils/generate-certificate-request regular-key regular-subject)
+            infra-csr (ssl-utils/generate-certificate-request infra-key infra-subject)
+            regular-csr-file (ks/temp-file "regular_csr.pem")
+            infra-csr-file (ks/temp-file "infra_csr.pem")
+            regular-url "https://localhost:8140/puppet-ca/v1/certificate_request/regular-node"
+            infra-url "https://localhost:8140/puppet-ca/v1/certificate_request/infra-mom"
+            request-opts {:ssl-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+                          :ssl-key (str bootstrap/server-conf-dir "/ca/ca_key.pem")
+                          :ssl-ca-cert (str bootstrap/server-conf-dir "/ca/ca_crt.pem")
+                          :as :text
+                          :headers {"content-type" "text/plain"}}]
+        (ks-file/atomic-write-string infra-nodes-path (str infra-subject "\n") "rw-r--r--")
+        (ssl-utils/obj->pem! regular-csr regular-csr-file)
+        (ssl-utils/obj->pem! infra-csr infra-csr-file)
+        (http-client/put regular-url (merge request-opts {:body (slurp regular-csr-file)}))
+        (http-client/put infra-url (merge request-opts {:body (slurp infra-csr-file)}))
+        (let [regular-cert (ssl-utils/pem->cert (slurp regular-csr-file))
+              infra-cert (ssl-utils/pem->cert (slurp infra-csr-file))
+              regular-serial (.getSerialNumber regular-cert)
+              infra-serial (.getSerialNumber infra-cert)]
+          (is (= 1N regular-serial)
+              "Regular node should have incrementing serial (1)")
+          (is (instance? java.math.BigInteger infra-serial))
+          (is (> (.bitLength infra-serial) 100)
+              "Infra node should have UUID serial"))
+        (fs/delete regular-csr-file)
+        (fs/delete infra-csr-file)))))
+
+
+    )
