@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set +e
+
+restartfile="/opt/puppetlabs/server/data/puppetserver/restartcounter"
+reload_timeout="${RELOAD_TIMEOUT:-120}"
+timeout="$reload_timeout"
+realname="puppetserver"
+
+if [ -d "/run" ]; then
+  PIDFILE="/run/puppetlabs/${realname}/${realname}.pid"
+else
+  PIDFILE="/var/run/puppetlabs/${realname}/${realname}.pid"
+fi
+
+if [ ! -e "${INSTALL_DIR}/ezbake-functions.sh" ]; then
+    echo "Unable to find ${INSTALL_DIR}/ezbake-functions.sh script, failing start." 1>&2
+    exit 1
+fi
+
+. "${INSTALL_DIR}/ezbake-functions.sh"
+
+init_restart_file "$restartfile" || exit $?
+
+initial="$(head -n 1 "$restartfile")"
+pid="$(pgrep -f "puppet-server-release.jar.* -m puppetlabs.trapperkeeper.main")"
+kill -HUP $pid >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Service not running so cannot be reloaded" 1>&2
+    exit 1
+fi
+sleep 0.1
+cur="$(head -n 1 "$restartfile")"
+while [ "$cur" == "$initial" ] ;do
+    kill -0 $pid >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Process $pid exited before reload had completed" 1>&2
+        rm -f "$PIDFILE"
+        exit 1
+    fi
+    sleep 1
+    cur="$(head -n 1 "$restartfile")"
+
+    ((timeout--))
+    if [ $timeout -eq 0 ]; then
+        echo "Reload timed out after $reload_timeout seconds"
+        exit 1
+    fi
+done
+
+exit 0
