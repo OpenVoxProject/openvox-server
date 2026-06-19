@@ -15,8 +15,9 @@ step 'Update EL postgresql repos' do
   # work around for testing on rhel and the repos on the image not finding the pg packages it needs
   if master.platform =~ /el-/
     major_version = master.platform.split('-')[1]
+    arch = master.platform.split('-')[2]
 
-    on master, "dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-#{major_version}-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    on master, "dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-#{major_version}-#{arch}/pgdg-redhat-repo-latest.noarch.rpm"
     # The built-in postgres modules pre-empt the postgresql.org repos.
     # Modules were introduced in EL 8, and deprecated in EL 10.
     on master, "dnf -qy module disable postgresql" if %w[8 9].include?(major_version)
