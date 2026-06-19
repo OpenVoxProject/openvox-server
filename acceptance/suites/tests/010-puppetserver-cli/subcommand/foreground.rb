@@ -3,7 +3,7 @@ test_name "Puppetserver 'foreground' subcommand tests."
 cli = "puppetserver"
 service = options['puppetservice']
 
-timout_length = "180s"
+timout_length = options['puppetserver-foreground-timeout'] || '180s'
 foreground_cmd = "#{cli} foreground --debug"
 timeout_cmd = "timeout -s INT #{timout_length} #{foreground_cmd}"
 
