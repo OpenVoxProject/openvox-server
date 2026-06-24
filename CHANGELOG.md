@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.14.1](https://github.com/openvoxproject/openvox-server/tree/8.14.1) (2026-06-24)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.14.0...8.14.1)
+
+**Merged pull requests:**
+
+- \[Backport 8.x\] Fix Jolokia 2.x configuration [\#380](https://github.com/OpenVoxProject/openvox-server/pull/380) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Update dependency ring:ring-core to v1.15.5 [\#375](https://github.com/OpenVoxProject/openvox-server/pull/375) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- Update logback-version to v1.5.35 [\#371](https://github.com/OpenVoxProject/openvox-server/pull/371) ([bastelfreak](https://github.com/bastelfreak))
+- ezbake version bump 2.7.7 -\> 2.7.9 [\#365](https://github.com/OpenVoxProject/openvox-server/pull/365) ([corporate-gadfly](https://github.com/corporate-gadfly))
+
 ## [8.14.0](https://github.com/openvoxproject/openvox-server/tree/8.14.0) (2026-06-12)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.13.0...8.14.0)
@@ -21,7 +32,6 @@ All notable changes to this project will be documented in this file.
 
 - \[Backport 8.x\] More EL-10 Postgres acceptance test fixes [\#360](https://github.com/OpenVoxProject/openvox-server/pull/360) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
 - \[Backport 8.x\] CI: test building on Fedora 44 [\#355](https://github.com/OpenVoxProject/openvox-server/pull/355) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
-- ezbake: Update 2.7.4 -\> 2.7.5 [\#292](https://github.com/OpenVoxProject/openvox-server/pull/292) ([corporate-gadfly](https://github.com/corporate-gadfly))
 
 ## [8.13.0](https://github.com/openvoxproject/openvox-server/tree/8.13.0) (2026-05-04)
 
