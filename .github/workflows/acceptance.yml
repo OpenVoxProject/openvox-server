@@ -1,7 +1,8 @@
 ---
 name: Beaker Acceptance Tests
 run-name: |-
-  Beaker acceptance tests for openvox-server using
+  Beaker acceptance tests for openvox-server
+  on ${{ inputs.guest-arch }} runners using
   ${{ inputs.pre-release-build && 'pre-release' || 'release' }}
   packages of openvox-agent
   ${{ (inputs.pre-release-build && inputs.openvox-agent-version) ||
@@ -91,6 +92,20 @@ on:
           true)
         default: 'https://s3.osuosl.org/openvox-artifacts'
         type: string
+      guest-arch:
+        description: |-
+          The architecture of the guest VMs to run the acceptance tests
+          on. This is used by the nested_vms action to determine which
+          VM images to use.
+
+          If not provided, the default is x86_64.
+
+          NOTE: Currently only x86_64 *runners* support nested
+          virtualization, so if guest-arch is set to arm64, the
+          nested_vms will run under qemu and be quite a bit slower
+          (5x-20x).
+        type: string
+        default: 'x86_64'
 
 permissions:
   contents: read
@@ -110,3 +125,4 @@ jobs:
       openvoxdb-version: ${{ inputs.openvoxdb-version }}
       openvoxdb-pre-release-build: ${{ inputs.pre-release-build }}
       artifacts-url: ${{ inputs.artifacts-url }}
+      guest-arch: ${{ inputs.guest-arch }}
