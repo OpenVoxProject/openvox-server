@@ -371,4 +371,9 @@
   :uberjar-merge-with {"locales.clj"  [(comp read-string slurp)
                                        (fn [new prev]
                                          (if (map? prev) [new prev] (conj prev new)))
-                                       #(spit %1 (pr-str %2))]})
+                                       #(spit %1 (pr-str %2))]
+
+                       ;; Jolokia 2.0 implemented a services architecture and
+                       ;; the default service lists from each dependency must
+                       ;; be combined to create a working configuration.
+                       "META-INF/jolokia/services-default" [slurp str spit]})
