@@ -16,7 +16,11 @@
 (def slf4j-version "2.0.18")
 (def i18n-version "1.0.4")
 (def logback-version "1.5.35")
-(def jackson-version "2.21.3")
+;; NOTE: Use the 2.21.z release series of Jackson. The Cheshire JSON
+;;       library requires 2.x and 2.21 is the current LTS as of 2026.
+;;
+;;       See: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
+(def jackson-version "2.21.4")
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -54,7 +58,10 @@
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
                          [lambdaisland/uri "1.19.155"]
                          [liberator "0.15.3"]
-                         [net.logstash.logback/logstash-logback-encoder "9.0"]
+                         ;; NOTE: Versions after 8.1 bring in Jackson 3.x.
+                         ;;       Pinned to 8.1 to keep Jackson 2.x as the only
+                         ;;       major versions we have to chase CVEs for.
+                         [net.logstash.logback/logstash-logback-encoder "8.1"]
                          [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.84"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
