@@ -1,9 +1,0 @@
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "addLabels": ["renovate", "dependencies"],
-  "assigneesFromCodeOwners": true,
-  "automerge": true,
-  "automergeType": "pr",
-  "dependencyDashboard": true,
-  "enabledManagers": ["leiningen"]
-}
