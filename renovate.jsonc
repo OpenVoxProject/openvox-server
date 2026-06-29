@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranchPatterns": ["main", "8.x"],
   "addLabels": ["renovate", "dependencies"],
   "assigneesFromCodeOwners": true,
   "automerge": true,
