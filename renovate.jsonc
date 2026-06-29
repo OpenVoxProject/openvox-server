@@ -5,5 +5,23 @@
   "automerge": true,
   "automergeType": "pr",
   "dependencyDashboard": true,
-  "enabledManagers": ["leiningen"]
+  "enabledManagers": ["leiningen"],
+
+  "packageRules": [
+    // Jackson 2.21.z is the LTS release line for the 2.x series.
+    // The Cheshire JSON parser uses Jackson 2.x instead of the
+    // newer 3.x release, thus we must stay on a 2.x LTS.
+    {
+      "matchPackagePatterns": ["com.fasterxml.jackson.*"],
+      "groupName": "jackson updates",
+      "allowedVersions": "<2.22.0"
+    },
+    // Version 9.0 of the logstash encoder moved to Jackson 3.x.
+    // Pin to 8.1 so that we stay with Jackson 2.x.
+    {
+      "matchPackagePatterns": ["net.logstash.logback:logstash-logback-encoder"],
+      "groupName": "jackson updates",
+      "allowedVersions": "<9.0"
+    }
+  ]
 }
