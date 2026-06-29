@@ -1,1 +1,1 @@
-openvoxserver-ca 3.2.0
+openvoxserver-ca 3.2.1
