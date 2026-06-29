@@ -65,7 +65,7 @@
                          [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.84"]
                          [org.bouncycastle/bcpkix-fips "1.0.8"]
-                         [org.bouncycastle/bc-fips "1.0.2.6"]
+                         [org.bouncycastle/bc-fips "2.1.2"]
                          [org.bouncycastle/bctls-fips "1.0.19"]
                          [org.openvoxproject/clj-shell-utils "2.2.0"]
                          [org.openvoxproject/comidi "1.1.3"]
