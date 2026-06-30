@@ -55,7 +55,7 @@
                          [commons-codec "1.22.0"]
                          [commons-io "2.22.0"]
                          [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-                         [io.dropwizard.metrics/metrics-core "3.2.6"]
+                         [io.dropwizard.metrics/metrics-core "4.2.39"]
                          [lambdaisland/uri "1.19.155"]
                          [liberator "0.15.3"]
                          ;; NOTE: Versions after 8.1 bring in Jackson 3.x.
