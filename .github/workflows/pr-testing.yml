@@ -44,7 +44,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
       - name: setup ruby
-        uses: ruby/setup-ruby@9eb537ca036ebaed86729dcb9309076e4c5c3b74 # v1.314.0
+        uses: ruby/setup-ruby@0dafeac902942906541bc140009cdbf32665b601 # v1.315.0
         with:
           ruby-version: '3.1'
       - name: Install clojure tools
@@ -71,7 +71,7 @@ jobs:
         with:
           submodules: recursive
       - name: setup ruby
-        uses: ruby/setup-ruby@9eb537ca036ebaed86729dcb9309076e4c5c3b74 # v1.314.0
+        uses: ruby/setup-ruby@0dafeac902942906541bc140009cdbf32665b601 # v1.315.0
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: setup java
@@ -100,7 +100,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
-        uses: ruby/setup-ruby@9eb537ca036ebaed86729dcb9309076e4c5c3b74 # v1.314.0
+        uses: ruby/setup-ruby@0dafeac902942906541bc140009cdbf32665b601 # v1.315.0
         with:
           ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 10
           bundler-cache: true
