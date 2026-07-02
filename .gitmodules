@@ -1,6 +1,7 @@
 [submodule "ruby/puppet"]
 	path = ruby/puppet
 	url = https://github.com/openvoxproject/openvox.git
+	branch = 8.x
 [submodule "ruby/hiera"]
 	path = ruby/hiera
 	url = https://github.com/openvoxproject/hiera.git
