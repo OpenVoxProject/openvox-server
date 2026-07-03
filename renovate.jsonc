@@ -4,10 +4,11 @@
   "addLabels": ["renovate", "dependencies"],
   "assigneesFromCodeOwners": true,
   "automerge": true,
+  "automergeStrategy": "merge-commit",
   "automergeType": "pr",
-  "platformAutomerge": true,
   "dependencyDashboard": true,
   "enabledManagers": ["leiningen"],
+  "platformAutomerge": true,
 
   "packageRules": [
     // Jackson 2.21.z is the LTS release line for the 2.x series.
