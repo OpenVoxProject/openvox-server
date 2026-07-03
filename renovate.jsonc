@@ -5,6 +5,7 @@
   "assigneesFromCodeOwners": true,
   "automerge": true,
   "automergeType": "pr",
+  "platformAutomerge": true,
   "dependencyDashboard": true,
   "enabledManagers": ["leiningen"],
 
