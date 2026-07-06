@@ -64,7 +64,11 @@ jobs:
       fail-fast: false
       matrix:
         java: ['21', '25']
-        ruby: ['3.1', '3.2', '3.3', '3.4', '4.0']
+        # The specs always run under the JRuby pinned via jruby-utils
+        # (see Rakefile: lein run -m org.jruby.Main); this MRI only drives
+        # rake and dev-setup, so one version suffices. Match the reference
+        # Ruby used by the build job / Dockerfile.
+        ruby: ['3.3']
     steps:
       - name: checkout repo
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
