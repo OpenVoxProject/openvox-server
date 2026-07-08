@@ -17,7 +17,7 @@
         "/^resources/ext/build-scripts/.*\\.txt$/"
       ],
       "matchStrings": [
-        "^(?<depName>\\S+)\\s+(?<currentValue>\\S+)\\s*$"
+        "(?:^|\\r\\n|\\r|\\n)(?<depName>\\S+)\\s+(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "rubygems"
     }
