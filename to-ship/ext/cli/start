@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+set +e
+
+pid="$(pgrep -f "puppet-server-release.jar.* -m puppetlabs.trapperkeeper.main")"
+
+restartfile="/opt/puppetlabs/server/data/puppetserver/restartcounter"
+start_timeout="${START_TIMEOUT:-300}"
+
+real_name="puppetserver"
+
+if [ -d "/run" ]; then
+  rundir="/run/puppetlabs/${real_name}"
+else
+  rundir="/var/run/puppetlabs/${real_name}"
+fi
+
+app_logdir=${app_logdir:=/var/log/puppetlabs/${real_name}}
+PIDFILE="${rundir}/${real_name}.pid"
+
+cli_defaults=${INSTALL_DIR}/cli/cli-defaults.sh
+
+if [ ! -e "${INSTALL_DIR}/ezbake-functions.sh" ]; then
+    echo "Unable to find ${INSTALL_DIR}/ezbake-functions.sh script, failing start." 1>&2
+    exit 1
+fi
+
+/usr/bin/install --directory --owner=$USER --group=$GROUP --mode=755 "$rundir"
+if [ $? -ne 0 ]; then
+    echo "Unable to create/set permissions for rundir: ${rundir}" 1>&2
+    exit 1
+fi
+
+. "${INSTALL_DIR}/ezbake-functions.sh"
+
+write_pid_file() {
+    echo "$pid" > "$PIDFILE"
+    if [ $? -ne 0 ]; then
+        echo "Unable to write pid file: ${PIDFILE}" 1>&2
+        terminate_java_process
+        exit 1
+    fi
+}
+
+terminate_java_process() {
+    echo "Startup script was terminated before completion" 1>&2
+    kill_pid "$pid" "$PIDFILE" "$SERVICE_STOP_RETRIES"
+    exit 1
+}
+
+if [ -n "$pid" ]; then
+    write_pid_file
+    exit 0
+fi
+
+rm -f "$PIDFILE"
+
+init_restart_file "$restartfile" || exit $?
+
+CLASSPATH=${INSTALL_DIR}/puppet-server-release.jar
+
+if [ -e "$cli_defaults" ]; then
+  . $cli_defaults
+  if [ $? -ne 0 ]; then
+    echo "Unable to initialize cli defaults, failing start." 1>&2
+    exit 1
+  fi
+fi
+
+java_version=$($JAVA_BIN -version 2>&1 | head -1 | awk -F\" '{ print $2 }')
+java_major_version=$(echo $java_version | awk -F. '{ print $1 }')
+
+LOG_APPENDER="-Dlogappender=F1"
+
+out_of_memory_flag='-XX:OnOutOfMemoryError=kill -9 %p'
+if [ "$java_major_version" -ge 11 ]; then
+  out_of_memory_flag="-XX:+CrashOnOutOfMemoryError"
+fi
+
+"$JAVA_BIN" $JAVA_ARGS $LOG_APPENDER \
+  "$out_of_memory_flag" \
+  -XX:ErrorFile="$app_logdir/${real_name}_err_pid%p.log" \
+  -cp "$CLASSPATH" \
+  clojure.main \
+  -m puppetlabs.trapperkeeper.main \
+  --config "$CONFIG" \
+  --bootstrap-config "$BOOTSTRAP_CONFIG" \
+  --restart-file "$restartfile" \
+  $TK_ARGS &
+
+# $! is the process id of the last backgrounded process, the Java process above.
+pid=$!
+trap terminate_java_process SIGHUP SIGINT SIGTERM
+write_pid_file
+
+cur="$(head -n 1 "$restartfile")"
+initial="$cur"
+
+timeout="$start_timeout"
+while [ "$cur" == "$initial" ] ;do
+    kill -0 $pid >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        rm -f "$PIDFILE"
+        echo "Background process $pid exited before start had completed" 1>&2
+        exit 1
+    fi
+
+    sleep 1
+    cur="$(head -n 1 "$restartfile")"
+
+    ((timeout--))
+    if [ $timeout -eq 0 ]; then
+        echo "Startup timed out after $start_timeout seconds" 1>&2
+        terminate_java_process
+        rm -f "$PIDFILE"
+        exit 1
+    fi
+done
+
+write_pid_file
+exit 0
