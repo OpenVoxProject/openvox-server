@@ -7,8 +7,21 @@
   "automergeStrategy": "merge-commit",
   "automergeType": "pr",
   "dependencyDashboard": true,
-  "enabledManagers": ["leiningen"],
+  "enabledManagers": ["leiningen", "custom.regex"],
   "platformAutomerge": true,
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^resources/ext/build-scripts/.*\\.txt$/"
+      ],
+      "matchStrings": [
+        "^(?<depName>\\S+)\\s+(?<currentValue>\\S+)\\s*$"
+      ],
+      "datasourceTemplate": "rubygems"
+    }
+  ],
 
   "packageRules": [
     // The 8.x branch follows jruby-utils 5.x, which tracks JRuby 9.4.
