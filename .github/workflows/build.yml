@@ -4,22 +4,31 @@ name: Build openvox-server
 on:
   workflow_dispatch:
     inputs:
+      ref:
+        description: >-
+          Tag to build for a release, or branch to build for a pre-release.
+        required: true
       branch:
-        description: 'The release branch to build from.'
+        description: >-
+          The default platform list to build for. Use `main` for 9.x builds
+          and `8.x` for 8.x builds.
         type: choice
         options:
           - main
           - '8.x'
         default: 'main'
-      ref:
-        description: 'Tag to build'
-        required: true
       deb_platform_list:
-        description: 'A comma-separated list of deb-based platforms to build for, excluding the architecture (e.g. ubuntu-24.04,debian-12). Do not include spaces. If not provided, will use the default list of platforms supported by OpenVox Server and DB.'
+        description: >-
+          A comma-separated list of deb-based platforms to build for, excluding
+          the architecture (e.g. ubuntu-24.04,debian-12). Do not include spaces.
+          If not provided, will use the default list of platforms chosen above.
         required: false
         type: string
       rpm_platform_list:
-        description: 'A comma-separated list of rpm-based platforms to build for, excluding the architecture (e.g. el-9,amazon-2023). Do not include spaces. If not provided, will use the default list of platforms supported by OpenVox Server and DB.'
+        description: >-
+          A comma-separated list of rpm-based platforms to build for, excluding
+          the architecture (e.g. el-9,amazon-2023). Do not include spaces.
+          If not provided, will use the default list of platforms chosen above.
         required: false
         type: string
       ezbake-ref:
