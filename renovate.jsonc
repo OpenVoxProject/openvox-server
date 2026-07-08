@@ -9,6 +9,18 @@
   "enabledManagers": ["leiningen"],
 
   "packageRules": [
+    // The 8.x branch follows jruby-utils 5.x, which tracks JRuby 9.4.
+    // The main branch is free to take up jruby-utils 6.x, which tracks
+    // JRuby 10.0.
+    {
+      "groupName": "jruby updates",
+      "allowedVersions": "<6.0",
+      "matchBaseBranches": "8.x",
+      "matchPackageNames": [
+        "org.openvoxproject:jruby-utils"
+      ]
+    },
+
     // Jackson 2.21.z is the LTS release line for the 2.x series.
     // The Cheshire JSON parser uses Jackson 2.x instead of the
     // newer 3.x release, thus we must stay on a 2.x LTS.
