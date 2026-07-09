@@ -43,6 +43,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
+          verify-signature: true
       - name: setup ruby
         uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
         with:
@@ -83,6 +84,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
+          verify-signature: true
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@4c7a6f613e5089821bb3bb2a33a3ee115578580d # 13.6.1
         with:
@@ -172,6 +174,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+          verify-signature: true
       - name: checkout repo
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       # newer versions cause lint errors
