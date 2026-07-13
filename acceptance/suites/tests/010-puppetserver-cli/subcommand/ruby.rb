@@ -30,7 +30,7 @@ end
 
 step "Verify that Java cli args passed through to ruby command"
 on(master, "JAVA_ARGS_CLI=-Djruby.cli.version=true #{cli} ruby -e ''") do |result|
-  assert_match(/jruby \d\.\d\.\d.*$/, result.stdout,
+  assert_match(/jruby \d+\.\d+\.\d+.*$/, result.stdout,
                'jruby version not included in ruby command output')
 end
 
