@@ -31,7 +31,7 @@ end
 
 step "Verify that Java cli args passed through to irb command"
 on(master, "echo '' | JAVA_ARGS_CLI=-Djruby.cli.version=true #{cli} irb -f") do |result|
-  assert_match(/jruby \d\.\d\.\d.*$/, result.stdout,
+  assert_match(/jruby \d+\.\d+\.\d+.*$/, result.stdout,
                'jruby version not included in irb command output')
 end
 
