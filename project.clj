@@ -350,7 +350,7 @@
                   (str "-Xms" (heap-size "1G"))
                   (str "-Xmx" (heap-size "2G"))
                   "-XX:+IgnoreUnrecognizedVMOptions"]
-                 (if (>= 17 (java.lang.Integer/parseInt major))
+                 (if (>= (java.lang.Integer/parseInt major) 17)
                    ["--add-opens" "java.base/sun.nio.ch=ALL-UNNAMED" "--add-opens" "java.base/java.io=ALL-UNNAMED"]
                    [])))
 
