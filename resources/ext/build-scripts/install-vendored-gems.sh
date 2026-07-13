@@ -10,10 +10,15 @@ install_gems () {
   gem_list=()
   while read LINE
   do
+    # Skip lines with comments.
+    [[ $LINE == "#"* ]] && continue
     gem_name=$(echo $LINE |awk '{print $1}')
     gem_version=$(echo $LINE |awk '{print $2}')
     gem_list+=("$gem_name:$gem_version")
   done < $gem_file
+
+  # Return early if no gems in file.
+  [[ "${#gem_list[@]}" -eq 0 ]] && return
 
   java -cp ext/classpath-jars/*:puppet-server-release.jar:jruby-9k.jar clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
 }
