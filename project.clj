@@ -71,7 +71,7 @@
                          [org.openvoxproject/comidi "1.1.3"]
                          [org.openvoxproject/http-client "2.3.1"]
                          [org.openvoxproject/i18n ~i18n-version]
-                         [org.openvoxproject/jruby-utils "5.5.0"]
+                         [org.openvoxproject/jruby-utils "6.0.0"]
                          [org.openvoxproject/kitchensink "3.5.7"]
                          [org.openvoxproject/kitchensink "3.5.7" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.3.0"]
@@ -350,7 +350,7 @@
                   (str "-Xms" (heap-size "1G"))
                   (str "-Xmx" (heap-size "2G"))
                   "-XX:+IgnoreUnrecognizedVMOptions"]
-                 (if (>= 17 (java.lang.Integer/parseInt major))
+                 (if (>= (java.lang.Integer/parseInt major) 17)
                    ["--add-opens" "java.base/sun.nio.ch=ALL-UNNAMED" "--add-opens" "java.base/java.io=ALL-UNNAMED"]
                    [])))
 

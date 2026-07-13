@@ -14,6 +14,8 @@ CODEDIR="${ROOTDIR}/etc/code"
 gem_list=()
 while read LINE
 do
+  # Skip lines with comments.
+  [[ $LINE == "#"* ]] && continue
   gem_name=$(echo $LINE |awk '{print $1}')
   gem_version=$(echo $LINE |awk '{print $2}')
   gem_list+=("$gem_name:$gem_version")
@@ -21,6 +23,8 @@ done < ./resources/ext/build-scripts/jruby-gem-list.txt
 
 while read LINE
 do
+  # Skip lines with comments.
+  [[ $LINE == "#"* ]] && continue
   gem_name=$(echo $LINE |awk '{print $1}')
   gem_version=$(echo $LINE |awk '{print $2}')
   gem_list+=("$gem_name:$gem_version")
