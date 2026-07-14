@@ -17,9 +17,8 @@ gem 'rake', :group => [:development, :test]
 
 group :test do
   gem 'rspec'
-  gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '~> 6.8')
-  gem "beaker-hostgenerator", *location_for(ENV['BEAKER_HOSTGENERATOR_VERSION'] || "< 4")
-  gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || "~> 4.0")
+  gem 'beaker', *location_for(ENV['BEAKER_VERSION'] || '~> 7.6')
+  gem "beaker-puppet", *location_for(ENV['BEAKER_PUPPET_VERSION'] || "~> 4.4")
   gem 'uuidtools'
   gem 'httparty'
   gem 'master_manipulator'
