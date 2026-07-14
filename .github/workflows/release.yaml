@@ -21,6 +21,7 @@ jobs:
     uses: 'openvoxproject/shared-actions/.github/workflows/clojure_release.yml@main'
     with:
       base-branch: ${{ inputs.branch }}
+      java-version: ${{ case(inputs.branch == '8.x', '17', '21') }}
     secrets:
       github_pat: ${{ secrets.OPENVOXBOT_COMMIT_AND_PRS }}
       ssh_private_key: ${{ secrets.OPENVOXBOT_SSH_PRIVATE_KEY }}
