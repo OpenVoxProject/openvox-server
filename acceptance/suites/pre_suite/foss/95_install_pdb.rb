@@ -56,7 +56,7 @@ node default {
     puppetdb_package    => 'openvoxdb',
     manage_firewall     => false,
     manage_package_repo => true,
-    postgres_version    => '14',
+    postgres_version    => '17',
   }
 
   class { 'puppetdb::master::config':
