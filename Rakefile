@@ -344,10 +344,9 @@ else
     config.future_release = File.readlines('project.clj')
       .grep(/^\(defproject /).first[/"([^"]+)"/, 1]
       .sub(/-SNAPSHOT\z/, '')
-    # we limit the changelog to all new openvox releases, to skip perforce onces
-    # otherwise the changelog generate takes a lot amount of time
-    config.since_tag = '8.7.0'
-    config.exclude_tags_regex = /\A[7,8]\./
+    # OpenVox 9.x branched after the 8.13.0 release.
+    config.since_tag = '8.13.0'
+    config.include_tags_regex = /\A8\.13\.0|\A9\./
     config.release_branch = "main"
   end
 end
