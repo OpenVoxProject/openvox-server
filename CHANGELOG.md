@@ -2,155 +2,70 @@
 
 All notable changes to this project will be documented in this file.
 
-## [8.13.0](https://github.com/openvoxproject/openvox-server/tree/8.13.0) (2026-04-30)
+## [9.0.0-beta1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta1) (2026-07-14)
 
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.12.1...8.13.0)
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.13.0...9.0.0-beta1)
 
-**Implemented enhancements:**
+**Breaking changes:**
 
-- openvoxserver-ca: Update 3.1.1-\>3.2.0 [\#256](https://github.com/OpenVoxProject/openvox-server/pull/256) ([bastelfreak](https://github.com/bastelfreak))
-- remove unused build dependencies  [\#254](https://github.com/OpenVoxProject/openvox-server/pull/254) ([bastelfreak](https://github.com/bastelfreak))
-- Depend on latest openvox-agent packages [\#253](https://github.com/OpenVoxProject/openvox-server/pull/253) ([bastelfreak](https://github.com/bastelfreak))
-- ezbake: Update 2.7.3-\>2.7.4 [\#252](https://github.com/OpenVoxProject/openvox-server/pull/252) ([bastelfreak](https://github.com/bastelfreak))
-- Add Ubuntu 26.04 to build matrix [\#251](https://github.com/OpenVoxProject/openvox-server/pull/251) ([bastelfreak](https://github.com/bastelfreak))
-
-**Fixed bugs:**
-
-- \[Bug\]: Exception after pruning CRL [\#202](https://github.com/OpenVoxProject/openvox-server/issues/202)
-- Change chown during install to check java.security.fips file existence [\#199](https://github.com/OpenVoxProject/openvox-server/pull/199) ([nmburgan](https://github.com/nmburgan))
-
-**Merged pull requests:**
-
-- fix: include tarballs in snapshot artifact upload by matching on version [\#286](https://github.com/OpenVoxProject/openvox-server/pull/286) ([slauger](https://github.com/slauger))
-- Remove FIPS BC jars from ezbake-fips dependencies [\#274](https://github.com/OpenVoxProject/openvox-server/pull/274) ([nmburgan](https://github.com/nmburgan))
-- version bump for dependencies [\#242](https://github.com/OpenVoxProject/openvox-server/pull/242) ([corporate-gadfly](https://github.com/corporate-gadfly))
-- replace Joda-Time with with java.time API [\#233](https://github.com/OpenVoxProject/openvox-server/pull/233) ([corporate-gadfly](https://github.com/corporate-gadfly))
-- Remove dujour-version-check from dependencies [\#232](https://github.com/OpenVoxProject/openvox-server/pull/232) ([corporate-gadfly](https://github.com/corporate-gadfly))
-- remove unused dujour-version-check [\#231](https://github.com/OpenVoxProject/openvox-server/pull/231) ([corporate-gadfly](https://github.com/corporate-gadfly))
-- Add Podman compatibility to vox:build task [\#228](https://github.com/OpenVoxProject/openvox-server/pull/228) ([Sharpie](https://github.com/Sharpie))
-- Use new ezbake methods for managing BC FIPS jars [\#196](https://github.com/OpenVoxProject/openvox-server/pull/196) ([nmburgan](https://github.com/nmburgan))
-
-## [8.12.1](https://github.com/openvoxproject/openvox-server/tree/8.12.1) (2026-01-21)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.12.0...8.12.1)
-
-**Fixed bugs:**
-
-- \[Bug\]: openvox-server 8.12.0 seems unable to serve directories \(recurse =\> true\)  for file resources [\#183](https://github.com/OpenVoxProject/openvox-server/issues/183)
-
-**Merged pull requests:**
-
-- Downgrade ring-core to version 1.14.2 [\#184](https://github.com/OpenVoxProject/openvox-server/pull/184) ([nmburgan](https://github.com/nmburgan))
-- CI: Update comment with ZIP link [\#179](https://github.com/OpenVoxProject/openvox-server/pull/179) ([bastelfreak](https://github.com/bastelfreak))
-- CI: Drop beaker-abs & beaker-vmpooler, allow latest beaker-hostgenerator [\#171](https://github.com/OpenVoxProject/openvox-server/pull/171) ([bastelfreak](https://github.com/bastelfreak))
-
-## [8.12.0](https://github.com/openvoxproject/openvox-server/tree/8.12.0) (2026-01-15)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.11.0...8.12.0)
+- JRUBY 10, YO [\#468](https://github.com/OpenVoxProject/openvox-server/pull/468) ([Sharpie](https://github.com/Sharpie))
+- CI: Stop building on amazon-2  [\#349](https://github.com/OpenVoxProject/openvox-server/pull/349) ([bastelfreak](https://github.com/bastelfreak))
+- CI: Stop building packages for Debian 11 & 12 [\#343](https://github.com/OpenVoxProject/openvox-server/pull/343) ([bastelfreak](https://github.com/bastelfreak))
+- Mark java 25 as supported & Drop support for Java 17 [\#336](https://github.com/OpenVoxProject/openvox-server/pull/336) ([bastelfreak](https://github.com/bastelfreak))
+- remove pe\_serverversion fact [\#247](https://github.com/OpenVoxProject/openvox-server/pull/247) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- Update to jetty12 [\#217](https://github.com/OpenVoxProject/openvox-server/pull/217) ([austb](https://github.com/austb))
 
 **Implemented enhancements:**
 
-- Add Ubuntu 25.10 support [\#138](https://github.com/OpenVoxProject/openvox-server/pull/138) ([bastelfreak](https://github.com/bastelfreak))
-- lein-parent: Update 0.3.7-\>0.3.9 [\#108](https://github.com/OpenVoxProject/openvox-server/pull/108) ([bastelfreak](https://github.com/bastelfreak))
-- Add Ruby 4.0 support [\#107](https://github.com/OpenVoxProject/openvox-server/pull/107) ([bastelfreak](https://github.com/bastelfreak))
-- Update dependencies [\#105](https://github.com/OpenVoxProject/openvox-server/pull/105) ([nmburgan](https://github.com/nmburgan))
+- Inform trapperkeeper about service readiness [\#465](https://github.com/OpenVoxProject/openvox-server/pull/465) ([bastelfreak](https://github.com/bastelfreak))
+- exclude jruby windows binaries and rdoc artifacts from uberjar [\#321](https://github.com/OpenVoxProject/openvox-server/pull/321) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- Support podman in tasks/build.rake [\#227](https://github.com/OpenVoxProject/openvox-server/pull/227) ([gregorynisbet-google](https://github.com/gregorynisbet-google))
 
 **Fixed bugs:**
 
-- \[Bug\]: /puppet-ca/v1/sign endpoint has no configuration in auth.conf [\#100](https://github.com/OpenVoxProject/openvox-server/issues/100)
-- \[Bug\]: Could not find 'facter' \(\>= 2.0.1, \< 5\) among 110 total gem\(s\) \(Gem::MissingSpecError\) [\#94](https://github.com/OpenVoxProject/openvox-server/issues/94)
-- \[Bug\]: openvox-server 8.11.0-1+debian13 Trixie Package Java Dependency [\#91](https://github.com/OpenVoxProject/openvox-server/issues/91)
-- \[Bug\]: RHEL9 openvox8 fails to start [\#90](https://github.com/OpenVoxProject/openvox-server/issues/90)
-- \[Bug\]: EL10 \(Alma Linux 10\) openvox-server-8.8.1 and openvoxdb-8.9.1 fails to install due to the missing java-17-openjdk-headless [\#36](https://github.com/OpenVoxProject/openvox-server/issues/36)
-- remove stale dependencies and imports [\#106](https://github.com/OpenVoxProject/openvox-server/pull/106) ([corporate-gadfly](https://github.com/corporate-gadfly))
-
-**Merged pull requests:**
-
-- client\_may\_use\_external\_cert\_chains test: don't use /tmp [\#170](https://github.com/OpenVoxProject/openvox-server/pull/170) ([nmburgan](https://github.com/nmburgan))
-- split\_external\_cas test: don't use /tmp [\#169](https://github.com/OpenVoxProject/openvox-server/pull/169) ([nmburgan](https://github.com/nmburgan))
-- More changes for FIPS builds [\#168](https://github.com/OpenVoxProject/openvox-server/pull/168) ([nmburgan](https://github.com/nmburgan))
-- Add FIPS-only build [\#167](https://github.com/OpenVoxProject/openvox-server/pull/167) ([nmburgan](https://github.com/nmburgan))
-- Change how we define the version [\#166](https://github.com/OpenVoxProject/openvox-server/pull/166) ([nmburgan](https://github.com/nmburgan))
-- Update build task to handle building FIPS [\#165](https://github.com/OpenVoxProject/openvox-server/pull/165) ([nmburgan](https://github.com/nmburgan))
-- Move versions into managed deps and update openvox components [\#158](https://github.com/OpenVoxProject/openvox-server/pull/158) ([nmburgan](https://github.com/nmburgan))
-- Add logback version check [\#139](https://github.com/OpenVoxProject/openvox-server/pull/139) ([nmburgan](https://github.com/nmburgan))
-- Remove clj-parent [\#114](https://github.com/OpenVoxProject/openvox-server/pull/114) ([nmburgan](https://github.com/nmburgan))
-- Changes for FIPS [\#112](https://github.com/OpenVoxProject/openvox-server/pull/112) ([nmburgan](https://github.com/nmburgan))
-- Remove testing Java 11 on el8 [\#104](https://github.com/OpenVoxProject/openvox-server/pull/104) ([nmburgan](https://github.com/nmburgan))
-- Change namespace, update versions, update build task [\#101](https://github.com/OpenVoxProject/openvox-server/pull/101) ([nmburgan](https://github.com/nmburgan))
-- Update gem lists [\#99](https://github.com/OpenVoxProject/openvox-server/pull/99) ([nmburgan](https://github.com/nmburgan))
-- \(maint\) Drop beaker parameters from beaker\_acceptance.yml call [\#93](https://github.com/OpenVoxProject/openvox-server/pull/93) ([jpartlow](https://github.com/jpartlow))
-
-## [8.11.0](https://github.com/openvoxproject/openvox-server/tree/8.11.0) (2025-08-24)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.10.0...8.11.0)
-
-**Implemented enhancements:**
-
-- Improve regen\_certs script [\#82](https://github.com/OpenVoxProject/openvox-server/pull/82) ([jcharaoui](https://github.com/jcharaoui))
-
-**Fixed bugs:**
-
-- Fix CRL test with uncommon timezone [\#81](https://github.com/OpenVoxProject/openvox-server/pull/81) ([jcharaoui](https://github.com/jcharaoui))
-
-**Merged pull requests:**
-
-- Fix tag task [\#89](https://github.com/OpenVoxProject/openvox-server/pull/89) ([nmburgan](https://github.com/nmburgan))
-- Allow override of ezbake version and fix ezbake ref passthrough [\#87](https://github.com/OpenVoxProject/openvox-server/pull/87) ([nmburgan](https://github.com/nmburgan))
-- Update net-imap [\#86](https://github.com/OpenVoxProject/openvox-server/pull/86) ([binford2k](https://github.com/binford2k))
-- feat: do single prs for updates, to better see what breaks atm [\#71](https://github.com/OpenVoxProject/openvox-server/pull/71) ([rwaffen](https://github.com/rwaffen))
-
-## [8.10.0](https://github.com/openvoxproject/openvox-server/tree/8.10.0) (2025-07-31)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.9.0...8.10.0)
-
-**Implemented enhancements:**
-
-- Consider Java 21 "supported" [\#62](https://github.com/OpenVoxProject/openvox-server/pull/62) ([smortex](https://github.com/smortex))
-- Introduce EZBAKE\_REPO to select the ezbake repository & optimize git clone [\#59](https://github.com/OpenVoxProject/openvox-server/pull/59) ([ekohl](https://github.com/ekohl))
-- depend on openvox-agent 8.21.1 or newer [\#58](https://github.com/OpenVoxProject/openvox-server/pull/58) ([bastelfreak](https://github.com/bastelfreak))
-- Run tests on JRE11, 17 & 21 \(21 without FIPS\) [\#57](https://github.com/OpenVoxProject/openvox-server/pull/57) ([bastelfreak](https://github.com/bastelfreak))
-- chore: update rexml to 3.4.1 [\#54](https://github.com/OpenVoxProject/openvox-server/pull/54) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
+- \[Bug\]: Race condition in JRuby startup leads to flakyness in OpenVox Server tests [\#414](https://github.com/OpenVoxProject/openvox-server/issues/414)
+- \[Bug\]: Don't include jruby-openssl as a vendored gem as JRuby 10.0.6.0+ / 9.4.15.0 include it as a dependency [\#366](https://github.com/OpenVoxProject/openvox-server/issues/366)
+- \[Bug\]: Update to 8.13.0 breaks ruby function openssl EC use [\#322](https://github.com/OpenVoxProject/openvox-server/issues/322)
+- \[Bug\]: Uninstalling openvox-server on SLES 15.7 not possible [\#245](https://github.com/OpenVoxProject/openvox-server/issues/245)
+- \[Bug\]: Installation of openvox-server using package resource fails \(partly\) on SLES 15.7 [\#244](https://github.com/OpenVoxProject/openvox-server/issues/244)
+- \[Maintenance\]: Performance issues with ring-core 1.15.x need investigation [\#197](https://github.com/OpenVoxProject/openvox-server/issues/197)
+- Fix Jolokia 2.x configuration [\#377](https://github.com/OpenVoxProject/openvox-server/pull/377) ([Sharpie](https://github.com/Sharpie))
+- isolate SLES RPM macros in /opt/suse-rpm-macros [\#346](https://github.com/OpenVoxProject/openvox-server/pull/346) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- Download SLES RPM macros to aid in expansion of macros [\#344](https://github.com/OpenVoxProject/openvox-server/pull/344) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- add jruby-openssl 0.16.0 to vendored gems [\#324](https://github.com/OpenVoxProject/openvox-server/pull/324) ([corporate-gadfly](https://github.com/corporate-gadfly))
 
 **Security fixes:**
 
-- sec: CVE 2024-49761 update rexml to 3.3.9 [\#42](https://github.com/OpenVoxProject/openvox-server/pull/42) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
+- Upgrade concurrent-ruby 1.3.5-\>1.3.7 [\#435](https://github.com/OpenVoxProject/openvox-server/pull/435) ([Sharpie](https://github.com/Sharpie))
+- Upgrade JRuby 9.4.12.1-\>9.4.15.0 [\#434](https://github.com/OpenVoxProject/openvox-server/pull/434) ([Sharpie](https://github.com/Sharpie))
+- Consolidate Jackson usage on 2.21.4 [\#395](https://github.com/OpenVoxProject/openvox-server/pull/395) ([Sharpie](https://github.com/Sharpie))
 
-## [8.9.0](https://github.com/openvoxproject/openvox-server/tree/8.9.0) (2025-07-19)
+**Closed issues:**
 
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.8.1...8.9.0)
-
-**Fixed bugs:**
-
-- \[Bug\]: Server phones to updates.puppet.com on startup [\#22](https://github.com/OpenVoxProject/openvox-server/issues/22)
-- \[Bug\]: PuppetServer CA service sets the CRL NextUpdate field to 5 Years into the future [\#14](https://github.com/OpenVoxProject/openvox-server/issues/14)
-- Fix git submodules [\#44](https://github.com/OpenVoxProject/openvox-server/pull/44) ([bastelfreak](https://github.com/bastelfreak))
+- \[Doc\] Issues link is dead following Perforce doc change [\#17](https://github.com/OpenVoxProject/openvox-server/issues/17)
 
 **Merged pull requests:**
 
-- openvox-server: depend on openvox-agent 8.21.0 or newer [\#53](https://github.com/OpenVoxProject/openvox-server/pull/53) ([bastelfreak](https://github.com/bastelfreak))
-- \(maint\) Drop debian-10 from testing matrix [\#40](https://github.com/OpenVoxProject/openvox-server/pull/40) ([jpartlow](https://github.com/jpartlow))
-- packaging: Switch from Perforce to OpenVoxProject releases [\#38](https://github.com/OpenVoxProject/openvox-server/pull/38) ([bastelfreak](https://github.com/bastelfreak))
-- Replace puppetserver-ca gem with openvoxserver-ca [\#34](https://github.com/OpenVoxProject/openvox-server/pull/34) ([bastelfreak](https://github.com/bastelfreak))
-- Drop analytics/dropsonde integration in openvox-server [\#9](https://github.com/OpenVoxProject/openvox-server/pull/9) ([ekohl](https://github.com/ekohl))
-
-## [8.8.1](https://github.com/openvoxproject/openvox-server/tree/8.8.1) (2025-03-19)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.8.0...8.8.1)
-
-**Fixed bugs:**
-
-- \[Bug\]: openvox-server 7.18.1 fails to start [\#5](https://github.com/OpenVoxProject/openvox-server/issues/5)
-
-**Merged pull requests:**
-
-- Add replaces/conflicts on puppetserver [\#12](https://github.com/OpenVoxProject/openvox-server/pull/12) ([nmburgan](https://github.com/nmburgan))
-- Add CHANGELOG.md [\#6](https://github.com/OpenVoxProject/openvox-server/pull/6) ([nmburgan](https://github.com/nmburgan))
-- Fix build task to remove unneeded i386 folders [\#4](https://github.com/OpenVoxProject/openvox-server/pull/4) ([nmburgan](https://github.com/nmburgan))
-
-## [8.8.0](https://github.com/openvoxproject/openvox-server/tree/8.8.0) (2025-01-16)
-
-[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.7.0...8.8.0)
+- Build JARs with Java version based on branch [\#483](https://github.com/OpenVoxProject/openvox-server/pull/483) ([Sharpie](https://github.com/Sharpie))
+- acceptance: Run tests against Postgres 17 [\#479](https://github.com/OpenVoxProject/openvox-server/pull/479) ([Sharpie](https://github.com/Sharpie))
+- Update acceptance tests for compatibility with latest OpenVox 9 [\#470](https://github.com/OpenVoxProject/openvox-server/pull/470) ([Sharpie](https://github.com/Sharpie))
+- fix regex to accept 3 multi-digit version string [\#469](https://github.com/OpenVoxProject/openvox-server/pull/469) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- ci: enable auto-merge for renovate [\#440](https://github.com/OpenVoxProject/openvox-server/pull/440) ([rwaffen](https://github.com/rwaffen))
+- CI: Drop redundant MRI matrix from RSpec tests [\#427](https://github.com/OpenVoxProject/openvox-server/pull/427) ([silug](https://github.com/silug))
+- renovate: set automergeStrategy [\#425](https://github.com/OpenVoxProject/openvox-server/pull/425) ([bastelfreak](https://github.com/bastelfreak))
+- Explicitly check out main branch during backports [\#379](https://github.com/OpenVoxProject/openvox-server/pull/379) ([Sharpie](https://github.com/Sharpie))
+- Add arm64 support to acceptance [\#374](https://github.com/OpenVoxProject/openvox-server/pull/374) ([jpartlow](https://github.com/jpartlow))
+- CI: test building on Fedora 44 [\#348](https://github.com/OpenVoxProject/openvox-server/pull/348) ([bastelfreak](https://github.com/bastelfreak))
+- Readd workflow to backport PRs [\#347](https://github.com/OpenVoxProject/openvox-server/pull/347) ([bastelfreak](https://github.com/bastelfreak))
+- Dockerfile: Dont install vim & Replace java-21-openjdk-devel-\>java-21-openjdk-headless [\#345](https://github.com/OpenVoxProject/openvox-server/pull/345) ([bastelfreak](https://github.com/bastelfreak))
+- feat: simplify container build by using ADD, list packages more readable [\#342](https://github.com/OpenVoxProject/openvox-server/pull/342) ([rwaffen](https://github.com/rwaffen))
+- CI: Add Java 25 [\#335](https://github.com/OpenVoxProject/openvox-server/pull/335) ([bastelfreak](https://github.com/bastelfreak))
+- Provide --format='{{json .ID}}' when listing docker images. [\#332](https://github.com/OpenVoxProject/openvox-server/pull/332) ([gregorynisbet-google](https://github.com/gregorynisbet-google))
+- build: Switch to alma 10 / Java 21 / system Ruby [\#330](https://github.com/OpenVoxProject/openvox-server/pull/330) ([bastelfreak](https://github.com/bastelfreak))
+- Use Ruby 4 for builder image and cache it [\#311](https://github.com/OpenVoxProject/openvox-server/pull/311) ([nmburgan](https://github.com/nmburgan))
+- Migrate config to use trapperkeeper-webserver [\#299](https://github.com/OpenVoxProject/openvox-server/pull/299) ([nmburgan](https://github.com/nmburgan))
+- Update acceptance descriptions and defaults for OpenVox 9 [\#297](https://github.com/OpenVoxProject/openvox-server/pull/297) ([nmburgan](https://github.com/nmburgan))
+- Target openvox9 platform for main branch [\#296](https://github.com/OpenVoxProject/openvox-server/pull/296) ([nmburgan](https://github.com/nmburgan))
 
 
 
