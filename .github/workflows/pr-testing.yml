@@ -45,7 +45,7 @@ jobs:
           java-version: ${{ matrix.version }}
           verify-signature: true
       - name: setup ruby
-        uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
+        uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
         with:
           ruby-version: '3.1'
       - name: Install clojure tools
@@ -76,7 +76,7 @@ jobs:
         with:
           submodules: recursive
       - name: setup ruby
-        uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
+        uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: setup java
@@ -106,7 +106,7 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
-        uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
+        uses: ruby/setup-ruby@003a5c4d8d6321bd302e38f6f0ec593f77f06600 # v1.319.0
         with:
           ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 10
           bundler-cache: true
