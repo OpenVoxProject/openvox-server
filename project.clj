@@ -69,7 +69,7 @@
                          [org.bouncycastle/bctls-fips "1.0.19"]
                          [org.openvoxproject/clj-shell-utils "2.2.0"]
                          [org.openvoxproject/comidi "1.1.3"]
-                         [org.openvoxproject/http-client "2.3.1"]
+                         [org.openvoxproject/http-client "2.4.0"]
                          [org.openvoxproject/i18n ~i18n-version]
                          [org.openvoxproject/jruby-utils "6.0.0"]
                          [org.openvoxproject/kitchensink "3.5.7"]
