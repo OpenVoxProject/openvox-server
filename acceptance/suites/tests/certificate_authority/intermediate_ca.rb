@@ -86,6 +86,10 @@ test_name 'Intermediate CA import' do
       on master, puppet("config set --section master node_terminus classifier")
     end
     on(master, puppet_resource('service', master['puppetservice'], 'ensure=running'))
+
+    # We just swapped the CA keys on the primary. Clear agent CA state to avoid
+    # contaminating future tests.
+    on(test_agent, puppet('ssl clean --localca'))
   end
 
   step 'Import External CA infrastructure and restart Puppet Server' do
