@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.15.0](https://github.com/openvoxproject/openvox-server/tree/8.15.0) (2026-07-22)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.14.1...8.15.0)
+
+**Fixed bugs:**
+
+- \[Bug\]: Race condition in JRuby startup leads to flakyness in OpenVox Server tests [\#414](https://github.com/OpenVoxProject/openvox-server/issues/414)
+- \[Bug\]: Don't include jruby-openssl as a vendored gem as JRuby 10.0.6.0+ / 9.4.15.0 include it as a dependency [\#366](https://github.com/OpenVoxProject/openvox-server/issues/366)
+- \[Bug\]: Uninstalling openvox-server on SLES 15.7 not possible [\#245](https://github.com/OpenVoxProject/openvox-server/issues/245)
+- \[Bug\]: Installation of openvox-server using package resource fails \(partly\) on SLES 15.7 [\#244](https://github.com/OpenVoxProject/openvox-server/issues/244)
+- Invert Java version test for "add-opens" [\#471](https://github.com/OpenVoxProject/openvox-server/pull/471) ([corporate-gadfly](https://github.com/corporate-gadfly))
+
+**Security fixes:**
+
+- Update net-imap 0.5.12 -\> 0.5.15 [\#507](https://github.com/OpenVoxProject/openvox-server/pull/507) ([Sharpie](https://github.com/Sharpie))
+- \[Backport 8.x\] Upgrade concurrent-ruby 1.3.5-\>1.3.7 [\#438](https://github.com/OpenVoxProject/openvox-server/pull/438) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Upgrade JRuby 9.4.12.1-\>9.4.15.0 [\#437](https://github.com/OpenVoxProject/openvox-server/pull/437) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Consolidate Jackson usage on 2.21.4 [\#398](https://github.com/OpenVoxProject/openvox-server/pull/398) ([Sharpie](https://github.com/Sharpie))
+
+**Closed issues:**
+
+- \[Doc\] Issues link is dead following Perforce doc change [\#17](https://github.com/OpenVoxProject/openvox-server/issues/17)
+
+**Merged pull requests:**
+
+- \[Backport 8.x\] Add acceptance test coverage for long certnames [\#510](https://github.com/OpenVoxProject/openvox-server/pull/510) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Inform trapperkeeper about service readiness [\#467](https://github.com/OpenVoxProject/openvox-server/pull/467) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- Update openvox submodule to 8.28.0-11-gaf1cbe7159 on 8.x branch [\#421](https://github.com/OpenVoxProject/openvox-server/pull/421) ([Sharpie](https://github.com/Sharpie))
+- \[Backport 8.x\] Update Renovate config, pin Jackson 2.21 [\#393](https://github.com/OpenVoxProject/openvox-server/pull/393) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] openvoxserver-ca: Update 3.2.0-\>3.2.1 [\#390](https://github.com/OpenVoxProject/openvox-server/pull/390) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- Add arm64 support to acceptance 8.x [\#383](https://github.com/OpenVoxProject/openvox-server/pull/383) ([jpartlow](https://github.com/jpartlow))
+
 ## [8.14.1](https://github.com/openvoxproject/openvox-server/tree/8.14.1) (2026-06-24)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.14.0...8.14.1)
