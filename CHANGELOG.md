@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.15.1](https://github.com/openvoxproject/openvox-server/tree/8.15.1) (2026-07-22)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.0...8.15.1)
+
+**Fixed bugs:**
+
+- \[8.x\] Ensure "gem install" works during FIPS builds [\#513](https://github.com/OpenVoxProject/openvox-server/pull/513) ([Sharpie](https://github.com/Sharpie))
+
 ## [8.15.0](https://github.com/openvoxproject/openvox-server/tree/8.15.0) (2026-07-22)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.14.1...8.15.0)
@@ -17,9 +25,10 @@ All notable changes to this project will be documented in this file.
 **Security fixes:**
 
 - Update net-imap 0.5.12 -\> 0.5.15 [\#507](https://github.com/OpenVoxProject/openvox-server/pull/507) ([Sharpie](https://github.com/Sharpie))
+- Update dependency org.bouncycastle:bcpkix-jdk18on to v1.85 \(8.x\) [\#494](https://github.com/OpenVoxProject/openvox-server/pull/494) ([renovate[bot]](https://github.com/apps/renovate))
 - \[Backport 8.x\] Upgrade concurrent-ruby 1.3.5-\>1.3.7 [\#438](https://github.com/OpenVoxProject/openvox-server/pull/438) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
 - \[Backport 8.x\] Upgrade JRuby 9.4.12.1-\>9.4.15.0 [\#437](https://github.com/OpenVoxProject/openvox-server/pull/437) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
-- \[Backport 8.x\] Consolidate Jackson usage on 2.21.4 [\#398](https://github.com/OpenVoxProject/openvox-server/pull/398) ([Sharpie](https://github.com/Sharpie))
+- Update jackson updates to v2.21.5 \(8.x\) [\#431](https://github.com/OpenVoxProject/openvox-server/pull/431) ([renovate[bot]](https://github.com/apps/renovate))
 
 **Closed issues:**
 
