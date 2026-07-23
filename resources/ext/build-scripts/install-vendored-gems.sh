@@ -20,7 +20,11 @@ install_gems () {
   # Return early if no gems in file.
   [[ "${#gem_list[@]}" -eq 0 ]] && return
 
-  java -cp ext/classpath-jars/*:puppet-server-release.jar:jruby-9k.jar clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
+  # JRuby Gem Install requires the non-FIPS BouncyCastle libraries, and only
+  # the non-FIPS libraries, to be present on the classpath.
+  gem_install_jars=(ext/classpath-jars/{bcpkix,bcprov}-jdk18on-*.jar)
+
+  java -cp "$(IFS=:; echo "${gem_install_jars[*]}"):puppet-server-release.jar" clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
 }
 
 SOURCE="${BASH_SOURCE[0]}"
