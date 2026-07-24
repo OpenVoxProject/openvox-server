@@ -2,7 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
-## [9.0.0-beta1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta1) (2026-07-14)
+## [9.0.0-beta2](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta2) (2026-07-24)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta1...9.0.0-beta2)
+
+**Breaking changes:**
+
+- Update Jruby 10.6.0 to 10.1.1 \(MRI 3.4 -\> 4.0\) [\#525](https://github.com/OpenVoxProject/openvox-server/pull/525) ([renovate[bot]](https://github.com/apps/renovate))
+- Depend on openvox-agent \>=9.0.0~beta1 [\#495](https://github.com/OpenVoxProject/openvox-server/pull/495) ([Sharpie](https://github.com/Sharpie))
+
+**Fixed bugs:**
+
+- Ensure "gem install" works during FIPS builds [\#517](https://github.com/OpenVoxProject/openvox-server/pull/517) ([Sharpie](https://github.com/Sharpie))
+
+**Security fixes:**
+
+- Update dependency org.bouncycastle:bcpkix-jdk18on to v1.85 \(main\) [\#489](https://github.com/OpenVoxProject/openvox-server/pull/489) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Merged pull requests:**
+
+- replace puppetlabs.com docs link with openvoxproject.org [\#519](https://github.com/OpenVoxProject/openvox-server/pull/519) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- Clarify descriptions of FIPS build workflow inputs [\#518](https://github.com/OpenVoxProject/openvox-server/pull/518) ([Sharpie](https://github.com/Sharpie))
+- Add acceptance test coverage for long certnames [\#509](https://github.com/OpenVoxProject/openvox-server/pull/509) ([Sharpie](https://github.com/Sharpie))
+
+## [9.0.0-beta1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta1) (2026-07-15)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.13.0...9.0.0-beta1)
 
@@ -38,7 +61,7 @@ All notable changes to this project will be documented in this file.
 
 - Upgrade concurrent-ruby 1.3.5-\>1.3.7 [\#435](https://github.com/OpenVoxProject/openvox-server/pull/435) ([Sharpie](https://github.com/Sharpie))
 - Upgrade JRuby 9.4.12.1-\>9.4.15.0 [\#434](https://github.com/OpenVoxProject/openvox-server/pull/434) ([Sharpie](https://github.com/Sharpie))
-- Consolidate Jackson usage on 2.21.4 [\#395](https://github.com/OpenVoxProject/openvox-server/pull/395) ([Sharpie](https://github.com/Sharpie))
+- Update jackson updates to v2.21.5 \(main\) [\#430](https://github.com/OpenVoxProject/openvox-server/pull/430) ([renovate[bot]](https://github.com/apps/renovate))
 
 **Closed issues:**
 
@@ -51,7 +74,6 @@ All notable changes to this project will be documented in this file.
 - Update acceptance tests for compatibility with latest OpenVox 9 [\#470](https://github.com/OpenVoxProject/openvox-server/pull/470) ([Sharpie](https://github.com/Sharpie))
 - fix regex to accept 3 multi-digit version string [\#469](https://github.com/OpenVoxProject/openvox-server/pull/469) ([corporate-gadfly](https://github.com/corporate-gadfly))
 - ci: enable auto-merge for renovate [\#440](https://github.com/OpenVoxProject/openvox-server/pull/440) ([rwaffen](https://github.com/rwaffen))
-- CI: Drop redundant MRI matrix from RSpec tests [\#427](https://github.com/OpenVoxProject/openvox-server/pull/427) ([silug](https://github.com/silug))
 - renovate: set automergeStrategy [\#425](https://github.com/OpenVoxProject/openvox-server/pull/425) ([bastelfreak](https://github.com/bastelfreak))
 - Explicitly check out main branch during backports [\#379](https://github.com/OpenVoxProject/openvox-server/pull/379) ([Sharpie](https://github.com/Sharpie))
 - Add arm64 support to acceptance [\#374](https://github.com/OpenVoxProject/openvox-server/pull/374) ([jpartlow](https://github.com/jpartlow))
