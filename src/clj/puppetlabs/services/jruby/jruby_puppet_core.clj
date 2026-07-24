@@ -274,6 +274,28 @@
                                                (:max-requests-per-instance jruby-puppet-config)))]
      (create-jruby-config jruby-puppet-config uninitialized-jruby-config agent-shutdown-fn profiler metrics-service))))
 
+(schema/defn initialize-jruby-cli-config :- jruby-schemas/JRubyConfig
+  "Creates JRuby configuration for the \"CLI\" entrypoints. That is:
+
+     puppetserver gem
+     puppetserver irb
+     puppetserver ruby
+
+   This method exists to load up any monkey-patches that may be required
+   to fix issues in the JRuby runtime."
+  [raw-config :- {:jruby-puppet {schema/Keyword schema/Any}
+                  (schema/optional-key :http-client) {schema/Keyword schema/Any}
+                  schema/Keyword schema/Any}]
+  (assoc-in (initialize-and-create-jruby-config raw-config) [:lifecycle :initialize-scripting-container]
+    (fn [scripting-container config]
+      (let [jruby (jruby-core/default-initialize-scripting-container scripting-container config)]
+        (-> ^org.jruby.RubyInstanceConfig jruby
+            (.getRequiredLibraries)
+            ;; Can be dropped when this upstream bug is fixed:
+            ;;   https://github.com/jruby/jruby/issues/9550
+            (.add "puppet/server/patches/resolv_ipv6_normalization"))
+        jruby))))
+
 (def EnvironmentCacheEntry
   "Represents an environment with each cacheable info service as a key.
   The value for each info service is a map that contains a:
