@@ -17,6 +17,12 @@ require 'puppet/server/settings'
 require 'java'
 require 'timeout'
 
+# Fixes regression in Resolv when using IPv6 DNS servers. Can be
+# dropped when the upstream bug is fixed:
+#
+#   https://github.com/jruby/jruby/issues/9550
+require 'puppet/server/patches/resolv_ipv6_normalization'
+
 ##
 ## This class is a bridge between the puppet ruby code and the java interface
 ## `com.puppetlabs.puppetserver.JRubyPuppet`.  The first `include` line in the class

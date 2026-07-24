@@ -5,7 +5,7 @@
 
 (defn gem-run!
   [config args]
-  (let [jruby-config (jruby-puppet-core/initialize-and-create-jruby-config config)]
+  (let [jruby-config (jruby-puppet-core/initialize-jruby-cli-config config)]
     (jruby-core/cli-run! jruby-config "gem" args)))
 
 (defn -main
