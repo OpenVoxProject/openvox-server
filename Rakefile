@@ -185,8 +185,8 @@ namespace :spec do
       PATH='#{TEST_GEMS_DIR}/bin:#{path}' \
       BUNDLE_GEMFILE='#{PUPPET_SRC}/Gemfile' \
       GEM_HOME='#{TEST_GEMS_DIR}' GEM_PATH='#{TEST_GEMS_DIR}' \
-      #{LEIN_PATH} run -m org.jruby.Main \
-        -S bundle install --without extra development packaging --path='#{TEST_BUNDLE_DIR}' --retry=3
+      #{LEIN_PATH} run -m org.jruby.Main --dev \
+        -S bundle install --retry=3
       CMD
       bundle_path = <<-CMD2
       PATH='#{TEST_GEMS_DIR}/bin:#{path}' \
@@ -195,6 +195,14 @@ namespace :spec do
       #{LEIN_PATH} run -m org.jruby.Main --dev \
       -S bundle config set path '#{TEST_BUNDLE_DIR}'
       CMD2
+      bundle_without = <<-CMD2
+      PATH='#{TEST_GEMS_DIR}/bin:#{path}' \
+      BUNDLE_GEMFILE='#{PUPPET_SRC}/Gemfile' \
+      GEM_HOME='#{TEST_GEMS_DIR}' GEM_PATH='#{TEST_GEMS_DIR}' \
+      #{LEIN_PATH} run -m org.jruby.Main --dev \
+      -S bundle config set without extra:development:packaging
+      CMD2
+      sh bundle_without
       sh bundle_path
       sh bundle_install
     end
@@ -211,10 +219,14 @@ task :spec, [:rspec_opts] => ["spec:init"] do |t, args|
   ## Line 4 adds all our Ruby source to the JRuby LOAD_PATH
   ## Line 5 runs our rspec wrapper script
   ## <sarcasm-font>dang ole real easy man</sarcasm-font>
+  ## --dev favors fast startup over peak JIT optimization, which is the
+  ## right trade for a short-lived spec-runner process. The server's own
+  ## JRuby pools default to compile-mode :off (jruby-utils), so this also
+  ## better matches production behavior.
   run_rspec_with_jruby = <<-CMD
     BUNDLE_GEMFILE='#{PUPPET_SRC}/Gemfile' \
     GEM_HOME='#{TEST_GEMS_DIR}' GEM_PATH='#{TEST_GEMS_DIR}' \
-    #{LEIN_PATH} run -m org.jruby.Main \
+    #{LEIN_PATH} run -m org.jruby.Main --dev \
       -I'#{PUPPET_SERVER_RUBY_SPEC}' -I'#{PUPPET_LIB}' -I'#{FACTER_LIB}' -I'#{PUPPET_SERVER_RUBY_SRC}' \
       ./spec/run_specs.rb #{rspec_opts}
   CMD
