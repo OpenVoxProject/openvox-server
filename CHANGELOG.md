@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.15.2](https://github.com/openvoxproject/openvox-server/tree/8.15.2) (2026-07-25)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.1...8.15.2)
+
+**Fixed bugs:**
+
+- \[Bug\]: 8.15.1 JRuby bump \(9.4.12.1 → 9.4.15.0\) breaks DNS resolution from within the server [\#535](https://github.com/OpenVoxProject/openvox-server/issues/535)
+- \[Backport 8.x\] Fix Resolv regression when querying IPv6 DNS servers [\#538](https://github.com/OpenVoxProject/openvox-server/pull/538) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
+**Merged pull requests:**
+
+- CI: dont set path twice & bundle: avoid --without & Drop redundant MRI matrix from rspec-tests [\#533](https://github.com/OpenVoxProject/openvox-server/pull/533) ([bastelfreak](https://github.com/bastelfreak))
+- \[Backport 8.x\] replace puppetlabs.com docs link with openvoxproject.org [\#522](https://github.com/OpenVoxProject/openvox-server/pull/522) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
 ## [8.15.1](https://github.com/openvoxproject/openvox-server/tree/8.15.1) (2026-07-22)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.0...8.15.1)
