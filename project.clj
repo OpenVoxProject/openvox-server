@@ -41,7 +41,7 @@
                          [org.clojure/tools.reader "1.6.0"]
                          [beckon "0.1.1"]
                          [ch.qos.logback.access/logback-access-common "2.0.13"]
-                         [ch.qos.logback.access/logback-access-jetty12 "2.0.13"]
+                         [ch.qos.logback.access/logback-access-jetty12 "2.0.14"]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
                          [cheshire "6.2.0"]
