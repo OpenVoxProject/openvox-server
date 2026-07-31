@@ -181,8 +181,8 @@
   :- (schema/pred ssl-simple/ssl-cert?)
   [ca-cert :- ca/Certificate
    certname :- schema/Str]
-  (let [ca-private-key (ssl-utils/pem->private-key
-                        (str "./target/server-conf/ca/ca_key.pem"))
+   (let [ca-private-key (ssl-utils/pem->private-key
+                         "./target/server-conf/ca/ca_key.pem")
         ca-dn (-> ca-cert
                   (.getSubjectX500Principal)
                   (.getName))
