@@ -169,7 +169,7 @@
           app
           (service-and-deps-with-mock-jruby config)
           config
-          (is (logged? #"Not overriding webserver settings with values from core Puppet"))))))
+          (is (logged? #"Not overriding webserver settings with values from core OpenVox"))))))
 
     (testing "webserver settings not overridden when single webserver is provided and full ssl cert configuration is available"
       (let [config (assoc required-config :webserver webserver-config)]
@@ -178,4 +178,4 @@
           app
           (service-and-deps-with-mock-jruby config)
           config
-          (is (logged? #"Not overriding webserver settings with values from core Puppet"))))))))
+          (is (logged? #"Not overriding webserver settings with values from core OpenVox"))))))))

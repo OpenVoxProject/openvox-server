@@ -119,7 +119,7 @@ developer, you should definitely check it out!
 
 [JRuby](http://jruby.org/) is an implementation of the Ruby programming language
 that runs on the JVM. It's a fantastic project, and the bridge that allows us to
-run Puppet Ruby code while taking advantage of the JVM's advanced features and
+run OpenVox Ruby code while taking advantage of the JVM's advanced features and
 libraries. We're very grateful to the developers for building such a great
 product and for helping us work through a few bugs that we've discovered along
 the way.

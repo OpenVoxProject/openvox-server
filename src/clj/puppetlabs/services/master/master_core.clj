@@ -249,7 +249,7 @@
   ;; used at the time this code was written (9.2.10), however, did not have this
   ;; logic to strip the "--gzip" characters from the incoming header.  This
   ;; function compensates for that by stripping the characters here - before
-  ;; other Puppet Server code would use it. When/if Puppet Server is upgraded to
+  ;; other OpenVox Server code would use it. When/if OpenVox Server is upgraded to
   ;; a version of trapperkeeper-webserver-jetty9 which is based on Jetty 9.3.x
   ;; or newer, it may be safe to take out the line that removes the '--gzip'
   ;; characters.
@@ -353,7 +353,7 @@
         file-id (:name file-data)
         size (fs/size file)
         sha256 (ks/file->sha256 (io/file file))
-        ;; we trust the file path from Puppet, so extract the relative path info from the file
+        ;; we trust the file path from OpenVox, so extract the relative path info from the file
         [module-root module-name mount relative-path] (task-file-uri-components file-id file)
         static-path (str/join "/" [module-root module-name mount relative-path])
         uri (try
@@ -841,7 +841,7 @@
 
 (schema/defn ^:always-validate valid-static-file-path?
   "Helper function to decide if a static_file_content path is valid.
-  The access here is designed to mimic Puppet's file_content endpoint."
+  The access here is designed to mimic OpenVox's file_content endpoint."
   [path :- schema/Str]
   ;; Here, keywords represent a single element in the path. Anything between two '/' counts.
   ;; The second vector takes anything else that might be on the end of the path.
@@ -1200,7 +1200,7 @@
         (throw (Error.
                 (format "%s %s %s"
                         (i18n/trs "Not enough available RAM ({0}MB) to safely accommodate the configured JVM heap size of {1}MB." (int (/ mem-size 1024.0)) (int (/ heap-size 1024.0)))
-                        (i18n/trs "Puppet Server requires at least {0}MB of available RAM given this heap size, computed as 1.1 * max heap (-Xmx)." (int (/ required-mem-size 1024.0)))
+                        (i18n/trs "OpenVox Server requires at least {0}MB of available RAM given this heap size, computed as 1.1 * max heap (-Xmx)." (int (/ required-mem-size 1024.0)))
                         (i18n/trs "Either increase available memory or decrease the configured heap size by reducing the -Xms and -Xmx values in JAVA_ARGS in /etc/sysconfig/puppetserver on EL systems or /etc/default/puppetserver on Debian systems."))))))))
 
 (defn register-gauge!

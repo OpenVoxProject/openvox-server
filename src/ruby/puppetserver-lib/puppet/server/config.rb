@@ -83,7 +83,7 @@ class Puppet::Server::Config
     if File.exist?(PUPPET_KEYSTORE_LOCATION)
       associate_entries(truststore, PUPPET_KEYSTORE_LOCATION)
     else
-      Puppet.warning("Could not find Puppet-vendored keystore at '#{PUPPET_KEYSTORE_LOCATION}'")
+      Puppet.warning("Could not find OpenVox-vendored keystore at '#{PUPPET_KEYSTORE_LOCATION}'")
     end
 
     if additional_store_location = Puppet[:ssl_trust_store]

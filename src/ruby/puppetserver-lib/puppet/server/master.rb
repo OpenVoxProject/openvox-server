@@ -43,7 +43,7 @@ class Puppet::Server::Master
     multithreaded = puppet_server_config.delete('multithreaded')
     Puppet::Server::Config.initialize_puppet_server(puppet_server_config)
     Puppet::Server::PuppetConfig.initialize_puppet(puppet_config: puppet_config)
-    # Tell Puppet's network layer which routes we are willing to handle - which is
+    # Tell OpenVox's network layer which routes we are willing to handle - which is
     # the server routes, not the CA routes.
     # There are SERVER variants of this constant in Puppet > 7.4, but we should
     # continue to use this one until Puppet 8 for backwards compatibility.

@@ -13,7 +13,7 @@ class Puppet::Server::PuppetConfig
 
   # Configure the Puppet.settings object
   # @param puppet_config [Hash] Hash of puppet settings
-  # @param require_config [Boolean] controls loading of Puppet configuration files
+  # @param require_config [Boolean] controls loading of OpenVox configuration files
   # @param push_global_settings [Boolean] controls push to global context after settings object initialization
   # @return [void]
   def self.initialize_puppet_settings(puppet_config:, require_config:, push_settings_globally:)
@@ -73,7 +73,7 @@ class Puppet::Server::PuppetConfig
 
   # This `initialize_puppet` method should only run during the initialization
   # of the Puppet::Server::Master class. Beyond the Puppet.settings configuration,
-  # it configures additional state for Puppet to begin compilations.
+  # it configures additional state for OpenVox to begin compilations.
   def self.initialize_puppet(puppet_config:)
     initialize_puppet_settings(puppet_config: puppet_config,
                                require_config: true,
@@ -81,7 +81,7 @@ class Puppet::Server::PuppetConfig
 
     Puppet::ApplicationSupport.push_application_context(Puppet::Util::RunMode[:server])
 
-    # Puppet's https machinery expects to find an object at
+    # OpenVox's https machinery expects to find an object at
     # `Puppet.lookup(:ssl_context)` which it will then use as an input
     # to the Verifier, which is passed to the client. We ignore these
     # values when passed to our https client and manage our SSLContext
@@ -96,7 +96,7 @@ class Puppet::Server::PuppetConfig
     end
 
     # We have now added support for setting "settings_catalog" to false in the puppet.conf.
-    # We should default to not applying the settings catalog and remove this line in Puppet 9.
+    # We should default to not applying the settings catalog and remove this line in OpenVox 9.
     Puppet.settings.use :main, :server, :ssl, :metrics
 
     if Puppet::Indirector::Indirection.method_defined?(:set_global_setting)

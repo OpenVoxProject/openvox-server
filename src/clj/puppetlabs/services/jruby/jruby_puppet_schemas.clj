@@ -9,26 +9,26 @@
 
   The keys should have the following values:
 
-    * :server-conf-dir - file path to Puppet Server's conf dir;
+    * :server-conf-dir - file path to OpenVox Server's conf dir;
         if not specified, will use the puppet default.
 
-    * :server-code-dir - file path to Puppet Server's code dir;
+    * :server-code-dir - file path to OpenVox Server's code dir;
         if not specified, will use the puppet default.
 
-    * :server-var-dir - path to the Puppet Server's var dir;
+    * :server-var-dir - path to the OpenVox Server's var dir;
         if not specified, will use the puppet default.
 
-    * :server-run-dir - path to the Puppet Server's run dir;
+    * :server-run-dir - path to the OpenVox Server's run dir;
         if not specified, will use the puppet default.
 
-    * :server-log-dir - path to the Puppet Server's log dir;
+    * :server-log-dir - path to the OpenVox Server's log dir;
         if not specified, will use the puppet default.
 
     * :track-lookups - a boolean to turn on tracking hiera lookups during compilation;
         if not specified, no tracking is enabled.
 
-    * :disable-i18n - a boolean to pass to Puppet to control whether or not to translate;
-        if not specified or false, the flag is not passed to Puppet's initialization.
+    * :disable-i18n - a boolean to pass to OpenVox to control whether or not to translate;
+        if not specified or false, the flag is not passed to OpenVox's initialization.
 
     * :http-client-ssl-protocols - A list of legal SSL protocols that may be used
         when https client requests are made.

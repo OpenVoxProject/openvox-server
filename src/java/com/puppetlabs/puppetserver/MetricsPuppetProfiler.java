@@ -165,9 +165,9 @@ public class MetricsPuppetProfiler implements PuppetProfiler {
             return false;
         }
         if ((metric_id.length > 0) && (metric_id[0].equals("http"))) {
-            // Puppet contains some metrics that are intended to time http requests.  We have
+            // OpenVox contains some metrics that are intended to time http requests.  We have
             // more comprehensive metrics for this in our ring middleware, so we skip the
-            // ones from Puppet.
+            // ones from OpenVox.
             return false;
         }
         return true;

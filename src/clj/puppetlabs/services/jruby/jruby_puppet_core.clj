@@ -74,7 +74,7 @@
 
 (schema/defn ^:always-validate config->puppet-config :- HashMap
   "Given the raw jruby-puppet configuration section, return a
-  HashMap with the configuration necessary for ruby Puppet."
+  HashMap with the configuration necessary for ruby OpenVox."
   [config :- jruby-puppet-schemas/JRubyPuppetConfig]
   (let [puppet-config (new HashMap)]
     (doseq [[setting-name dir] [[:server-conf-dir "confdir"]
