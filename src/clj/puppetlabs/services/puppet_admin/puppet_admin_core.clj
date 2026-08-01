@@ -101,7 +101,7 @@
 
 (schema/defn ^:always-validate config->puppet-admin-settings
   :- (schema/maybe PuppetAdminSettings)
-  "Given the full Puppet Server config map, extract and return the Puppet
+  "Given the full OpenVox Server config map, extract and return the Puppet
   Admin web service settings."
   [config]
   (:puppet-admin config))

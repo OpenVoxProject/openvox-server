@@ -711,10 +711,10 @@
                                                 facts.to_json")
                response (http-put "/puppet/v3/facts/puppet.node.test?environment=production" facts)]
 
-           (testing "Puppet Server responds to PUT requests for /puppet/v3/facts"
+           (testing "OpenVox Server responds to PUT requests for /puppet/v3/facts"
              (is (= 200 (:status response))))
 
-           (testing "Puppet Server saves facts to the configured facts terminus"
+           (testing "OpenVox Server saves facts to the configured facts terminus"
              ;; Ensure the test is configured properly
              (is (= "yaml" (.runScriptlet container "Puppet::Node::Facts.indirection.terminus_class")))
              (let [stored-facts (-> (.runScriptlet container "facts = Puppet::Node::Facts.indirection.find('puppet.node.test')

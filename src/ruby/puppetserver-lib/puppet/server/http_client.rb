@@ -41,7 +41,7 @@ class Puppet::Server::HttpClient < Puppet::HTTP::Client
   end
 
   def initialize(options = {})
-    # NOTE: Unlike Puppet's HTTP client implementation, the Java HttpAsyncClient
+    # NOTE: Unlike OpenVox's HTTP client implementation, the Java HttpAsyncClient
     # does not support retries in the version we are using, so the `retry_limit`
     # option will be ignored if passed.
     #

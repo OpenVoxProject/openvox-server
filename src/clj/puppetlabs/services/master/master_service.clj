@@ -209,7 +209,7 @@
   (start
     [this context]
     (signal-ready! (tk-services/service-id this))
-    (log/info (i18n/trs "Puppet Server has successfully started and is now ready to handle requests"))
+    (log/info (i18n/trs "OpenVox Server has successfully started and is now ready to handle requests"))
     context)
 
   (add-metric-ids-to-http-client-metrics-list!

@@ -3,7 +3,7 @@
 (defprotocol PuppetServerConfigService
   "The configuration service for puppetserver.  This is built on top of
   Trapperkeeper's normal configuration service.  It adds a few features -
-  most importantly, it merges in settings from the Puppet's 'settings' in ruby.
+  most importantly, it merges in settings from OpenVox's 'settings' in ruby.
 
   It also adds a set of required configuration values and validates them
   during service initialization.

@@ -175,7 +175,7 @@
 
 (deftest cert-info-in-headers
   (testing
-    "In the case where Puppet Server is running under HTTP with an upstream HTTPS
+    "In the case where OpenVox Server is running under HTTP with an upstream HTTPS
     terminator, the cert's CN, cert, and authenticated status will be provided as
     HTTP headers.  If cert info is not provided in the headers but is available
     via SSL, the SSL info will be used."

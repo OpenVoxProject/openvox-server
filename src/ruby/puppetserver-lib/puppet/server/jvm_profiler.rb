@@ -1,6 +1,6 @@
 require 'java'
 
-# A wrapper class that implements Puppet's profiler API by passing calls
+# A wrapper class that implements OpenVox's profiler API by passing calls
 # through to a Java/JVM-based implementation.
 module Puppet
   module Server

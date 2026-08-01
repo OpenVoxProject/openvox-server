@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'puppet/server/puppet_config'
 
 describe 'Puppet::Server::PuppetConfig' do
-  context "initializing Puppet Server" do
+  context "initializing OpenVox Server" do
     context "setting the Puppet log level from logback" do
       let(:logger) do
         double("Logger", isDebugEnabled: false, isInfoEnabled: true, isWarnEnabled: false, isErrorEnabled: false)

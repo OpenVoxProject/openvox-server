@@ -46,7 +46,7 @@ describe Puppet::Server::Config do
       Puppet[:ssl_trust_store] = "spec/fixtures/foo.pem"
       allow(File).to receive(:exist?).and_return(false)
 
-      expect(Puppet).to receive(:warning).with(/Could not find Puppet-vendored keystore/)
+      expect(Puppet).to receive(:warning).with(/Could not find OpenVox-vendored keystore/)
       expect(Puppet).to receive(:warning).with(/The 'ssl_trust_store' setting does not refer to a file/)
 
       Puppet::Server::Config.puppet_and_system_ssl_context

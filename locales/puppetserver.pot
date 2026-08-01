@@ -7,7 +7,6 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: puppetlabs.puppetserver \n"
-"X-Git-Ref: 6efb46b8c2a4a58988e2ed260a1243495df48272\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -21,8 +20,8 @@ msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
 msgid ""
-"Detected ca-ttl setting in CA config which will take precedence over puppet."
-"conf setting"
+"Detected ca-ttl setting in CA config which will take precedence over "
+"puppet.conf setting"
 msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
@@ -127,7 +126,7 @@ msgid ""
 msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
-msgid "Failed to find certificate for Puppet Infrastructure Node: {0}"
+msgid "Failed to find certificate for OpenVox Infrastructure Node: {0}"
 msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
@@ -239,7 +238,7 @@ msgid "Recent changes to the CRL may not have taken effect."
 msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
-msgid "To load the updated CRL, reload or restart the Puppet Server service."
+msgid "To load the updated CRL, reload or restart the OpenVox Server service."
 msgstr ""
 
 #: src/clj/puppetlabs/puppetserver/certificate_authority.clj
@@ -556,44 +555,6 @@ msgstr ""
 msgid "Access to {0} rejected; no client certificate found"
 msgstr ""
 
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "Running dropsonde"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "dropsonde run complete"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "Failed while running dropsonde"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "Failed to check for product updates"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "Not checking for updates - opt-out setting exists"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid ""
-"Puppet Server Update Service has successfully started and will run in the "
-"background"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/analytics_service.clj
-msgid "Puppet Server Update Service shutting down"
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/dropsonde.clj
-msgid "Successfully submitted module metrics via Dropsonde."
-msgstr ""
-
-#: src/clj/puppetlabs/services/analytics/dropsonde.clj
-msgid "Failed to submit module metrics via Dropsonde. Error: {0}"
-msgstr ""
-
 #: src/clj/puppetlabs/services/ca/certificate_authority_core.clj
 msgid "Could not find certificate {0}"
 msgstr ""
@@ -724,15 +685,15 @@ msgid ""
 msgstr ""
 
 #: src/clj/puppetlabs/services/config/puppet_server_config_core.clj
-msgid "Not overriding webserver settings with values from core Puppet"
+msgid "Not overriding webserver settings with values from core OpenVox"
 msgstr ""
 
 #: src/clj/puppetlabs/services/config/puppet_server_config_core.clj
-msgid "Initializing webserver settings from core Puppet"
+msgid "Initializing webserver settings from core OpenVox"
 msgstr ""
 
 #: src/clj/puppetlabs/services/config/puppet_server_config_service.clj
-msgid "Initializing with the following settings from core Puppet:"
+msgid "Initializing with the following settings from core OpenVox:"
 msgstr ""
 
 #: src/clj/puppetlabs/services/jruby/jruby_metrics_core.clj
@@ -889,8 +850,8 @@ msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_core.clj
 msgid ""
-"Puppet Server requires at least {0}MB of available RAM given this heap size, "
-"computed as 1.1 * max heap (-Xmx)."
+"OpenVox Server requires at least {0}MB of available RAM given this heap "
+"size, computed as 1.1 * max heap (-Xmx)."
 msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_core.clj
@@ -905,11 +866,11 @@ msgid "Route not found for service {0}"
 msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_service.clj
-msgid "JDK {0} is neither tested nor supported. Please use JDK 11 or 17"
+msgid "JDK {0} is neither tested nor supported. Please use JDK 21 or 25"
 msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_service.clj
-msgid "JDK {0} is deprecated, please upgrade to JDK 11 or 17"
+msgid "JDK {0} is deprecated, please upgrade to JDK 21 or 25"
 msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_service.clj
@@ -922,7 +883,7 @@ msgstr ""
 
 #: src/clj/puppetlabs/services/master/master_service.clj
 msgid ""
-"Puppet Server has successfully started and is now ready to handle requests"
+"OpenVox Server has successfully started and is now ready to handle requests"
 msgstr ""
 
 #: src/clj/puppetlabs/services/puppet_admin/puppet_admin_service.clj

@@ -196,7 +196,7 @@
      certname
      ca-map
      1000
-     ;; Set this artificially lower than default 4K that Puppet Server uses
+     ;; Set this artificially lower than default 4K that OpenVox Server uses
      ;; just to make it a bit faster.  Key size is presumed not to matter
      ;; for the core functionality in any tests that use this.
      {:keylength 1024})))

@@ -29,7 +29,7 @@
     :certdir
     :certname
     :cert-inventory
-    :codedir ; This is not actually needed in Puppet Server, but it's needed in PE (file sync)
+    :codedir ; This is not actually needed in OpenVox Server, but is kept for compatibility (upstream file sync used it)
     :csrdir
     :csr-attributes
     :dns-alt-names
@@ -58,9 +58,9 @@
 
 (defn get-puppet-config-value
   "For a given keyword `k`, returns the configuration value (setting) from
-  JRubyPuppet.  Returns `nil` if Puppet does not have a setting for the given
+  JRubyPuppet.  Returns `nil` if OpenVox does not have a setting for the given
   key.  The keyword will be converted into the appropriate format before it is
-  passed to Puppet - for example, if you want the value of Puppet's
+  passed to OpenVox - for example, if you want the value of OpenVox's
   'autoflush' setting, pass in `:autoflush`."
   [jruby-puppet k]
   {:pre [(keyword? k)]}
@@ -77,7 +77,7 @@
 ;; Schemas
 
 (def Config
-  "Represents valid configuration data from Puppet.  Ensures that
+  "Represents valid configuration data from OpenVox.  Ensures that
     * all config keys are present in the map,
       and there is a non-nil value for each key.
     * :puppet-version is present."
@@ -117,7 +117,7 @@
                    :ssl-ca-cert  localcacert
                    :ssl-crl-path hostcrl}]
     (if (some #((key %) webserver-settings) overrides)
-      (log/info (i18n/trs "Not overriding webserver settings with values from core Puppet"))
+      (log/info (i18n/trs "Not overriding webserver settings with values from core OpenVox"))
       (do
-        (log/info (i18n/trs "Initializing webserver settings from core Puppet"))
+        (log/info (i18n/trs "Initializing webserver settings from core OpenVox"))
         (override-webserver-settings! overrides)))))

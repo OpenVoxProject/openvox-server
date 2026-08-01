@@ -24,7 +24,7 @@
   "x-client-cert")
 
 (defn unmunge-http-header-name
-  "Given the value of a Puppet setting which contains a munged HTTP header name,
+  "Given the value of an OpenVox setting which contains a munged HTTP header name,
   convert it to the actual header name in all lower-case."
   [setting]
   (->> (string/split setting #"_")
@@ -33,7 +33,7 @@
        string/lower-case))
 
 (defn config->request-handler-settings
-  "Given an entire Puppet Server configuration map, return only those keys
+  "Given an entire OpenVox Server configuration map, return only those keys
   which are required by the request handler service."
   [{:keys [puppetserver master]}]
   {:allow-header-cert-info   (true? (:allow-header-cert-info master))
@@ -209,7 +209,7 @@
         JRuby, so I don't think there's any way around this.
       * It also extracts the client DN and certificate and includes that
         in the map it returns, because it's needed by the ruby layer.  It is
-        possible that the HTTPS termination has happened external to Puppet
+        possible that the HTTPS termination has happened external to OpenVox
         Server.  If so, then the DN, authentication status, and, optionally, the
         certificate will be provided by HTTP headers."
   [config request]

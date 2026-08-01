@@ -11,7 +11,7 @@ expected_messages = {
   / DEBUG .*Debug logging enabled/ => "Debug logging isn't enabled",
   /Initializing the JRuby service/ => "JRuby didn't initialize",
   /Starting web server/ => "Expected web server to start",
-  /Puppet Server has successfully started and is now ready to handle requests/ => "puppetserver never finished starting",
+  /OpenVox Server has successfully started and is now ready to handle requests/ => "puppetserver never finished starting",
   /Beginning shutdown sequence/ => "Test ended without puppetserver triggering shutdown"
 }
 
