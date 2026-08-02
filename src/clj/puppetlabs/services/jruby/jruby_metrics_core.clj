@@ -8,7 +8,7 @@
             [puppetlabs.comidi :as comidi]
             [puppetlabs.i18n.core :refer [trs]]
             [puppetlabs.services.protocols.jruby-puppet :as jruby-protocol])
-  (:import (com.codahale.metrics MetricRegistry Gauge Counter Histogram Meter Timer)
+  (:import (io.dropwizard.metrics5 MetricFilter MetricRegistry Gauge Counter Histogram Meter Timer)
            (clojure.lang Atom IFn)
            (java.time ZoneOffset ZonedDateTime)
            (java.time.format DateTimeFormatter)
@@ -201,15 +201,8 @@
 (schema/defn borrow-timers :- java.util.Map
   "Returns a map of borrow timers from JRuby Metrics"
   [{:keys [metric-registry hostname]} :- JRubyMetrics]
-  (let [metric-namespace (metrics/host-metric-name hostname "jruby.borrow-timer")
-        ;; TODO: v4.0 of Dropwizard Metrics has a MetricFilter/startsWith
-        ;;       static method that returns a filter which can be passed
-        ;;       directly to .getTimers.
-        metric-filter (partial filter (fn [[k _]]
-                                        (str/starts-with? k metric-namespace)))]
-    (->> (.getTimers metric-registry)
-         metric-filter
-         (into {}))))
+  (let [metric-namespace (metrics/host-metric-name hostname "jruby.borrow-timer")]
+    (.getTimers metric-registry (MetricFilter/startsWith metric-namespace))))
 
 (schema/defn summarize-borrow-timers
   "Generates a summary for each JRuby borrow timer
@@ -219,10 +212,11 @@
   [{:keys [hostname] :as metrics} :- JRubyMetrics]
   (let [timer-namespace (metrics/host-metric-name hostname "jruby.borrow-timer")
         get-name (fn [timer-name]
-                   (if (= timer-namespace timer-name)
+                   (let [timer-name (str timer-name)]
+                     (if (= timer-namespace timer-name)
                      "total"
                      (str/replace-first timer-name
-                                        (str timer-namespace ".") "")))
+                                          (str timer-namespace ".") ""))))
         timer-summary (fn [timer]
                         (let [snapshot (.getSnapshot timer)]
                         {:count (.getCount timer)

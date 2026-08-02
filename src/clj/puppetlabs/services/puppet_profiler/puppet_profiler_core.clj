@@ -1,5 +1,5 @@
 (ns puppetlabs.services.puppet-profiler.puppet-profiler-core
-  (:import (com.codahale.metrics MetricRegistry)
+  (:import (io.dropwizard.metrics5 MetricRegistry)
            (com.puppetlabs.puppetserver MetricsPuppetProfiler PuppetProfiler))
   (:require [clojure.string :as str]
             [schema.core :as schema]

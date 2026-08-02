@@ -3,7 +3,7 @@
            (org.slf4j LoggerFactory)
            (ch.qos.logback.classic Logger Level)
            (com.puppetlabs.puppetserver PuppetProfiler)
-           (com.codahale.metrics MetricRegistry Timer))
+           (io.dropwizard.metrics5 MetricRegistry Timer))
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [puppetlabs.services.puppet-profiler.puppet-profiler-core :refer [initialize metrics-profiler v1-status]]
             [puppetlabs.trapperkeeper.testutils.logging :as logutils]
@@ -53,13 +53,14 @@
           (profile profiler "bye" ["compile" "init-environment"])
           (testing "keeps timers for all metrics"
             (let [metrics-map (.getMetrics registry)
+                  metrics-by-name (into {} (map (fn [[k v]] [(str k) v]) metrics-map))
                   expected-metrics ["puppetlabs.localhost.function"
                                     "puppetlabs.localhost.function.hiera-lookup"
                                     "puppetlabs.localhost.compile"
                                     "puppetlabs.localhost.compile.init-environment"]]
               (is (= (set expected-metrics)
-                     (.keySet metrics-map)))
-              (is (every? #(instance? Timer (.get metrics-map %)) expected-metrics)))))))))
+                     (set (map str (.keySet metrics-map)))))
+              (is (every? #(instance? Timer (get metrics-by-name %)) expected-metrics)))))))))
 
 (deftest test-profiler-via-ruby
   (let [sc      (jruby-internal/create-scripting-container
@@ -76,7 +77,7 @@
 
                      require 'java'
                      java_import com.puppetlabs.puppetserver.MetricsPuppetProfiler
-                     java_import com.codahale.metrics.MetricRegistry
+                     java_import io.dropwizard.metrics5.MetricRegistry
 
                      registry = MetricRegistry.new
                      profiler = MetricsPuppetProfiler.new('testhost', registry)
@@ -89,7 +90,7 @@
         (is (= #{"puppetlabs.testhost.foo"
                  "puppetlabs.testhost.foo.bar"
                  "puppetlabs.testhost.foo.bar.baz"}
-               (into #{} (.getNames registry)))))
+               (into #{} (map str (.getNames registry))))))
       (finally
         (.terminate sc)))))
 

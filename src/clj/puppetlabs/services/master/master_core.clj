@@ -25,7 +25,7 @@
             [schema.core :as schema]
             [slingshot.slingshot :refer [throw+ try+]])
   (:import (clojure.lang IFn)
-           (com.codahale.metrics Gauge MetricRegistry)
+           (io.dropwizard.metrics5 Gauge MetricRegistry)
            (com.fasterxml.jackson.core JsonParseException)
            (java.io FileInputStream)
            (java.lang.management ManagementFactory)
@@ -1205,10 +1205,10 @@
 
 (defn register-gauge!
   [registry hostname metric-name metric-fn]
-  (.register registry (metrics/host-metric-name hostname metric-name)
-             (proxy [Gauge] []
-               (getValue []
-                 (metric-fn)))))
+  (.registerGauge registry (metrics/host-metric-name hostname metric-name)
+                  (proxy [Gauge] []
+                    (getValue []
+                      (metric-fn)))))
 
 (schema/defn register-jvm-metrics!
   [registry :- MetricRegistry

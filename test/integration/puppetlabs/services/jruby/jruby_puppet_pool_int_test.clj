@@ -32,7 +32,7 @@
             [puppetlabs.trapperkeeper.services.protocols.metrics :as metrics-protocol]
             [puppetlabs.trapperkeeper.testutils.bootstrap :as tk-testutils]
             [puppetlabs.trapperkeeper.testutils.logging :as logutils])
-  (:import (com.codahale.metrics MetricRegistry)
+  (:import (io.dropwizard.metrics5 MetricRegistry)
            (java.io ByteArrayOutputStream)
            (org.jruby RubyInstanceConfig$CompileMode RubyInstanceConfig$ProfilingMode)
            (org.jruby.embed EvalFailedException)))

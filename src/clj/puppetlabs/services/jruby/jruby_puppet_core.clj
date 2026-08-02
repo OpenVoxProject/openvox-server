@@ -12,7 +12,7 @@
   (:import (com.puppetlabs.puppetserver PuppetProfiler JRubyPuppet)
            (clojure.lang IFn)
            (java.util HashMap)
-           (com.codahale.metrics MetricRegistry)))
+           (io.dropwizard.metrics5 MetricRegistry)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Constants
