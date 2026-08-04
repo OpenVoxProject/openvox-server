@@ -139,14 +139,26 @@ with_puppet_running_on(master, {}) do
   end
 
   step 'file_bucket_file endpoint' do
-    # We'd actually need to store a file in the filebucket in order to get
-    # back a 200, but we know that a 500 means we got past authorization
-    curl_authenticated('/puppet/v3/file_bucket_file/md5/123?environment=production') do |stdout|
-      assert_allowed(stdout, 500)
+    # Well-formed sha256 checksum for content that was never stored.
+    sum = 'a' * 64
+    bucket_path = "/puppet/v3/file_bucket_file/sha256/#{sum}?environment=production"
+
+    # Agents are allowed 'head' so they can test whether content is already
+    # stored before uploading it.  We'd actually need to store a file in the
+    # filebucket in order to get back a 200, but we know that a 404 means we got
+    # past authorization.
+    curl_authenticated("#{bucket_path} --head") do |stdout|
+      assert_allowed(stdout, 404)
     end
 
-    curl_unauthenticated('/puppet/v3/file_bucket_file/md5/123?environment=production') do |stdout|
-      assert_denied(stdout, /\/puppet\/v3\/file_bucket_file\/md5\/123 \(method :get\)/)
+    # Reading content back out is restricted to certificates carrying the
+    # pp_cli_auth extension, which an ordinary agent certificate does not have.
+    curl_authenticated(bucket_path) do |stdout|
+      assert_denied(stdout, /\/puppet\/v3\/file_bucket_file\/sha256\/#{sum} \(method :get\)/)
+    end
+
+    curl_unauthenticated(bucket_path) do |stdout|
+      assert_denied(stdout, /\/puppet\/v3\/file_bucket_file\/sha256\/#{sum} \(method :get\)/)
     end
   end
 
