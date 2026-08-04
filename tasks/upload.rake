@@ -40,9 +40,12 @@ namespace :vox do
     # Tarballs use a different version format than RPM/DEB packages.
     # ezbake generates the tarball name from the git tag (e.g. 8.13.0.SNAPSHOT.2026...)
     # while RPM/DEB use the version-release format (e.g. 8.13.0-0.1SNAPSHOT.2026...).
-    # Match tarballs separately by version to cover both formats.
+    # Pre-releases add a tilde suffix to the version here (e.g. 9.0.0~beta1) that the
+    # git-tag tarball name lacks, so match on the base version to cover snapshots and
+    # pre-releases alike.
     unless os
-      tarball_files = Dir.glob("#{__dir__}/../output/openvox-server-#{version}*.tar.gz")
+      base_version = version.split('~').first
+      tarball_files = Dir.glob("#{__dir__}/../output/openvox-server-#{base_version}*.tar.gz")
       files = (files + tarball_files).uniq
     end
 
