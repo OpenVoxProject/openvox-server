@@ -1,0 +1,17 @@
+# Note: changes to this section of the spec may require synchronisation with the
+# install.sh source based installation methodology.
+#
+# Add puppet group
+getent group puppet >/dev/null || groupadd --system --force --gid 52 puppet
+
+# Add puppet user
+if getent passwd puppet > /dev/null; then
+  usermod --gid puppet --home %{_app_data} \
+  --comment "puppetserver daemon" puppet || :
+else
+  useradd_options=('--system' '--gid' 'puppet' '--home' '%{_app_data}' '--shell' "$(which nologin)" '--comment' 'puppetserver daemon')
+  if ! getent passwd 52 > /dev/null; then
+    useradd_options+=('--uid' '52')
+  fi
+  useradd "${useradd_options[@]}" puppet || :
+fi
