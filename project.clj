@@ -163,6 +163,12 @@
                        :puppet-platform-version 9
                        :java-args ~(str "-Xms2g -Xmx2g "
                                      "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")
+                       ;; Default JVM args for one-shot CLI subcommands (gem,
+                       ;; irb, ruby). Limiting JIT tiering favors startup time
+                       ;; over peak optimization, which is the right trade for
+                       ;; short-lived processes. Overridable via JAVA_ARGS_CLI
+                       ;; in the service defaults file.
+                       :java-args-cli "-XX:TieredStopAtLevel=1"
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"
                                      "/opt/puppetlabs/server/data/puppetserver/yaml"]
                        :repo-target "openvox9"
