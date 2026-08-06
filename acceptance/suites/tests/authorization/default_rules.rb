@@ -98,15 +98,14 @@ with_puppet_running_on(master, {}) do
       assert_allowed(stdout)
     end
 
-    # In PE, the master (specifically the orchestrator)
-    # is allowed to make report submissions on behalf of
-    # other nodes
+    # Nodes may submit only their own reports (allow: "$1"); submitting on
+    # behalf of other nodes was a PE orchestrator capability that OpenVox
+    # does not have. Note: this must not be guarded on master.is_pe? --
+    # this suite's beaker options do not set a host type, and beaker's
+    # default type is 'pe', which made is_pe? return true on FOSS hosts
+    # and select the wrong assertion.
     curl_authenticated(report_query('notme')) do |stdout|
-      if master.is_pe?
-        assert_allowed(stdout)
-      else
-        assert_denied(stdout, /\/puppet\/v3\/report\/notme \(method :put\)/)
-      end
+      assert_denied(stdout, /\/puppet\/v3\/report\/notme \(method :put\)/)
     end
 
     curl_unauthenticated(report_query(masterfqdn)) do |stdout|
