@@ -42,11 +42,23 @@ describe Puppet::Server::Config do
       end
     end
 
+    it "falls back to the vendored PEM CA bundle when the keystore is absent" do
+      stub_const('Puppet::Server::Config::PUPPET_KEYSTORE_LOCATION',
+                 'spec/fixtures/does-not-exist')
+      stub_const('Puppet::Server::Config::PUPPET_CA_BUNDLE_LOCATION',
+                 'spec/fixtures/ca-cert.pem')
+
+      expect(Puppet).not_to receive(:warning)
+
+      ssl_context = Puppet::Server::Config.puppet_and_system_ssl_context
+      expect(ssl_context).to be_a_kind_of(Java::JavaxNetSsl::SSLContext)
+    end
+
     it "warns if :ssl_trust_store is set but not readable" do
       Puppet[:ssl_trust_store] = "spec/fixtures/foo.pem"
       allow(File).to receive(:exist?).and_return(false)
 
-      expect(Puppet).to receive(:warning).with(/Could not find OpenVox-vendored keystore/)
+      expect(Puppet).to receive(:warning).with(/Could not find an OpenVox-vendored trust store/)
       expect(Puppet).to receive(:warning).with(/The 'ssl_trust_store' setting does not refer to a file/)
 
       Puppet::Server::Config.puppet_and_system_ssl_context
