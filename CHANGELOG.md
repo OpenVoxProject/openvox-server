@@ -2,13 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [9.0.0-beta2](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta2) (2026-07-25)
+## [9.0.0-beta3](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta3) (2026-08-06)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta2...9.0.0-beta3)
+
+**Breaking changes:**
+
+- Restrict filebucket reads to pp\_cli\_auth certificates [\#549](https://github.com/OpenVoxProject/openvox-server/pull/549) ([silug](https://github.com/silug))
+- drop gettext from jruby gems [\#98](https://github.com/OpenVoxProject/openvox-server/pull/98) ([jcharaoui](https://github.com/jcharaoui))
+
+**Implemented enhancements:**
+
+- openvox-agent: require 9.0.0~beta2 [\#551](https://github.com/OpenVoxProject/openvox-server/pull/551) ([bastelfreak](https://github.com/bastelfreak))
+- Rebrand Puppet Server -\> OpenVox Server in docs and comments [\#544](https://github.com/OpenVoxProject/openvox-server/pull/544) ([silug](https://github.com/silug))
+
+**Fixed bugs:**
+
+- \[Bug\]: '/etc/puppetlabs/puppetserver/conf.d' must exist and must be readable [\#515](https://github.com/OpenVoxProject/openvox-server/issues/515)
+- fix: match pre-release tarballs by base version on upload [\#550](https://github.com/OpenVoxProject/openvox-server/pull/550) ([slauger](https://github.com/slauger))
+
+## [9.0.0-beta2](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta2) (2026-07-27)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta1...9.0.0-beta2)
 
 **Breaking changes:**
 
-- Update Jruby 10.6.0 to 10.1.1 \(MRI 3.4 -\> 4.0\) [\#525](https://github.com/OpenVoxProject/openvox-server/pull/525) ([renovate[bot]](https://github.com/apps/renovate))
+- Update Jruby 10.0.6.0 to 10.1.1.0 \(MRI 3.4 -\> 4.0\) [\#525](https://github.com/OpenVoxProject/openvox-server/pull/525) ([renovate[bot]](https://github.com/apps/renovate))
 - Depend on openvox-agent \>=9.0.0~beta1 [\#495](https://github.com/OpenVoxProject/openvox-server/pull/495) ([Sharpie](https://github.com/Sharpie))
 
 **Fixed bugs:**
@@ -24,7 +43,6 @@ All notable changes to this project will be documented in this file.
 **Merged pull requests:**
 
 - replace puppetlabs.com docs link with openvoxproject.org [\#519](https://github.com/OpenVoxProject/openvox-server/pull/519) ([corporate-gadfly](https://github.com/corporate-gadfly))
-- Clarify descriptions of FIPS build workflow inputs [\#518](https://github.com/OpenVoxProject/openvox-server/pull/518) ([Sharpie](https://github.com/Sharpie))
 - Add acceptance test coverage for long certnames [\#509](https://github.com/OpenVoxProject/openvox-server/pull/509) ([Sharpie](https://github.com/Sharpie))
 
 ## [9.0.0-beta1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta1) (2026-07-15)
