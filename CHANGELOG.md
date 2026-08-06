@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.0.0-beta4](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta4) (2026-08-06)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta3...9.0.0-beta4)
+
+We had a hiccup with our CI system and the 9.0.0-beta3 packages weren't released. In addition, a 9.0.0 release was published to [clojars](https://clojars.org/org.openvoxproject/puppetserver) with the 9.0.0-beta3 changes. 9.0.0-beta4 just republishes the 9.0.0-beta3 changes.
+
 ## [9.0.0-beta3](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta3) (2026-08-06)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta2...9.0.0-beta3)
