@@ -34,6 +34,22 @@ def curl_unauthenticated(path)
   on(master, curl)
 end
 
+# Issue a request with a certificate other than the primary's own.  The
+# primary's certificate carries the pp_cli_auth extension so that its CLI
+# tooling can reach administrative endpoints, which makes it unsuitable for
+# testing rules that gate on that extension.  An ordinary agent certificate
+# does not carry it.
+def curl_with_cert(certname, path, &block)
+  curl = 'curl '
+  curl += "--cert $(puppet config print ssldir)/certs/#{certname}.pem "
+  curl += "--key $(puppet config print ssldir)/private_keys/#{certname}.pem "
+  curl += '--cacert $(puppet config print localcacert) '
+  curl += "--write-out '\\nSTATUSCODE=%{http_code}\\n' "
+  curl += "https://#{master}:8140#{path}"
+  result = on(master, curl)
+  block.call(result.stdout)
+end
+
 def assert_allowed(stdout, expected_statuscode = 200)
   refute_match(/Forbidden request/, stdout)
   assert_match(/STATUSCODE=#{expected_statuscode}/, stdout)
@@ -50,6 +66,27 @@ def report_query(node)
   curl += '-X PUT -H "Content-Type: application/json" '
   curl += '--data "{\"host\":\"' + node
   curl += '\",\"metrics\":{},\"logs\":[],\"resource_statuses\":{}}"'
+end
+
+# An ordinary agent certificate, used to test rules that are gated on the
+# pp_cli_auth extension.  Generated once the server is up, and cleaned up in
+# the teardown below.
+agent_certname = 'filebucket-read-test-agent'
+
+# 'puppetserver ca generate' refuses to run while any key file for the certname
+# is still on disk, so clear them before generating as well as afterwards.  That
+# keeps the test repeatable if an earlier run was interrupted before teardown.
+def revoke_and_remove_cert(certname)
+  on(master, "puppetserver ca clean --certname #{certname}",
+     :accept_all_exit_codes => true)
+  on(master, "rm -f $(puppet config print ssldir)/certs/#{certname}.pem " \
+             "$(puppet config print ssldir)/private_keys/#{certname}.pem " \
+             "$(puppet config print ssldir)/public_keys/#{certname}.pem",
+     :accept_all_exit_codes => true)
+end
+
+teardown do
+  revoke_and_remove_cert(agent_certname)
 end
 
 with_puppet_running_on(master, {}) do
@@ -143,6 +180,9 @@ with_puppet_running_on(master, {}) do
     sum = 'a' * 64
     bucket_path = "/puppet/v3/file_bucket_file/sha256/#{sum}?environment=production"
 
+    revoke_and_remove_cert(agent_certname)
+    on(master, "puppetserver ca generate --certname=#{agent_certname}")
+
     # Agents are allowed 'head' so they can test whether content is already
     # stored before uploading it.  We'd actually need to store a file in the
     # filebucket in order to get back a 200, but we know that a 404 means we got
@@ -151,9 +191,20 @@ with_puppet_running_on(master, {}) do
       assert_allowed(stdout, 404)
     end
 
+    curl_with_cert(agent_certname, "#{bucket_path} --head") do |stdout|
+      assert_allowed(stdout, 404)
+    end
+
     # Reading content back out is restricted to certificates carrying the
-    # pp_cli_auth extension, which an ordinary agent certificate does not have.
+    # pp_cli_auth extension.  The primary's own certificate carries it, so the
+    # request reaches the endpoint and is answered with a 404.
     curl_authenticated(bucket_path) do |stdout|
+      assert_allowed(stdout, 404)
+    end
+
+    # An ordinary agent certificate does not carry pp_cli_auth, so reads are
+    # refused even though the same certificate may store content.
+    curl_with_cert(agent_certname, bucket_path) do |stdout|
       assert_denied(stdout, /\/puppet\/v3\/file_bucket_file\/sha256\/#{sum} \(method :get\)/)
     end
 
