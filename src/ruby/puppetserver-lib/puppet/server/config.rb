@@ -19,6 +19,7 @@ java_import java.security.KeyStore
 
 class Puppet::Server::Config
   PUPPET_KEYSTORE_LOCATION = '/opt/puppetlabs/puppet/ssl/puppet-cacerts'
+  PUPPET_CA_BUNDLE_LOCATION = '/opt/puppetlabs/puppet/ssl/cert.pem'
   CERT_REGEX = /.*-----BEGIN CERTIFICATE-----.*/
 
   def self.initialize_puppet_server(puppet_server_config)
@@ -82,8 +83,16 @@ class Puppet::Server::Config
     truststore = stores['truststore']
     if File.exist?(PUPPET_KEYSTORE_LOCATION)
       associate_entries(truststore, PUPPET_KEYSTORE_LOCATION)
+    elsif File.exist?(PUPPET_CA_BUNDLE_LOCATION)
+      # puppet-runtime stopped shipping the Java keystore form of the
+      # vendored CA bundle (puppet-runtime@066fd48); load the PEM bundle
+      # it still ships instead.
+      SSLUtils.associateCertsFromReader(
+        truststore,
+        'openvox_vendored_ca_bundle',
+        FileReader.new(PUPPET_CA_BUNDLE_LOCATION))
     else
-      Puppet.warning("Could not find OpenVox-vendored keystore at '#{PUPPET_KEYSTORE_LOCATION}'")
+      Puppet.warning("Could not find an OpenVox-vendored trust store at '#{PUPPET_KEYSTORE_LOCATION}' or '#{PUPPET_CA_BUNDLE_LOCATION}'")
     end
 
     if additional_store_location = Puppet[:ssl_trust_store]
