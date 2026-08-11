@@ -95,7 +95,7 @@
                          [org.slf4j/slf4j-api ~slf4j-version]
                          [org.yaml/snakeyaml "2.6"]
                          [pjstadig/humane-test-output "0.11.0"]
-                         [prismatic/schema "1.4.1"]
+                         [prismatic/schema "1.4.2"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
                          [ring/ring-core "1.15.5"]
