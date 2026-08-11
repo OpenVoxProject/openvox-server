@@ -85,7 +85,7 @@
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.6.1"]
                          [org.openvoxproject/trapperkeeper-metrics "2.3.0"]
                          [org.openvoxproject/trapperkeeper-metrics "2.3.0" :classifier "test"]
-                         [org.openvoxproject/trapperkeeper-scheduler "1.4.0"]
+                         [org.openvoxproject/trapperkeeper-scheduler "1.4.1"]
                          [org.openvoxproject/trapperkeeper-status "1.5.0"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.0"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.0" :classifier "test"]
