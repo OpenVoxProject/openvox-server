@@ -1,0 +1,1039 @@
+{
+  "packaging_type" : {
+    "ezbake" : "2.6.3-SNAPSHOT-openvox"
+  },
+  "version" : "a63c3ecd8fde60ef3e37a6c580a9ea5d44b6b1b3",
+  "build_time" : "20250824T184341.846Z",
+  "components" : {
+    "puppetlabs/http-client" : {
+      "version" : "2.1.3",
+      "dependencies" : {
+        "org.apache.httpcomponents/httpasyncclient" : {
+          "version" : "4.1.5",
+          "dependencies" : {
+            "commons-logging" : {
+              "version" : "1.2"
+            },
+            "org.apache.httpcomponents/httpclient" : {
+              "version" : "4.5.13"
+            },
+            "org.apache.httpcomponents/httpcore-nio" : {
+              "version" : "4.4.15"
+            },
+            "org.apache.httpcomponents/httpcore" : {
+              "version" : "4.4.15"
+            }
+          }
+        }
+      }
+    },
+    "liberator" : {
+      "version" : "0.15.2",
+      "dependencies" : {
+        "hiccup" : {
+          "version" : "1.0.5"
+        },
+        "org.clojure/data.csv" : {
+          "version" : "0.1.3"
+        },
+        "org.clojure/data.json" : {
+          "version" : "2.4.0"
+        }
+      }
+    },
+    "org.yaml/snakeyaml" : {
+      "version" : "2.0"
+    },
+    "nrepl" : {
+      "version" : "0.6.0"
+    },
+    "org.apache.httpcomponents/httpcore" : {
+      "version" : "4.4.15"
+    },
+    "org.bouncycastle/bcutil-jdk18on" : {
+      "version" : "1.78.1"
+    },
+    "commons-lang" : {
+      "version" : "2.6"
+    },
+    "prismatic/schema" : {
+      "version" : "1.1.12"
+    },
+    "org.tcrawley/dynapath" : {
+      "version" : "1.1.0"
+    },
+    "puppetlabs/comidi" : {
+      "version" : "1.0.0",
+      "dependencies" : {
+        "bidi" : {
+          "version" : "2.1.3"
+        }
+      }
+    },
+    "puppetlabs/trapperkeeper-scheduler" : {
+      "version" : "1.1.3",
+      "dependencies" : {
+        "org.quartz-scheduler/quartz" : {
+          "version" : "2.3.2",
+          "dependencies" : {
+            "com.mchange/c3p0" : {
+              "version" : "0.9.5.4"
+            },
+            "com.mchange/mchange-commons-java" : {
+              "version" : "0.2.15"
+            },
+            "com.zaxxer/HikariCP-java7" : {
+              "version" : "2.4.13"
+            }
+          }
+        }
+      }
+    },
+    "org.clojure/data.priority-map" : {
+      "version" : "1.1.0"
+    },
+    "org.clojure/tools.namespace" : {
+      "version" : "0.2.11"
+    },
+    "org.clojure/java.jmx" : {
+      "version" : "1.0.0"
+    },
+    "ring/ring-json" : {
+      "version" : "0.5.1"
+    },
+    "net.logstash.logback/logstash-logback-encoder" : {
+      "version" : "7.3",
+      "dependencies" : {
+        "com.fasterxml.jackson.core/jackson-databind" : {
+          "version" : "2.14.0",
+          "dependencies" : {
+            "com.fasterxml.jackson.core/jackson-annotations" : {
+              "version" : "2.14.0"
+            }
+          }
+        }
+      }
+    },
+    "com.fasterxml.jackson.core/jackson-databind" : {
+      "version" : "2.14.0",
+      "dependencies" : {
+        "com.fasterxml.jackson.core/jackson-annotations" : {
+          "version" : "2.14.0"
+        }
+      }
+    },
+    "slingshot" : {
+      "version" : "0.12.2"
+    },
+    "puppetlabs/trapperkeeper-comidi-metrics" : {
+      "version" : "0.1.1"
+    },
+    "org.clojure/core.async" : {
+      "version" : "1.5.648",
+      "dependencies" : {
+        "org.clojure/tools.analyzer.jvm" : {
+          "version" : "1.2.2",
+          "dependencies" : {
+            "org.clojure/core.memoize" : {
+              "version" : "1.0.257",
+              "dependencies" : {
+                "org.clojure/core.cache" : {
+                  "version" : "1.0.225",
+                  "dependencies" : {
+                    "org.clojure/data.priority-map" : {
+                      "version" : "1.1.0"
+                    }
+                  }
+                }
+              }
+            },
+            "org.clojure/tools.analyzer" : {
+              "version" : "1.1.0"
+            },
+            "org.clojure/tools.reader" : {
+              "version" : "1.3.6"
+            }
+          }
+        }
+      }
+    },
+    "org.apache.httpcomponents/httpclient" : {
+      "version" : "4.5.13"
+    },
+    "org.slf4j/slf4j-api" : {
+      "version" : "2.0.7"
+    },
+    "org.clojure/tools.macro" : {
+      "version" : "0.1.5"
+    },
+    "org.clojure/tools.logging" : {
+      "version" : "1.2.4"
+    },
+    "puppetlabs/puppetserver" : {
+      "version" : "8.11.0",
+      "dependencies" : {
+        "puppetlabs/http-client" : {
+          "version" : "2.1.3",
+          "dependencies" : {
+            "org.apache.httpcomponents/httpasyncclient" : {
+              "version" : "4.1.5",
+              "dependencies" : {
+                "commons-logging" : {
+                  "version" : "1.2"
+                },
+                "org.apache.httpcomponents/httpclient" : {
+                  "version" : "4.5.13"
+                },
+                "org.apache.httpcomponents/httpcore-nio" : {
+                  "version" : "4.4.15"
+                },
+                "org.apache.httpcomponents/httpcore" : {
+                  "version" : "4.4.15"
+                }
+              }
+            }
+          }
+        },
+        "liberator" : {
+          "version" : "0.15.2",
+          "dependencies" : {
+            "hiccup" : {
+              "version" : "1.0.5"
+            },
+            "org.clojure/data.csv" : {
+              "version" : "0.1.3"
+            },
+            "org.clojure/data.json" : {
+              "version" : "2.4.0"
+            }
+          }
+        },
+        "org.yaml/snakeyaml" : {
+          "version" : "2.0"
+        },
+        "commons-lang" : {
+          "version" : "2.6"
+        },
+        "puppetlabs/comidi" : {
+          "version" : "1.0.0",
+          "dependencies" : {
+            "bidi" : {
+              "version" : "2.1.3"
+            }
+          }
+        },
+        "puppetlabs/trapperkeeper-scheduler" : {
+          "version" : "1.1.3",
+          "dependencies" : {
+            "org.quartz-scheduler/quartz" : {
+              "version" : "2.3.2",
+              "dependencies" : {
+                "com.mchange/c3p0" : {
+                  "version" : "0.9.5.4"
+                },
+                "com.mchange/mchange-commons-java" : {
+                  "version" : "0.2.15"
+                },
+                "com.zaxxer/HikariCP-java7" : {
+                  "version" : "2.4.13"
+                }
+              }
+            }
+          }
+        },
+        "net.logstash.logback/logstash-logback-encoder" : {
+          "version" : "7.3",
+          "dependencies" : {
+            "com.fasterxml.jackson.core/jackson-databind" : {
+              "version" : "2.14.0",
+              "dependencies" : {
+                "com.fasterxml.jackson.core/jackson-annotations" : {
+                  "version" : "2.14.0"
+                }
+              }
+            }
+          }
+        },
+        "puppetlabs/trapperkeeper-comidi-metrics" : {
+          "version" : "0.1.1"
+        },
+        "puppetlabs/dujour-version-check" : {
+          "version" : "1.0.0"
+        },
+        "commons-io" : {
+          "version" : "2.15.1"
+        },
+        "grimradical/clj-semver" : {
+          "version" : "0.3.0"
+        },
+        "org.apache.commons/commons-exec" : {
+          "version" : "1.4.0"
+        },
+        "puppetlabs/trapperkeeper-filesystem-watcher" : {
+          "version" : "1.2.5"
+        },
+        "puppetlabs/clj-shell-utils" : {
+          "version" : "2.0.1"
+        },
+        "puppetlabs/ssl-utils" : {
+          "version" : "3.5.2",
+          "dependencies" : {
+            "commons-codec" : {
+              "version" : "1.15"
+            }
+          }
+        },
+        "io.dropwizard.metrics/metrics-core" : {
+          "version" : "3.2.2"
+        },
+        "puppetlabs/trapperkeeper-status" : {
+          "version" : "1.2.0",
+          "dependencies" : {
+            "trptcolin/versioneer" : {
+              "version" : "0.2.0"
+            }
+          }
+        },
+        "clj-time" : {
+          "version" : "0.11.0",
+          "dependencies" : {
+            "joda-time" : {
+              "version" : "2.12.5"
+            }
+          }
+        },
+        "puppetlabs/rbac-client" : {
+          "version" : "1.1.5",
+          "dependencies" : {
+            "ring/ring-json" : {
+              "version" : "0.5.1"
+            }
+          }
+        },
+        "puppetlabs/trapperkeeper-authorization" : {
+          "version" : "2.0.1"
+        }
+      }
+    },
+    "clj-commons/fs" : {
+      "version" : "1.6.307",
+      "dependencies" : {
+        "org.apache.commons/commons-compress" : {
+          "version" : "1.26.0",
+          "dependencies" : {
+            "org.apache.commons/commons-lang3" : {
+              "version" : "3.14.0"
+            }
+          }
+        },
+        "org.tukaani/xz" : {
+          "version" : "1.8"
+        }
+      }
+    },
+    "puppetlabs/trapperkeeper" : {
+      "version" : "4.0.2"
+    },
+    "ring/ring-servlet" : {
+      "version" : "1.8.2"
+    },
+    "org.bouncycastle/bcpkix-jdk18on" : {
+      "version" : "1.78.1",
+      "dependencies" : {
+        "org.bouncycastle/bcprov-jdk18on" : {
+          "version" : "1.78.1"
+        },
+        "org.bouncycastle/bcutil-jdk18on" : {
+          "version" : "1.78.1"
+        }
+      }
+    },
+    "puppetlabs/dujour-version-check" : {
+      "version" : "1.0.0"
+    },
+    "org.codehaus.janino/janino" : {
+      "version" : "3.0.8",
+      "dependencies" : {
+        "org.codehaus.janino/commons-compiler" : {
+          "version" : "3.0.8"
+        }
+      }
+    },
+    "org.clojure/tools.reader" : {
+      "version" : "1.3.6"
+    },
+    "ring/ring-core" : {
+      "version" : "1.8.2",
+      "dependencies" : {
+        "commons-fileupload" : {
+          "version" : "1.4"
+        },
+        "crypto-equality" : {
+          "version" : "1.0.0"
+        },
+        "crypto-random" : {
+          "version" : "1.2.0"
+        }
+      }
+    },
+    "commons-io" : {
+      "version" : "2.15.1"
+    },
+    "puppetlabs/ring-middleware" : {
+      "version" : "2.0.4"
+    },
+    "commons-logging" : {
+      "version" : "1.2"
+    },
+    "org.apache.commons/commons-exec" : {
+      "version" : "1.4.0"
+    },
+    "puppetlabs/trapperkeeper-filesystem-watcher" : {
+      "version" : "1.2.5"
+    },
+    "puppetlabs/jruby-utils" : {
+      "version" : "5.2.0",
+      "dependencies" : {
+        "prismatic/schema" : {
+          "version" : "1.1.12"
+        },
+        "org.clojure/java.jmx" : {
+          "version" : "1.0.0"
+        },
+        "slingshot" : {
+          "version" : "0.12.2"
+        },
+        "org.clojure/tools.logging" : {
+          "version" : "1.2.4"
+        },
+        "clj-commons/fs" : {
+          "version" : "1.6.307",
+          "dependencies" : {
+            "org.apache.commons/commons-compress" : {
+              "version" : "1.26.0",
+              "dependencies" : {
+                "org.apache.commons/commons-lang3" : {
+                  "version" : "3.14.0"
+                }
+              }
+            },
+            "org.tukaani/xz" : {
+              "version" : "1.8"
+            }
+          }
+        },
+        "puppetlabs/trapperkeeper" : {
+          "version" : "4.0.2",
+          "dependencies" : {
+            "nrepl" : {
+              "version" : "0.6.0"
+            },
+            "org.clojure/core.async" : {
+              "version" : "1.5.648",
+              "dependencies" : {
+                "org.clojure/tools.analyzer.jvm" : {
+                  "version" : "1.2.2",
+                  "dependencies" : {
+                    "org.clojure/core.memoize" : {
+                      "version" : "1.0.257",
+                      "dependencies" : {
+                        "org.clojure/core.cache" : {
+                          "version" : "1.0.225",
+                          "dependencies" : {
+                            "org.clojure/data.priority-map" : {
+                              "version" : "1.1.0"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "org.clojure/tools.analyzer" : {
+                      "version" : "1.1.0"
+                    },
+                    "org.clojure/tools.reader" : {
+                      "version" : "1.3.6"
+                    }
+                  }
+                }
+              }
+            },
+            "org.slf4j/slf4j-api" : {
+              "version" : "2.0.7"
+            },
+            "org.clojure/tools.macro" : {
+              "version" : "0.1.5"
+            },
+            "io.github.clj-kondo/config-slingshot-slingshot" : {
+              "version" : "1.0.0"
+            },
+            "puppetlabs/typesafe-config" : {
+              "version" : "0.2.0",
+              "dependencies" : {
+                "com.typesafe/config" : {
+                  "version" : "1.4.1"
+                }
+              }
+            },
+            "prismatic/plumbing" : {
+              "version" : "0.4.2",
+              "dependencies" : {
+                "de.kotka/lazymap" : {
+                  "version" : "3.1.0"
+                }
+              }
+            },
+            "beckon" : {
+              "version" : "0.1.1"
+            },
+            "org.slf4j/log4j-over-slf4j" : {
+              "version" : "2.0.7"
+            }
+          }
+        },
+        "puppetlabs/ring-middleware" : {
+          "version" : "2.0.4"
+        },
+        "puppetlabs/kitchensink" : {
+          "version" : "3.4.0",
+          "dependencies" : {
+            "digest" : {
+              "version" : "1.4.3"
+            },
+            "org.clojure/tools.cli" : {
+              "version" : "1.0.206"
+            },
+            "org.ini4j/ini4j" : {
+              "version" : "0.5.4"
+            },
+            "org.tcrawley/dynapath" : {
+              "version" : "1.1.0"
+            }
+          }
+        },
+        "puppetlabs/i18n" : {
+          "version" : "0.9.2",
+          "dependencies" : {
+            "cpath-clj" : {
+              "version" : "0.1.2",
+              "dependencies" : {
+                "org.clojure/java.classpath" : {
+                  "version" : "1.0.0"
+                }
+              }
+            },
+            "org.gnu.gettext/libintl" : {
+              "version" : "0.18.3"
+            }
+          }
+        },
+        "puppetlabs/jruby-deps" : {
+          "version" : "9.4.8.0-1",
+          "dependencies" : {
+            "org.jruby/jruby-base" : {
+              "version" : "9.4.8.0",
+              "dependencies" : {
+                "org.jruby/jzlib" : {
+                  "version" : "1.1.5"
+                },
+                "org.jruby/dirgra" : {
+                  "version" : "0.3"
+                },
+                "com.headius/backport9" : {
+                  "version" : "1.13"
+                },
+                "com.github.jnr/jffi" : {
+                  "version" : "1.3.13"
+                },
+                "org.jruby.joni/joni" : {
+                  "version" : "2.2.1"
+                },
+                "org.ow2.asm/asm-commons" : {
+                  "version" : "9.2",
+                  "dependencies" : {
+                    "org.ow2.asm/asm-analysis" : {
+                      "version" : "9.2"
+                    },
+                    "org.ow2.asm/asm-tree" : {
+                      "version" : "9.2"
+                    }
+                  }
+                },
+                "org.ow2.asm/asm" : {
+                  "version" : "9.2"
+                },
+                "com.github.jnr/jnr-netdb" : {
+                  "version" : "1.2.0"
+                },
+                "me.qmx.jitescript/jitescript" : {
+                  "version" : "0.4.1"
+                },
+                "org.ow2.asm/asm-util" : {
+                  "version" : "9.2"
+                },
+                "com.headius/options" : {
+                  "version" : "1.6"
+                },
+                "com.github.jnr/jnr-constants" : {
+                  "version" : "0.10.4"
+                },
+                "com.github.jnr/jnr-enxio" : {
+                  "version" : "0.32.17"
+                },
+                "com.headius/invokebinder" : {
+                  "version" : "1.13"
+                },
+                "com.github.jnr/jnr-ffi" : {
+                  "version" : "2.2.16",
+                  "dependencies" : {
+                    "com.github.jnr/jnr-a64asm" : {
+                      "version" : "1.0.0"
+                    },
+                    "com.github.jnr/jnr-x86asm" : {
+                      "version" : "1.0.2"
+                    }
+                  }
+                },
+                "com.github.jnr/jnr-unixsocket" : {
+                  "version" : "0.38.22"
+                },
+                "org.jruby.jcodings/jcodings" : {
+                  "version" : "1.0.58"
+                },
+                "com.github.jnr/jnr-posix" : {
+                  "version" : "3.1.19"
+                }
+              }
+            },
+            "org.jruby/jruby-stdlib" : {
+              "version" : "9.4.8.0"
+            },
+            "org.snakeyaml/snakeyaml-engine" : {
+              "version" : "2.7"
+            }
+          }
+        }
+      }
+    },
+    "org.clojure/core.cache" : {
+      "version" : "1.0.225",
+      "dependencies" : {
+        "org.clojure/data.priority-map" : {
+          "version" : "1.1.0"
+        }
+      }
+    },
+    "org.apache.httpcomponents/httpasyncclient" : {
+      "version" : "4.1.5",
+      "dependencies" : {
+        "commons-logging" : {
+          "version" : "1.2"
+        },
+        "org.apache.httpcomponents/httpclient" : {
+          "version" : "4.5.13"
+        },
+        "org.apache.httpcomponents/httpcore-nio" : {
+          "version" : "4.4.15"
+        },
+        "org.apache.httpcomponents/httpcore" : {
+          "version" : "4.4.15"
+        }
+      }
+    },
+    "io.dropwizard.metrics/metrics-graphite" : {
+      "version" : "3.2.2"
+    },
+    "cheshire" : {
+      "version" : "5.10.2",
+      "dependencies" : {
+        "com.fasterxml.jackson.core/jackson-core" : {
+          "version" : "2.14.0"
+        },
+        "com.fasterxml.jackson.dataformat/jackson-dataformat-cbor" : {
+          "version" : "2.12.4"
+        },
+        "com.fasterxml.jackson.dataformat/jackson-dataformat-smile" : {
+          "version" : "2.12.4"
+        },
+        "tigris" : {
+          "version" : "0.1.2"
+        }
+      }
+    },
+    "org.clojure/tools.cli" : {
+      "version" : "1.0.206"
+    },
+    "puppetlabs/clj-shell-utils" : {
+      "version" : "2.0.1"
+    },
+    "puppetlabs/typesafe-config" : {
+      "version" : "0.2.0",
+      "dependencies" : {
+        "com.typesafe/config" : {
+          "version" : "1.4.1"
+        }
+      }
+    },
+    "org.slf4j/jul-to-slf4j" : {
+      "version" : "2.0.7"
+    },
+    "org.bouncycastle/bcprov-jdk18on" : {
+      "version" : "1.78.1"
+    },
+    "ring/ring-codec" : {
+      "version" : "1.1.2"
+    },
+    "ch.qos.logback/logback-access" : {
+      "version" : "1.3.14"
+    },
+    "com.puppetlabs/trapperkeeper-webserver-jetty10" : {
+      "version" : "1.0.18",
+      "dependencies" : {
+        "javax.servlet/javax.servlet-api" : {
+          "version" : "4.0.1"
+        },
+        "org.clojure/tools.namespace" : {
+          "version" : "0.2.11"
+        },
+        "org.eclipse.jetty/jetty-servlets" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty/jetty-util" : {
+              "version" : "10.0.20"
+            }
+          }
+        },
+        "puppetlabs/trapperkeeper" : {
+          "version" : "4.0.2"
+        },
+        "ring/ring-servlet" : {
+          "version" : "1.8.2"
+        },
+        "org.codehaus.janino/janino" : {
+          "version" : "3.0.8",
+          "dependencies" : {
+            "org.codehaus.janino/commons-compiler" : {
+              "version" : "3.0.8"
+            }
+          }
+        },
+        "ring/ring-core" : {
+          "version" : "1.8.2",
+          "dependencies" : {
+            "commons-fileupload" : {
+              "version" : "1.4"
+            },
+            "crypto-equality" : {
+              "version" : "1.0.0"
+            },
+            "crypto-random" : {
+              "version" : "1.2.0"
+            }
+          }
+        },
+        "org.eclipse.jetty/jetty-servlet" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty/jetty-security" : {
+              "version" : "10.0.20"
+            }
+          }
+        },
+        "org.flatland/ordered" : {
+          "version" : "1.5.9"
+        },
+        "org.slf4j/jul-to-slf4j" : {
+          "version" : "2.0.7"
+        },
+        "org.eclipse.jetty.websocket/websocket-jetty-server" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty.websocket/websocket-jetty-common" : {
+              "version" : "10.0.20",
+              "dependencies" : {
+                "org.eclipse.jetty.websocket/websocket-core-common" : {
+                  "version" : "10.0.20"
+                }
+              }
+            },
+            "org.eclipse.jetty.websocket/websocket-servlet" : {
+              "version" : "10.0.20",
+              "dependencies" : {
+                "org.eclipse.jetty.websocket/websocket-core-server" : {
+                  "version" : "10.0.20"
+                }
+              }
+            }
+          }
+        },
+        "ring/ring-codec" : {
+          "version" : "1.1.2"
+        },
+        "org.eclipse.jetty.websocket/websocket-jetty-client" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty.websocket/websocket-core-client" : {
+              "version" : "10.0.20"
+            }
+          }
+        },
+        "ch.qos.logback/logback-access" : {
+          "version" : "1.3.14"
+        },
+        "org.eclipse.jetty/jetty-server" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty.toolchain/jetty-servlet-api" : {
+              "version" : "4.0.6"
+            },
+            "org.eclipse.jetty/jetty-http" : {
+              "version" : "10.0.20"
+            },
+            "org.eclipse.jetty/jetty-io" : {
+              "version" : "10.0.20"
+            }
+          }
+        },
+        "org.eclipse.jetty/jetty-webapp" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty/jetty-xml" : {
+              "version" : "10.0.20"
+            }
+          }
+        },
+        "ch.qos.logback/logback-classic" : {
+          "version" : "1.3.14"
+        },
+        "puppetlabs/kitchensink" : {
+          "version" : "3.4.0"
+        },
+        "org.eclipse.jetty/jetty-jmx" : {
+          "version" : "10.0.20"
+        },
+        "ch.qos.logback/logback-core" : {
+          "version" : "1.3.14"
+        },
+        "compojure" : {
+          "version" : "1.7.1",
+          "dependencies" : {
+            "clout" : {
+              "version" : "2.2.1",
+              "dependencies" : {
+                "instaparse" : {
+                  "version" : "1.4.1"
+                }
+              }
+            },
+            "medley" : {
+              "version" : "1.4.0"
+            }
+          }
+        },
+        "org.eclipse.jetty.websocket/websocket-jetty-api" : {
+          "version" : "10.0.20"
+        },
+        "org.eclipse.jetty/jetty-proxy" : {
+          "version" : "10.0.20",
+          "dependencies" : {
+            "org.eclipse.jetty/jetty-client" : {
+              "version" : "10.0.20",
+              "dependencies" : {
+                "org.eclipse.jetty/jetty-alpn-client" : {
+                  "version" : "10.0.20"
+                }
+              }
+            }
+          }
+        },
+        "hato" : {
+          "version" : "0.9.0"
+        }
+      }
+    },
+    "com.fasterxml.jackson.core/jackson-core" : {
+      "version" : "2.14.0"
+    },
+    "puppetlabs/ssl-utils" : {
+      "version" : "3.5.2",
+      "dependencies" : {
+        "commons-codec" : {
+          "version" : "1.15"
+        }
+      }
+    },
+    "commons-codec" : {
+      "version" : "1.15"
+    },
+    "trptcolin/versioneer" : {
+      "version" : "0.2.0"
+    },
+    "hiccup" : {
+      "version" : "1.0.5"
+    },
+    "io.dropwizard.metrics/metrics-core" : {
+      "version" : "3.2.2"
+    },
+    "joda-time" : {
+      "version" : "2.12.5"
+    },
+    "ch.qos.logback/logback-classic" : {
+      "version" : "1.3.14"
+    },
+    "prismatic/plumbing" : {
+      "version" : "0.4.2",
+      "dependencies" : {
+        "de.kotka/lazymap" : {
+          "version" : "3.1.0"
+        }
+      }
+    },
+    "puppetlabs/kitchensink" : {
+      "version" : "3.4.0"
+    },
+    "beckon" : {
+      "version" : "0.1.1"
+    },
+    "puppetlabs/trapperkeeper-status" : {
+      "version" : "1.2.0",
+      "dependencies" : {
+        "trptcolin/versioneer" : {
+          "version" : "0.2.0"
+        }
+      }
+    },
+    "org.clojure/java.classpath" : {
+      "version" : "1.0.0"
+    },
+    "clj-time" : {
+      "version" : "0.11.0",
+      "dependencies" : {
+        "joda-time" : {
+          "version" : "2.12.5"
+        }
+      }
+    },
+    "org.slf4j/log4j-over-slf4j" : {
+      "version" : "2.0.7"
+    },
+    "ch.qos.logback/logback-core" : {
+      "version" : "1.3.14"
+    },
+    "puppetlabs/i18n" : {
+      "version" : "0.9.2",
+      "dependencies" : {
+        "cpath-clj" : {
+          "version" : "0.1.2",
+          "dependencies" : {
+            "org.clojure/java.classpath" : {
+              "version" : "1.0.0"
+            }
+          }
+        },
+        "org.gnu.gettext/libintl" : {
+          "version" : "0.18.3"
+        }
+      }
+    },
+    "compojure" : {
+      "version" : "1.7.1",
+      "dependencies" : {
+        "clout" : {
+          "version" : "2.2.1",
+          "dependencies" : {
+            "instaparse" : {
+              "version" : "1.4.1"
+            }
+          }
+        },
+        "medley" : {
+          "version" : "1.4.0"
+        }
+      }
+    },
+    "org.clojure/core.memoize" : {
+      "version" : "1.0.257",
+      "dependencies" : {
+        "org.clojure/core.cache" : {
+          "version" : "1.0.225",
+          "dependencies" : {
+            "org.clojure/data.priority-map" : {
+              "version" : "1.1.0"
+            }
+          }
+        }
+      }
+    },
+    "org.clojure/data.json" : {
+      "version" : "2.4.0"
+    },
+    "puppetlabs/trapperkeeper-metrics" : {
+      "version" : "2.0.4",
+      "dependencies" : {
+        "cheshire" : {
+          "version" : "5.10.2",
+          "dependencies" : {
+            "com.fasterxml.jackson.core/jackson-core" : {
+              "version" : "2.14.0"
+            },
+            "com.fasterxml.jackson.dataformat/jackson-dataformat-cbor" : {
+              "version" : "2.12.4"
+            },
+            "com.fasterxml.jackson.dataformat/jackson-dataformat-smile" : {
+              "version" : "2.12.4"
+            },
+            "tigris" : {
+              "version" : "0.1.2"
+            }
+          }
+        },
+        "io.dropwizard.metrics/metrics-graphite" : {
+          "version" : "3.2.2"
+        },
+        "org.jolokia/jolokia-core" : {
+          "version" : "1.7.0",
+          "dependencies" : {
+            "com.googlecode.json-simple/json-simple" : {
+              "version" : "1.1.1"
+            }
+          }
+        }
+      }
+    },
+    "bidi" : {
+      "version" : "2.1.3"
+    },
+    "puppetlabs/rbac-client" : {
+      "version" : "1.1.5",
+      "dependencies" : {
+        "ring/ring-json" : {
+          "version" : "0.5.1"
+        }
+      }
+    },
+    "org.apache.commons/commons-compress" : {
+      "version" : "1.26.0",
+      "dependencies" : {
+        "org.apache.commons/commons-lang3" : {
+          "version" : "3.14.0"
+        }
+      }
+    },
+    "org.clojure/clojure" : {
+      "version" : "1.11.2",
+      "dependencies" : {
+        "org.clojure/core.specs.alpha" : {
+          "version" : "0.2.62"
+        },
+        "org.clojure/spec.alpha" : {
+          "version" : "0.3.218"
+        }
+      }
+    },
+    "org.apache.commons/commons-lang3" : {
+      "version" : "3.14.0"
+    },
+    "puppetlabs/trapperkeeper-authorization" : {
+      "version" : "2.0.1"
+    }
+  }
+}

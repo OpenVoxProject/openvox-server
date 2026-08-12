@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ "$1" = "failed-upgrade" ] || [ "$1" = "remove" ] ; then
+  if [ -d '/run/systemd/system' ] ; then
+    # Using systemd
+    systemctl --no-reload disable puppetserver.service > /dev/null 2>&1 || :
+    systemctl stop puppetserver.service > /dev/null 2>&1 || :
+  else
+    # Using sysv
+    invoke-rc.d puppetserver stop || :
+  fi
+fi
