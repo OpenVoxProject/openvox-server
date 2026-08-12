@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.0.0-beta5](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta5) (2026-08-12)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta4...9.0.0-beta5)
+
+**Implemented enhancements:**
+
+- Fall back to the vendored PEM CA bundle for the system trust store [\#558](https://github.com/OpenVoxProject/openvox-server/pull/558) ([silug](https://github.com/silug))
+
+**Fixed bugs:**
+
+- Fix the report authorization test's is\_pe? misfire [\#557](https://github.com/OpenVoxProject/openvox-server/pull/557) ([silug](https://github.com/silug))
+
+**Merged pull requests:**
+
+- Fix the filebucket read authorization test [\#556](https://github.com/OpenVoxProject/openvox-server/pull/556) ([silug](https://github.com/silug))
+
 ## [9.0.0-beta4](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta4) (2026-08-06)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta3...9.0.0-beta4)
