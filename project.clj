@@ -76,7 +76,7 @@
                          [org.openvoxproject/kitchensink "3.5.8" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.3.0"]
                          [org.openvoxproject/rbac-client "1.3.0" :classifier "test"]
-                         [org.openvoxproject/ring-middleware "2.2.0"]
+                         [org.openvoxproject/ring-middleware "2.2.1"]
                          [org.openvoxproject/ssl-utils "3.7.1"]
                          [org.openvoxproject/trapperkeeper "5.0.5"]
                          [org.openvoxproject/trapperkeeper "5.0.5" :classifier "test"]
