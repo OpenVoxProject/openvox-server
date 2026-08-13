@@ -86,7 +86,7 @@
                          [org.openvoxproject/trapperkeeper-metrics "2.3.2"]
                          [org.openvoxproject/trapperkeeper-metrics "2.3.2" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-scheduler "1.4.1"]
-                         [org.openvoxproject/trapperkeeper-status "1.5.0"]
+                         [org.openvoxproject/trapperkeeper-status "1.5.1"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.1"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.1" :classifier "test"]
                          [org.ow2.asm/asm "9.10.1"]
