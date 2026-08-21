@@ -107,11 +107,9 @@
    [:JRubyPuppetService]
    [:AuthorizationService wrap-with-authorization-check]
    [:StatusService register-status]
-   [:ReadinessService register-ready! signal-ready!]
    [:VersionedCodeService get-code-content current-code-id]]
   (init
    [this context]
-   (register-ready! (tk-services/service-id this))
    (master-core/validate-memory-requirements!)
    (let [config (get-config)
          route-config (master-core/get-master-route-config ::master-service config)
@@ -208,7 +206,6 @@
          (assoc :http-client-metric-ids-for-status http-client-metric-ids-for-status))))
   (start
     [this context]
-    (signal-ready! (tk-services/service-id this))
     (log/info (i18n/trs "OpenVox Server has successfully started and is now ready to handle requests"))
     context)
 
