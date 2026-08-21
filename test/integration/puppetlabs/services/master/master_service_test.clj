@@ -1,7 +1,7 @@
 (ns puppetlabs.services.master.master-service-test
   (:require
     [clojure.test :refer [deftest is testing use-fixtures]]
-    ; [puppetlabs.services.master.master-service :refer :all]
+    [puppetlabs.services.master.master-service :refer [sanitize-route-metadata-for-metrics]]
     [cheshire.core :as json]
     [clojure.set :as setutils]
     [clojure.string :as str]
@@ -152,13 +152,13 @@
        (is (= 1 (-> http-metrics :route-timers :other .getCount)))
 
        (is (= 1 (-> http-metrics :route-timers
-                    (get "puppet-v3-node-/*/")
+                    (get "puppet-v3-node-/ANY/")
                     .getCount)))
        (is (= 1 (-> http-metrics :route-timers
-                    (get "puppet-v3-catalog-/*/")
+                    (get "puppet-v3-catalog-/ANY/")
                     .getCount)))
        (is (= 0 (-> http-metrics :route-timers
-                    (get "puppet-v3-report-/*/")
+                    (get "puppet-v3-report-/ANY/")
                     .getCount)))
        (testing "Catalog compilation increments catalog metrics and adds timing data"
          (let [profiler-status (puppet-profiler-core/v1-status puppet-profiler :debug)
@@ -196,13 +196,13 @@
          (is (nil? (schema/check master-core/MasterStatusV1
                                  (get-in status [:master :status]))))
          (testing "HTTP metrics in status endpoint are sorted in order of aggregate amount of time spent"
-           (let [hit-routes #{"total" "puppet-v3-node-/*/"
-                              "puppet-v3-catalog-/*/" "other"}
+           (let [hit-routes #{"total" "puppet-v3-node-/ANY/"
+                               "puppet-v3-catalog-/ANY/" "other"}
                  http-metrics (get-in status [:master :status :experimental :http-metrics])]
              (testing "'total' should come first since it is the sum of the other endpoints"
                (is (= "total" (:route-id (first http-metrics)))))
              (testing "The other two routes that actually received requests should come next"
-               (is (= #{"puppet-v3-node-/*/" "puppet-v3-catalog-/*/"}
+               (is (= #{"puppet-v3-node-/ANY/" "puppet-v3-catalog-/ANY/"}
                       (set (map :route-id (rest (take 3 http-metrics)))))))
              (testing "The aggregate times should be in descending order"
                (let [aggregate-times (map :aggregate http-metrics)]
@@ -211,8 +211,8 @@
                (let [find-route (fn [route-metrics route-id]
                                   (first (filter #(= (:route-id %) route-id) route-metrics)))]
                  (is (= 3 (:count (find-route http-metrics "total"))))
-                 (is (= 1 (:count (find-route http-metrics "puppet-v3-node-/*/"))))
-                 (is (= 1 (:count (find-route http-metrics "puppet-v3-catalog-/*/"))))
+                 (is (= 1 (:count (find-route http-metrics "puppet-v3-node-/ANY/"))))
+                 (is (= 1 (:count (find-route http-metrics "puppet-v3-catalog-/ANY/"))))
                  (is (= 1 (:count (find-route http-metrics "other"))))))
              (testing "The counts should be zero for endpoints that we didn't hit"
                (is (every? #(= 0 %) (map :count
@@ -310,7 +310,7 @@
                   (is (= 1 (count requested-instances)))
                   (is (= {:request
                           {:request-method "get"
-                           :route-id "puppet-v3-catalog-/*/"
+                           :route-id "puppet-v3-catalog-/ANY/"
                            :uri "/puppet/v3/catalog/localhost"}}
                          (:reason requested-instance)))
                   (is (>= (:time requested-instance) time-before-second-borrow))
@@ -318,6 +318,50 @@
                   (is (>= (System/currentTimeMillis)
                           (+ (:duration-millis requested-instance)
                              (:time requested-instance))))))))))))))
+
+(deftest test-sanitize-route-metadata-for-metrics
+  (testing "Flat route map transformation"
+    (let [input  {:route-id "http.puppet-v3-catalog-/*/-requests" :method :get}
+          output (sanitize-route-metadata-for-metrics input)]
+      (is (= "http.puppet-v3-catalog-/ANY/-requests" (:route-id output))
+          "Should replace the * wildcard with the stable token 'ANY' inside flat maps.")))
+
+  (testing "Deeply nested and complex tree structures (Comidi style)"
+    (let [complex-tree [{:route-id "http.puppet-v3-environment-/*/-requests"
+                         :nested   [{:route-id "http.puppet-v3-environment_classes-/*/-percentage"
+                                     :leaf     "keep-me-unmodified"}
+                                    {:route-id "http.static-route-no-wildcard"}]}
+                        {:route-id "http.puppet-v3-file_content-/*/-requests"
+                         :metadata {:route-id "http.nested-meta-/*/-metric"}}]
+
+          expected     [{:route-id "http.puppet-v3-environment-/ANY/-requests"
+                         :nested   [{:route-id "http.puppet-v3-environment_classes-/ANY/-percentage"
+                                     :leaf     "keep-me-unmodified"}
+                                    {:route-id "http.static-route-no-wildcard"}]}
+                        {:route-id "http.puppet-v3-file_content-/ANY/-requests"
+                         :metadata {:route-id "http.nested-meta-/ANY/-metric"}}]
+
+          actual (sanitize-route-metadata-for-metrics complex-tree)]
+
+      (is (= expected actual)
+          "The postwalk function should recursively sanitize every :route-id found at any depth of a complex tree.")))
+
+  (testing "Type resilience and non-target exclusion"
+    (let [input    {:route-id        "http.puppet-v3-node-/*/-requests"
+                    :other-wildcard  "leave-*-alone" ;; * character present but not a :route-id key
+                    :integer-route   12345           ;; non-string route-id representation fallback
+                    :nil-route-id    nil}
+          actual   (sanitize-route-metadata-for-metrics input)]
+
+      (is (= "http.puppet-v3-node-/ANY/-requests" (:route-id actual))
+          "Targeted :route-id strings containing wildcards should be sanitized.")
+      (is (= "leave-*-alone" (:other-wildcard actual))
+          "Asterisks belonging to keys other than :route-id must be completely ignored.")
+      (is (= 12345 (:integer-route actual))
+          "Non-string route identifiers should pass through cleanly without causing runtime type exceptions.")
+      (is (nil? (:nil-route-id actual))
+          "Nil values under target keys should pass through without throwing a NullPointerException."))))
+
 
 (def graphite-enabled-config
   {:metrics {:server-id "localhost"
@@ -398,9 +442,12 @@
        (let [registry (:registry (get-puppetserver-registry-context app))
              get-memory-map
              (fn [mem-type]
-               (ks/mapvals #(.getValue %)
-                           (filter #(.matches (key %) (format "puppetlabs.localhost.memory.%s.*" mem-type))
-                                   (.getMetrics registry))))
+                (->> (.getMetrics registry)
+                     (filter (fn [[k _]]
+                               (re-matches (re-pattern (format "puppetlabs\\.localhost\\.memory\\.%s\\..*" mem-type))
+                                           (str k))))
+                     (map (fn [[k v]] [(str k) (.getValue v)]))
+                     (into {})))
              heap-memory-map (get-memory-map "heap")
              non-heap-memory-map (get-memory-map "non-heap")
              total-memory-map (get-memory-map "total")]
@@ -431,10 +478,11 @@
            (is (every? #(< 0 %) (vals total-memory-map))))
 
          (testing "uptime metric works"
-           (let [get-uptime (fn [] (-> registry
-                                       .getMetrics
-                                       (get "puppetlabs.localhost.uptime")
-                                       .getValue))
+           (let [get-uptime (fn []
+                              (->> (.getMetrics registry)
+                                   (some (fn [[k v]]
+                                           (when (= "puppetlabs.localhost.uptime" (str k))
+                                             (.getValue v))))))
                  uptime (get-uptime)]
              (is (< 0 uptime))
              ;; Make sure uptime can be updated after initialization.

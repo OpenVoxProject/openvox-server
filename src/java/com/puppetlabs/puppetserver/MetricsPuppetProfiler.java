@@ -1,7 +1,7 @@
 package com.puppetlabs.puppetserver;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
+import io.dropwizard.metrics5.MetricRegistry;
+import io.dropwizard.metrics5.Timer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,8 +190,14 @@ public class MetricsPuppetProfiler implements PuppetProfiler {
     }
 
     private String getMetricName(List<String> metric_id) {
-        metric_id.add(0, hostname);
-        return MetricRegistry.name("puppetlabs", metric_id.toArray(new String[metric_id.size()]));
+        StringBuilder sb = new StringBuilder();
+        sb.append("puppetlabs.").append(hostname);
+        for (String segment : metric_id) {
+            if (segment != null && !segment.isEmpty()) {
+                sb.append('.').append(segment);
+            }
+        }
+        return sb.toString();
     }
 
     private void registerMetricName(String metric_name) {

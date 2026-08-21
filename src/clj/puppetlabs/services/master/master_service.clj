@@ -1,5 +1,6 @@
 (ns puppetlabs.services.master.master-service
   (:require [clojure.tools.logging :as log]
+            [clojure.walk :as walk]
             [puppetlabs.trapperkeeper.core :refer [defservice]]
             [puppetlabs.puppetserver.certificate-authority :as ca]
             [puppetlabs.puppetserver.jruby-request :as jruby-request]
@@ -14,36 +15,55 @@
 
 (def master-service-status-version 1)
 
+;; Dropwizard 5 JMX rejects wildcard pattern characters in ObjectName values.
+;; We replace route wildcards with a stable token before metrics registration.
+(def metrics-route-wildcard-token "ANY")
+
+(defn sanitize-metrics-route-id
+  [route-id]
+  (if (string? route-id)
+    (str/replace route-id "*" metrics-route-wildcard-token)
+    route-id))
+
+(defn sanitize-route-metadata-for-metrics
+  [route-metadata]
+  (walk/postwalk
+   (fn [node]
+     (if (and (map? node) (string? (:route-id node)))
+       (update node :route-id sanitize-metrics-route-id)
+       node))
+   route-metadata))
+
 ;; Default list of allowed histograms/timers
 (def default-metrics-allowed-hists
   ["http.active-histo"
-   "http.puppet-v3-catalog-/*/-requests"
-   "http.puppet-v3-environment-/*/-requests"
-   "http.puppet-v3-environment_classes-/*/-requests"
+   "http.puppet-v3-catalog-/ANY/-requests"
+   "http.puppet-v3-environment-/ANY/-requests"
+   "http.puppet-v3-environment_classes-/ANY/-requests"
    "http.puppet-v3-environments-requests"
-   "http.puppet-v3-file_bucket_file-/*/-requests"
-   "http.puppet-v3-file_content-/*/-requests"
-   "http.puppet-v3-file_metadata-/*/-requests"
-   "http.puppet-v3-file_metadatas-/*/-requests"
-   "http.puppet-v3-node-/*/-requests"
-   "http.puppet-v3-report-/*/-requests"
-   "http.puppet-v3-static_file_content-/*/-requests"])
+   "http.puppet-v3-file_bucket_file-/ANY/-requests"
+   "http.puppet-v3-file_content-/ANY/-requests"
+   "http.puppet-v3-file_metadata-/ANY/-requests"
+   "http.puppet-v3-file_metadatas-/ANY/-requests"
+   "http.puppet-v3-node-/ANY/-requests"
+   "http.puppet-v3-report-/ANY/-requests"
+   "http.puppet-v3-static_file_content-/ANY/-requests"])
 
 ;; Default list of allowed values/counts
 (def default-metrics-allowed-vals
   ["http.active-requests"
-   "http.puppet-v3-catalog-/*/-percentage"
-   "http.puppet-v3-environment-/*/-percentage"
-   "http.puppet-v3-environment_classes-/*/-percentage"
+   "http.puppet-v3-catalog-/ANY/-percentage"
+   "http.puppet-v3-environment-/ANY/-percentage"
+   "http.puppet-v3-environment_classes-/ANY/-percentage"
    "http.puppet-v3-environments-percentage"
-   "http.puppet-v3-file_bucket_file-/*/-percentage"
-   "http.puppet-v3-file_content-/*/-percentage"
-   "http.puppet-v3-file_metadata-/*/-percentage"
-   "http.puppet-v3-file_metadatas-/*/-percentage"
-   "http.puppet-v3-node-/*/-percentage"
-   "http.puppet-v3-report-/*/-percentage"
-   "http.puppet-v3-static_file_content-/*/-percentage"
-   "http.puppet-v3-status-/*/-percentage"
+   "http.puppet-v3-file_bucket_file-/ANY/-percentage"
+   "http.puppet-v3-file_content-/ANY/-percentage"
+   "http.puppet-v3-file_metadata-/ANY/-percentage"
+   "http.puppet-v3-file_metadatas-/ANY/-percentage"
+   "http.puppet-v3-node-/ANY/-percentage"
+   "http.puppet-v3-report-/ANY/-percentage"
+   "http.puppet-v3-static_file_content-/ANY/-percentage"
+   "http.puppet-v3-status-/ANY/-percentage"
    "http.total-requests"
    ; num-cpus is registered in trapperkeeper-comidi-metrics, see
    ; https://github.com/puppetlabs/trapperkeeper-comidi-metrics/blob/0.1.1/src/puppetlabs/metrics/http.clj#L117-L120
@@ -151,7 +171,9 @@
                                                boltlib-path
                                                certname))
          routes (comidi/context path ring-app)
-         route-metadata (comidi/route-metadata routes)
+         route-metadata (-> routes
+                            comidi/route-metadata
+                            sanitize-route-metadata-for-metrics)
          comidi-handler (comidi/routes->handler routes)
          registry (get-metrics-registry :puppetserver)
          http-metrics (http-metrics/initialize-http-metrics!
@@ -159,8 +181,16 @@
                        metrics-server-id
                        route-metadata)
          http-client-metric-ids-for-status (atom master-core/puppet-server-http-client-metrics-for-status)
+         ;; Middleware to sanitize live request route-ids so they match
+         ;; the sanitized metric names registered during initialization.
+         wrap-with-route-id-sanitization (fn [handler]
+                                           (fn [req]
+                                             (if (get-in req [:route-info :route-id])
+                                               (handler (update-in req [:route-info :route-id] sanitize-metrics-route-id))
+                                               (handler req))))
          ring-handler (-> comidi-handler
                           (http-metrics/wrap-with-request-metrics http-metrics)
+                          wrap-with-route-id-sanitization
                           (comidi/wrap-with-route-metadata routes))
          hostcrl (get-in config [:puppetserver :hostcrl])]
      (log-java-deprecation-message (System/getProperty "java.version"))
