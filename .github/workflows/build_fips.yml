@@ -30,7 +30,7 @@ on:
         type: string
         default: 'main'
       ezbake-ver:
-        description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version found in project.clj in this repo if not specified.'
+        description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version 2.x. Used for distros with systemd 252 or older'
         type: string
         required: false
 
@@ -39,7 +39,8 @@ permissions:
 
 jobs:
   build:
-    uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake_fips.yml@main'
+    name: Build OpenVox-Server ${{ inputs.ref }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake_fips.yml@ezbake4'
     with:
       branch: ${{ inputs.branch }}
       ref: ${{ inputs.ref }}

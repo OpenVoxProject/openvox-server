@@ -78,8 +78,8 @@
                          [org.openvoxproject/rbac-client "1.3.0" :classifier "test"]
                          [org.openvoxproject/ring-middleware "2.2.1"]
                          [org.openvoxproject/ssl-utils "3.7.1"]
-                         [org.openvoxproject/trapperkeeper "5.0.5"]
-                         [org.openvoxproject/trapperkeeper "5.0.5" :classifier "test"]
+                         [org.openvoxproject/trapperkeeper "5.0.6-SNAPSHOT"]
+                         [org.openvoxproject/trapperkeeper "5.0.6-SNAPSHOT" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.1"]
                          [org.openvoxproject/trapperkeeper-authorization "2.4.1"]
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.6.1"]
@@ -256,7 +256,7 @@
                                                [org.openvoxproject/puppetserver "9.1.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "2.9.1")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.0.1-SNAPSHOT")]]
                       :name "puppetserver"}
 
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
