@@ -4,6 +4,15 @@
             [puppetlabs.trapperkeeper.config :as tk-config]
             [puppetlabs.i18n.core :as i18n]))
 
+;;; Set the default logger used by ruby, gem, irb, and other subcommands to
+;;; the same class used by JRuby binaries of the same name. This pre-empts
+;;; the SLF4J logger set by jruby-utils, but still allows overrides via explicit
+;;; -D flags in JAVA_ARGS.
+#_{:clj-kondo/ignore [:unused-private-var]}
+(defonce ^:private set-cli-logger-default
+  (doto (System/getProperties)
+    (.putIfAbsent "jruby.logger.class" "org.jruby.util.log.StandardErrorLogger")))
+
 (defn parse-cli-args!
   "Parses the command-line arguments using `puppetlabs.kitchensink.core/cli!`.
    Required arguments:
