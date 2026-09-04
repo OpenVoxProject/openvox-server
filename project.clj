@@ -13,7 +13,7 @@
     heap-size-from-profile-clj
     default-heap-size))
 
-(def slf4j-version "2.0.18")
+(def slf4j-version "2.0.19")
 (def i18n-version "1.0.5")
 (def logback-version "1.6.3")
 ;; NOTE: Use the 2.21.z release series of Jackson. The Cheshire JSON
