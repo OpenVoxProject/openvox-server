@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.0.0-rc1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-rc1) (2026-09-04)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta5...9.0.0-rc1)
+
+**Implemented enhancements:**
+
+- packages: depend on openvox-agent \>= 9.0.0~rc1 [\#624](https://github.com/OpenVoxProject/openvox-server/pull/624) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- \[Bug\]: JAVA\_ARGS missing some security flags required by newer JVMs [\#609](https://github.com/OpenVoxProject/openvox-server/issues/609)
+- \[Bug\]: 200%+ regression in catalog compilation performance in OpenVox 9 betas [\#600](https://github.com/OpenVoxProject/openvox-server/issues/600)
+- \[Bug\]: server log entries for 9.0.0~beta2 when a catalog is compiled [\#552](https://github.com/OpenVoxProject/openvox-server/issues/552)
+- Use StandardErrorLogger for ruby subcommands [\#614](https://github.com/OpenVoxProject/openvox-server/pull/614) ([Sharpie](https://github.com/Sharpie))
+- Add missing JRuby security flags for Java 21+ [\#613](https://github.com/OpenVoxProject/openvox-server/pull/613) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- Revert "Inform trapperkeeper about service readiness" [\#610](https://github.com/OpenVoxProject/openvox-server/pull/610) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [9.0.0-beta5](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta5) (2026-08-12)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta4...9.0.0-beta5)
