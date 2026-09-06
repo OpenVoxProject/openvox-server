@@ -161,8 +161,7 @@
                        :build-type "foss"
                        :package-name "openvox-server"
                        :puppet-platform-version 9
-                       :java-args ~(str "-Xms2g -Xmx2g "
-                                     "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")
+                       :java-args ~(str "-Xms2g -Xmx2g")
                        :java-args-dist ~(str "--add-opens java.base/sun.nio.ch=ALL-UNNAMED "
                                              "--add-opens java.base/java.io=ALL-UNNAMED "
                                              "--enable-native-access=ALL-UNNAMED")
@@ -201,8 +200,7 @@
                                         [org.bouncycastle/bctls-fips]]
                          :lein-ezbake {:vars {:java-args ~(str
                                                             "-Djava.security.properties==/opt/puppetlabs/server/data/puppetserver/java.security.fips "
-                                                            "-Xms2g -Xmx2g "
-                                                            "-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger")}
+                                                            "-Xms2g -Xmx2g")}
                                        :classpath-jars [{:artifact org.bouncycastle/bc-fips
                                                   :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
                                                             :mode "0644"}}
@@ -348,8 +346,7 @@
   :jvm-opts ~(let [version (System/getProperty "java.specification.version")
                    [major minor _] (clojure.string/split version #"\.")]
                (concat
-                 ["-Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
-                  "-XX:+UseG1GC"
+                 ["-XX:+UseG1GC"
                   (str "-Xms" (heap-size "1G"))
                   (str "-Xmx" (heap-size "2G"))
                   "-XX:+IgnoreUnrecognizedVMOptions"]
