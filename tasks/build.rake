@@ -149,7 +149,7 @@ namespace :vox do
       unless @debs.empty? && @nonfips_rpms.empty?
         run("cd /code && COW=\"#{@debs}\" MOCK=\"#{@nonfips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile user,ezbake,provided ezbake local-build")
       end
-      
+
       unless @fips_rpms.empty?
         run("cd /code && COW= MOCK=\"#{@fips_rpms}\" GEM_SOURCE='https://rubygems.org' #{ezbake_version_var} EZBAKE_ALLOW_UNREPRODUCIBLE_BUILDS=true EZBAKE_NODEPLOY=true LEIN_PROFILES=ezbake lein with-profile fips,user,ezbake-fips,provided ezbake local-build")
       end
