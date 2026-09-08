@@ -6,8 +6,6 @@ All notable changes to this project will be documented in this file.
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.2...8.16.0)
 
-We had a hiccup with our CI system and the 9.0.0-beta3 packages weren't released. In addition, a 9.0.0 release was published to [clojars](https://clojars.org/org.openvoxproject/puppetserver) with the 9.0.0-beta3 changes. 9.0.0-beta4 just republishes the 9.0.0-beta3 changes.
-
 **Implemented enhancements:**
 
 - packages: depend on openvox-agent \>= 8.29.0 [\#625](https://github.com/OpenVoxProject/openvox-server/pull/625) ([bastelfreak](https://github.com/bastelfreak))
