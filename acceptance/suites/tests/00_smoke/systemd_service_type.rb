@@ -5,17 +5,24 @@ skip_test 'No primary node to validate puppetserver service type on' unless mast
 variant, version, _, _ = master['platform'].to_array
 platform = "#{variant}-#{version}"
 
+puppetserver_version = on(master, '/opt/puppetlabs/server/bin/puppetserver --version').stdout.strip
+puppetserver_major_version = puppetserver_version.match(/\Apuppetserver version: (\d+)\./i)[1].to_i
+
 # Beaker normalizes the RHEL-family guests to el-* platform names.
-# These legacy OpenVox 9.x acceptance OSes still use Type=forking.
-forking_platforms = %w[
+# These legacy OpenVox 9.x acceptance OSes still use Type=notify.
+notify_platforms = %w[
   el-8
   el-9
   ubuntu-2204
 ].freeze
 
-expected_type = forking_platforms.include?(platform) ? 'notify' : 'notify-reload'
+expected_type = if puppetserver_major_version == 8
+  'forking'
+else
+  notify_platforms.include?(platform) ? 'notify' : 'notify-reload'
+end
 
-step "Validate Type= for #{platform} (expected #{expected_type})" do
+step "Validate Type= for #{platform} with puppetserver #{puppetserver_version} (expected #{expected_type})" do
   on(master, 'systemctl cat puppetserver.service')
 
   type_result = on(master, 'systemctl show --property Type --value puppetserver.service')
