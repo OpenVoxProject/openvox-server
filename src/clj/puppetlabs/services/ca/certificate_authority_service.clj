@@ -40,7 +40,8 @@
     [this context]
     (let [path (get-route this)
           settings (ca/config->ca-settings (get-config))
-          puppet-version (get-in-config [:puppetserver :puppet-version])
+          puppet-version (if (get-in-config [:expose-version-header] true)
+                           (get-in-config [:puppetserver :puppet-version]) "")
           custom-oid-file (get-in-config [:puppetserver :trusted-oid-mapping-file])
           oid-mappings (ca/get-oid-mappings custom-oid-file)
           auth-handler (fn [request] (wrap-with-authorization-check request {:oid-map oid-mappings}))
