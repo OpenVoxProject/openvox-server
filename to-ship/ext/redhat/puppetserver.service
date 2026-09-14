@@ -1,0 +1,46 @@
+#
+# Local settings can be configured without being overwritten by package upgrades, for example
+# if you want to increase puppetserver open-files-limit to 10000,
+# you need to increase systemd's LimitNOFILE setting, so create a file named
+# "/etc/systemd/system/puppetserver.service.d/limits.conf" containing:
+#	[Service]
+#	LimitNOFILE=10000
+# You can confirm it worked by running systemctl daemon-reload
+# then running systemctl show puppetserver | grep LimitNOFILE
+#
+[Unit]
+Description=puppetserver Service
+After=syslog.target network.target nss-lookup.target 
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/puppetserver
+User=puppet
+TimeoutStartSec=300
+TimeoutStopSec=60
+Restart=on-failure
+StartLimitBurst=5
+PIDFile=/run/puppetlabs/puppetserver/puppetserver.pid
+
+# https://tickets.puppetlabs.com/browse/EZ-129
+# Prior to systemd v228, TasksMax was unset by default, and unlimited. Starting in 228 a default of '512'
+# was implemented. This is low enough to cause problems for certain applications. In systemd 231, the
+# default was changed to be 15% of the default kernel limit. This explicitly sets TasksMax to 4915,
+# which should match the default in systemd 231 and later.
+# See https://github.com/systemd/systemd/issues/3211#issuecomment-233676333
+TasksMax=4915
+
+#set default privileges to -rw-r-----
+UMask=027
+
+
+ExecReload=/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver reload
+ExecStart=/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver start
+ExecStop=/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver stop
+
+KillMode=process
+
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

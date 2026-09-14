@@ -1,0 +1,17 @@
+---
+default_cow: 'base-bionic-i386.cow'
+cows: 'base-bionic-i386.cow base-buster-i386.cow base-focal-i386.cow base-bullseye-i386.cow base-jammy-i386.cow base-bookworm-i386.cow'
+pbuild_conf: '/etc/pbuilderrc'
+packager: 'puppetlabs'
+gpg_key: '4528B6CD9E61EF26'
+sign_tar: FALSE
+# a space separated list of mock configs
+final_mocks: 'pl-el-7-x86_64 pl-el-8-x86_64 pl-el-9-x86_64 pl-sles-12-x86_64 pl-sles-15-x86_64 pl-amazon-2023-x86_64'
+yum_host: 'yum.puppetlabs.com'
+yum_repo_path: '/opt/repository/yum/'
+build_gem: FALSE
+build_dmg: FALSE
+build_ips: FALSE
+apt_host: 'apt.puppetlabs.com'
+apt_repo_url: 'http://apt.puppetlabs.com'
+apt_repo_path: '/opt/repository/incoming'

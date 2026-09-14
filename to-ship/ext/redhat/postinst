@@ -1,0 +1,24 @@
+# Run these unconditionally
+%{_app_prefix}/scripts/install.sh postinst_redhat
+# Only run these on initial install, not ugrades
+if [ "$1" = "1" ]; then
+    %{_app_prefix}/scripts/install.sh postinst_redhat_install
+fi
+%if %{_with_systemd}
+# Reload the systemd units
+systemctl daemon-reload >/dev/null 2>&1 || :
+%endif
+%if %{_systemd_el}
+%systemd_post puppetserver.service
+%endif
+%if %{_systemd_sles}
+%service_add_post puppetserver.service
+%endif
+%if %{_with_sysvinit}
+# If this is an install (as opposed to an upgrade)...
+if [ "$1" = "1" ]; then
+    # Register the puppetserver service
+    /sbin/chkconfig --add %{name}
+fi
+%endif
+
