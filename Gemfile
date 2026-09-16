@@ -1,7 +1,7 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place, fake_version = nil)
-  if place.is_a?(String) && place =~ /^(git[:@][^#]*)#(.*)/
+  if place.is_a?(String) && place =~ /^((?:git[:@]|https:)[^#]*)#(.*)/
     [fake_version, { :git => $1, :branch => $2, :require => false }].compact
   elsif place.is_a?(String) && place =~ /^file:\/\/(.*)/
     ['>= 0', { :path => File.expand_path($1), :require => false }]
@@ -12,7 +12,7 @@ end
 
 gem 'public_suffix', '>= 4.0.7', '< 8'
 # 1.0.0 is the first OpenVoxProject release
-gem 'packaging', '~> 1.0', github: 'OpenVoxProject/packaging'
+#gem 'packaging', '~> 1.0', github: 'OpenVoxProject/packaging'
 gem 'rake', :group => [:development, :test]
 
 group :test do
@@ -24,6 +24,10 @@ group :test do
   gem 'master_manipulator'
 
   gem 'docker-api', '>=1.31.0', '< 3'
+end
+
+group :packaging do
+  gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || 'https://github.com/openvoxproject/vanagon#main')
 end
 
 group :release, optional: true do
