@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set +e
+
+restartfile="/run/puppetlabs/puppetserver/restartcounter"
+reload_timeout="${RELOAD_TIMEOUT:-120}"
+timeout="$reload_timeout"
+
+if [ ! -r $restartfile ]; then
+    echo "Restart counter does not exist or is not readable: ${restartfile}" 1>&2
+    exit 1
+fi
+
+pid="$(systemctl show --value -p MainPID puppetserver)"
+if [[ ! "$pid" =~ ^[0-9]+$ ]] || [ "$pid" -eq 0 ]; then
+    echo "Service not running so cannot be reloaded" 1>&2
+    exit 1
+fi
+
+initial="$(head -n 1 "$restartfile")"
+kill -HUP "$pid" >/dev/null 2>&1
+sleep 0.1
+cur="$(head -n 1 "$restartfile")"
+while [ "$cur" == "$initial" ] ;do
+    kill -0 "$pid" >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Process $pid exited before reload had completed" 1>&2
+        exit 1
+    fi
+    sleep 1
+    cur="$(head -n 1 "$restartfile")"
+
+    ((timeout--))
+    if [ $timeout -le 0 ]; then
+        echo "Reload timed out after $reload_timeout seconds"
+        exit 1
+    fi
+done
+
+exit 0
