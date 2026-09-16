@@ -1,0 +1,62 @@
+#
+# Local settings can be configured without being overwritten by package upgrades, for example
+# if you want to increase puppetserver open-files-limit to 10000,
+# you need to increase systemd's LimitNOFILE setting, so create a file named
+# "/etc/systemd/system/puppetserver.service.d/limits.conf" containing:
+#	[Service]
+#	LimitNOFILE=10000
+# You can confirm it worked by running systemctl daemon-reload
+# then running systemctl show puppetserver | grep LimitNOFILE
+#
+[Unit]
+Description=puppetserver Service
+After=syslog.target network.target nss-lookup.target
+
+[Service]
+Type=<%= @settings[:systemd_notify_reload] ? 'notify-reload' : 'notify' %>
+LogsDirectory=puppetlabs/puppetserver
+RuntimeDirectory=puppetlabs/puppetserver
+EnvironmentFile=<%= @platform.defaultdir %>/puppetserver
+Environment="JAVA_ARGS_DIST=<%= @settings[:java_args_dist] %>"
+User=puppet
+TimeoutStartSec=300
+TimeoutStopSec=60
+Restart=on-failure
+StartLimitBurst=5
+PrivateTmp=true
+
+# https://tickets.puppetlabs.com/browse/EZ-129
+# Prior to systemd v228, TasksMax was unset by default, and unlimited. Starting in 228 a default of '512'
+# was implemented. This is low enough to cause problems for certain applications. In systemd 231, the
+# default was changed to be 15% of the default kernel limit. This explicitly sets TasksMax to 4915,
+# which should match the default in systemd 231 and later.
+# See https://github.com/systemd/systemd/issues/3211#issuecomment-233676333
+TasksMax=4915
+
+#set default privileges to -rw-r-----
+UMask=027
+
+# The classpath starts with the jars directory so that extra jars, most
+# notably the BouncyCastle FIPS provider jars on redhatfips platforms, are
+# available to the service.
+ExecStart=<%= @settings[:java_bin] %> $JAVA_ARGS_DIST $JAVA_ARGS $LOG_APPENDER -Dlogappender=F1 \
+  -XX:+CrashOnOutOfMemoryError \
+  -XX:ErrorFile="${LOGS_DIRECTORY}/puppetserver_err_pid%%p.log" \
+  -cp "/opt/puppetlabs/server/data/puppetserver/jars/*:${INSTALL_DIR}/puppet-server-release.jar" \
+  clojure.main \
+  -m puppetlabs.trapperkeeper.main \
+  --config "${CONFIG}" \
+  --bootstrap-config "${BOOTSTRAP_CONFIG}" \
+  --restart-file /run/puppetlabs/puppetserver/restartcounter \
+  $TK_ARGS
+<% unless @settings[:systemd_notify_reload] -%>
+
+ExecReload=/opt/puppetlabs/server/apps/puppetserver/bin/puppetserver reload
+<% end -%>
+
+KillMode=process
+
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
