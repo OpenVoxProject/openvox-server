@@ -2,6 +2,7 @@
   (:import (clojure.lang IFn)
            (java.security.cert X509Certificate))
   (:require [clojure.tools.logging :as log]
+            [clojure.string :as str]
             [puppetlabs.ssl-utils.core :as ssl-utils]
             [ring.util.response :as ring]
             [schema.core :as schema]
@@ -83,15 +84,21 @@
     (ring/header (handler request) "X-Puppet-Compiler-Name" name)))
 
 (defn wrap-with-puppet-version-header
-  "Function that returns a middleware that adds an
-  X-Puppet-Version header to the response."
+  "Function that returns a middleware that adds an X-Puppet-Version
+  header to the response.  When `version` is blank (for example when
+  the `expose-version-header` setting is false) any X-Puppet-Version
+  header is removed from the response instead, so the version is not
+  disclosed even when a downstream handler (e.g. the JRuby request
+  handler) already set it."
   [handler version]
   (fn [request]
     (let [response (handler request)]
       ; Our compojure app returns nil responses sometimes.
-      ; In that case, don't add the header.
-      (when response
-        (ring/header response "X-Puppet-Version" version)))))
+      (cond
+        (nil? response) response
+        (str/blank? version) (cond-> response
+                               (:headers response) (update :headers dissoc "X-Puppet-Version"))
+        :else (ring/header response "X-Puppet-Version" version)))))
 
 ;; This function exists to support backward-compatible usage of a
 ;; client-whitelist to protect access to some Clojure endpoints.  When support
