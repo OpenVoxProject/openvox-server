@@ -21,6 +21,11 @@ Two vanagon projects make up the build:
    configs from `resources/files/`, and the systemd unit, defaults file, and
    tmpfiles config rendered from the templates next to it.
 
+The `el-9-x86_64` package build also writes `openvox-server-<version>.tar.gz`
+to `packaging/output/`. That is the tarball downstream packagers such as the
+FreeBSD port build from: the jar and the authored content in the layout of the
+ezbake source tarball, under a `puppetserver-<version>/` top level directory.
+
 Both run through `rake "vox:build[<project>,<platform>]"` at the repo root,
 which is what the shared CI workflow calls.
 

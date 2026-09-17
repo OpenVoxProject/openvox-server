@@ -10,6 +10,11 @@ module ServerPackaging
     'fips' => 'redhatfips-9-x86_64',
   }.freeze
 
+  # The package build that also emits the source tarball downstream packagers
+  # such as the FreeBSD port build from. Any one platform would do, this one is
+  # in the platform lists of both release lines.
+  SOURCE_TARBALL_PLATFORM = 'el-9-x86_64'
+
   # Clojure libraries that can be rebuilt from source before the uberjar
   # build, in dependency order. There is a circular dependency between
   # clj-http-client and trapperkeeper-webserver, but only for tests.
@@ -41,6 +46,16 @@ module ServerPackaging
   # Matches the archive name vanagon gives the uberjar project's output
   def self.uberjar_archive_name(version, variant)
     "openvox-server-uberjar-#{version}.#{UBERJAR_PLATFORMS.fetch(variant)}.tar.gz"
+  end
+
+  # The source tarball keeps the name ezbake gave it, and its top level
+  # directory keeps the puppetserver name the FreeBSD port expects
+  def self.source_tarball_name(version)
+    "openvox-server-#{version}.tar.gz"
+  end
+
+  def self.source_tarball_root(version)
+    "puppetserver-#{version}"
   end
 
   # Reads a dependency rebuild request from the environment. Returns the
