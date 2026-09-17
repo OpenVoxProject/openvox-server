@@ -1,3 +1,5 @@
+require_relative '../packaging/lib/server_packaging'
+
 def s3_command_prefix
   endpoint = ENV.fetch('ENDPOINT_URL', nil)
   bucket = ENV.fetch('BUCKET_NAME', nil)
@@ -20,8 +22,9 @@ end
 
 # Uploads the vanagon build output for one platform, or everything in
 # packaging/output when no platform is given. Packages carry the short
-# platform tag in their names (el9, ubuntu24.04) while the uberjar archives
-# carry the full vanagon platform name (el-9-x86_64).
+# platform tag in their names (el9, ubuntu24.04), the uberjar archives carry
+# the full vanagon platform name (el-9-x86_64), and the source tarball one
+# platform's build emits carries neither.
 def vanagon_upload(tag, platform)
   munged_tag = tag.gsub('-', '.')
   glob = "#{__dir__}/../packaging/output/**/*#{munged_tag}*"
@@ -31,7 +34,11 @@ def vanagon_upload(tag, platform)
   if platform && !platform.to_s.empty?
     parts = platform.split('-')
     os = parts[0].gsub('fedora', 'fc') + parts[1]
-    files = files.select { |f| File.basename(f).include?(os) || File.basename(f).include?(platform) }
+    source_tarball = ServerPackaging.source_tarball_name(tag)
+    files = files.select do |f|
+      name = File.basename(f)
+      name.include?(os) || name.include?(platform) || name == source_tarball
+    end
   end
   abort 'No files for the given tag found in the output directory.' if files.empty?
 

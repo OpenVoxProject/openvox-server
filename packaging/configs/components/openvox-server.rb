@@ -1,3 +1,5 @@
+require_relative '../../lib/server_packaging'
+
 # Assembles all the package contents from the repo checkout. The compiled
 # bits (uberjar, vendored gems, FIPS BC jars) come from the uberjar-tarball
 # component.
@@ -48,6 +50,28 @@ component 'openvox-server' do |pkg, settings, platform|
   service_file = File.basename(service_template, '.erb')
   pkg.install_service "../#{service_file}", '../puppetserver.sysconfig', 'puppetserver'
   pkg.install_file '../puppetserver.conf', '/usr/lib/tmpfiles.d/puppetserver.conf' if wrapper_style
+
+  # Ordering only, so the jar is unpacked before the source tarball below is assembled
+  pkg.build_requires 'uberjar-tarball'
+
+  # One platform's build also emits the tarball downstream packagers such as
+  # the FreeBSD port build from. It carries the jar and the authored content
+  # in the layout of the ezbake source tarball, under the top level directory
+  # the port expects, and lands in output/ next to the packages.
+  if platform.name == ServerPackaging::SOURCE_TARBALL_PLATFORM
+    tarball_root = ServerPackaging.source_tarball_root(settings[:package_version])
+    tarball_name = ServerPackaging.source_tarball_name(settings[:package_version])
+    pkg.install do
+      [
+        "rm -rf ../#{tarball_root} && mkdir -p ../#{tarball_root}/ext/cli_defaults ../output",
+        "cp #{app_dir}/puppet-server-release.jar ../#{tarball_root}/",
+        "cp -r bin cli config system-config ../#{tarball_root}/ext/",
+        "cp ../cli-defaults.sh ../#{tarball_root}/ext/cli_defaults/",
+        "#{platform.tar} --sort=name --owner=0 --group=0 --numeric-owner --mtime=@$$SOURCE_DATE_EPOCH --clamp-mtime " \
+        "-C .. -czf ../output/#{tarball_name} #{tarball_root}",
+      ]
+    end
+  end
 
   # User and group creation, kept identical to what the ezbake packages did.
   # The rpm variant prefers uid and gid 52 when they are free.
