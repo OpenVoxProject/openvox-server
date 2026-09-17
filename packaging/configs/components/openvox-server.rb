@@ -89,11 +89,11 @@ component 'openvox-server' do |pkg, settings, platform|
   # owns the puppet.conf and ssl directories this touches.
   postinstall_commands = [
     'install --owner=puppet --group=puppet -d /opt/puppetlabs/server/data/puppetserver/jruby-gems',
-    '/opt/puppetlabs/puppet/bin/puppet config set --section master vardir  /opt/puppetlabs/server/data/puppetserver',
-    '/opt/puppetlabs/puppet/bin/puppet config set --section master logdir  /var/log/puppetlabs/puppetserver',
-    '/opt/puppetlabs/puppet/bin/puppet config set --section master rundir  /var/run/puppetlabs/puppetserver',
-    '/opt/puppetlabs/puppet/bin/puppet config set --section master pidfile /var/run/puppetlabs/puppetserver/puppetserver.pid',
-    '/opt/puppetlabs/puppet/bin/puppet config set --section master codedir /etc/puppetlabs/code',
+    '/opt/puppetlabs/puppet/bin/puppet config set --section server vardir  /opt/puppetlabs/server/data/puppetserver',
+    '/opt/puppetlabs/puppet/bin/puppet config set --section server logdir  /var/log/puppetlabs/puppetserver',
+    '/opt/puppetlabs/puppet/bin/puppet config set --section server rundir  /var/run/puppetlabs/puppetserver',
+    '/opt/puppetlabs/puppet/bin/puppet config set --section server pidfile /var/run/puppetlabs/puppetserver/puppetserver.pid',
+    '/opt/puppetlabs/puppet/bin/puppet config set --section server codedir /etc/puppetlabs/code',
     'usermod --home /opt/puppetlabs/server/data/puppetserver puppet',
     'install --directory --owner=puppet --group=puppet --mode=775 /opt/puppetlabs/server/data',
     'install --directory /etc/puppetlabs/puppet/ssl',
