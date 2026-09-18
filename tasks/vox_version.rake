@@ -4,10 +4,9 @@
 def vox_set_version(version)
   data = File.read('project.clj')
 #(defproject org.openvoxproject/puppetserver "9.1.0-SNAPSHOT"
-#  data = data.sub(/\(def ps-version "[^"]*"/,"(def ps-version \"#{version}\"")
   data = data.sub /\(defproject org.openvoxproject\/puppetserver .*-SNAPSHOT\"/, "(defproject org.openvoxproject/puppetserver \"#{version}-SNAPSHOT\""
 
-  # stolen from sync_ezbake_dep.rb needs ARGV[0]='project.cli'
+  # stolen from sync_ezbake_dep.rb
   v = data[/^\(defproject\s+\S+\s+"([^"]+)"/m, 1]
   abort("Couldn't find defproject version string in #{file}") unless v
 
@@ -18,7 +17,7 @@ def vox_set_version(version)
 
   File.write('project.clj', data)
 
-#  run_command("git add project.clj && git commit -m 'Set version to #{version}'", silent: true)
+  run_command("git add project.clj && git commit -m 'Set version to #{version}'", silent: true)
 end
 
 namespace :vox do
