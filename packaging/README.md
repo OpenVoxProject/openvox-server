@@ -9,11 +9,10 @@ Two vanagon projects make up the build:
 
 1. `openvox-server-uberjar` builds everything that needs the JVM toolchain: the
    `puppet-server-release.jar` uberjar, the vendored gems, and on the FIPS
-   variant the BouncyCastle FIPS jars. It runs once per variant, on
-   `el-9-x86_64` for the regular jar and on `redhatfips-9-x86_64` for the FIPS
-   jar (see `lib/server_packaging.rb`), and its output is a rooted archive,
-   `openvox-server-uberjar-<version>.<platform>.tar.gz`, that CI uploads to the
-   artifacts S3 bucket.
+   variant the BouncyCastle FIPS jars. It runs once per variant, on the
+   platforms specified in `UBERJAR_PLATFORMS` in `lib/server_packaging.rb`, and
+   its output is a rooted archive, `openvox-server-uberjar-<version>.<platform>.tar.gz`,
+   that CI uploads to the artifacts S3 bucket.
 2. `openvox-server` builds the package for one platform. The `uberjar-tarball`
    component fetches the matching uberjar archive (from S3 in CI, or from
    `packaging/output` for local builds) and the `openvox-server` component
@@ -21,10 +20,11 @@ Two vanagon projects make up the build:
    configs from `resources/files/`, and the systemd unit, defaults file, and
    tmpfiles config rendered from the templates next to it.
 
-The `el-9-x86_64` package build also writes `openvox-server-<version>.tar.gz`
-to `packaging/output/`. That is the tarball downstream packagers such as the
-FreeBSD port build from: the jar and the authored content in the layout of the
-ezbake source tarball, under a `puppetserver-<version>/` top level directory.
+The package build for `SOURCE_TARBALL_PLATFORM` in `lib/server_packaging.rb` 
+also writes `openvox-server-<version>.tar.gz` to `packaging/output/`. That is
+the tarball downstream packagers such as the FreeBSD port build from: the jar
+and the authored content in the layout of the ezbake source tarball, under a
+`puppetserver-<version>/` top level directory.
 
 Both run through `rake "vox:build[<project>,<platform>]"` at the repo root,
 which is what the shared CI workflow calls.
