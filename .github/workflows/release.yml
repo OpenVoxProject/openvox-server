@@ -34,7 +34,8 @@ jobs:
 # $ grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+' project.clj
 # 9.1.0
         run: |
-          ovoxserverversion=$(cat project.clj | grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+')
+#          ovoxserverversion=$(cat project.clj | grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+')
+          ovoxserverversion=$(lein update-in :plugins conj '[lein-pprint "1.3.2"]' -- pprint :version |tail -1 |grep -Po '\d+\.\d+\.\d+')
           if [ "$ovoxserverversion" != "$RELEASE_VERSION" ]; then
             echo "::error::PUPPETSERVERVERSION is '$ovoxserverversion' but expected '$RELEASE_VERSION'. Has the prepare_release PR been merged?"
             exit 1
