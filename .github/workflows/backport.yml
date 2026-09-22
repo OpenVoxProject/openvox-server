@@ -17,7 +17,7 @@ env:
 jobs:
   backport:
     name: Backport merged pull request
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # For security reasons, we don't want to checkout and run arbitrary code when
     # using the pull_request_target trigger. So restrict this to cases where the
     # backport label is applied to an already merged PR.
