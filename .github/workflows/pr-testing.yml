@@ -32,7 +32,7 @@ jobs:
           - javaargs: 'with-profile fips'
             version: '25'
             filter: ':singlethreaded'
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04 # 26.04 doesn't have Ruby 3.1
     steps:
       - name: checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -60,7 +60,7 @@ jobs:
 
   rspec-tests:
     name: Rspec Tests - Java ${{ matrix.java }} Ruby ${{ matrix.ruby }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -96,7 +96,7 @@ jobs:
 
   build:
     name: build openvox-server
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       pull-requests: write
     steps:
@@ -193,7 +193,7 @@ jobs:
       - rspec-tests
       - clojure-linting
       - build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: Test suite
     steps:
       - name: Decide whether the needed jobs succeeded or failed
@@ -206,7 +206,7 @@ jobs:
     if: github.event_name == 'pull_request' && (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'renovate[bot]')
     needs:
       - tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       pull-requests: write
