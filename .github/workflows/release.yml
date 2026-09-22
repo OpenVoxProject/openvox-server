@@ -31,7 +31,7 @@ jobs:
       - name: Verify PUPPETVERSION matches release version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
-# $ cat project.clj | grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+'
+# $ grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+' project.clj
 # 9.1.0
         run: |
           ovoxserverversion=$(cat project.clj | grep 'defproject org.openvoxproject/puppetserver ".*-SNAPSHOT"' |grep -Po '\d+\.\d+\.\d+')
