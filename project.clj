@@ -21,6 +21,7 @@
 ;;
 ;;       See: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 (def jackson-version "2.21.7")
+(def jackson-annotations-version (re-find #"^\d+\.\d+" jackson-version))
 
 ;; If you modify the version manually, run scripts/sync_ezbake_dep.rb to keep
 ;; the ezbake dependency in sync.
@@ -49,9 +50,7 @@
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
-                         ;; For some reason, this version is 2.20 without a .1. Update this back to
-                         ;; ~jackson-version when they match again.
-                         [com.fasterxml.jackson.core/jackson-annotations "2.21"]
+                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-annotations-version]
                          [commons-codec "1.22.1"]
                          [commons-io "2.22.0"]
                          [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
