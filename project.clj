@@ -260,6 +260,16 @@
                       :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.1.0")]]
                       :name "puppetserver"}
 
+             ;; Profiles for building the release uberjar without ezbake. Used by
+             ;; tasks/uberjar.rake, which feeds the vanagon packaging under packaging/.
+             ;; bcpkix-jdk18on is bundled in the regular jar and is also needed at
+             ;; packaging time to install vendored gems. The FIPS jar excludes all
+             ;; BouncyCastle classes and the package installs the separate BC FIPS
+             ;; jars for the runtime instead.
+             :pkg {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]}
+             :pkg-fips {:dependencies [[org.bouncycastle/bcpkix-jdk18on]]
+                        :uberjar-exclusions [#"^org/bouncycastle/.*"]}
+
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
                                                     ;; The non-FIPS BC jar is only needed for installing vendored gems
                                                     ;; at packaging time, and is not included in the final package.
