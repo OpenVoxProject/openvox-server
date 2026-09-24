@@ -70,7 +70,7 @@
                          [org.openvoxproject/comidi "1.1.4"]
                          [org.openvoxproject/http-client "2.4.1"]
                          [org.openvoxproject/i18n ~i18n-version]
-                         [org.openvoxproject/jruby-utils "5.5.0"]
+                         [org.openvoxproject/jruby-utils "5.5.1"]
                          [org.openvoxproject/kitchensink "3.5.8"]
                          [org.openvoxproject/kitchensink "3.5.8" :classifier "test"]
                          [org.openvoxproject/rbac-client "1.3.0"]
