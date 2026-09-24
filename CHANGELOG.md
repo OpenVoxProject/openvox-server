@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## [9.0.0-rc1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-rc1) (2026-09-08)
+## [1.2.3](https://github.com/openvoxproject/openvox-server/tree/1.2.3) (2026-09-24)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc1...1.2.3)
+
+**Implemented enhancements:**
+
+- allow primary to clean jrubies code cache after code deployment [\#640](https://github.com/OpenVoxProject/openvox-server/pull/640) ([marcusdots](https://github.com/marcusdots))
+
+**Merged pull requests:**
+
+- Github Actions to release OpenVox-server [\#642](https://github.com/OpenVoxProject/openvox-server/pull/642) ([marcusdots](https://github.com/marcusdots))
+
+## [9.0.0-rc1](https://github.com/openvoxproject/openvox-server/tree/9.0.0-rc1) (2026-09-09)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta5...9.0.0-rc1)
 
