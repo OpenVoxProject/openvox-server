@@ -366,3 +366,6 @@ else
     config.release_branch = "main"
   end
 end
+
+desc 'Prepare for a release'
+task 'release:prepare' => [:changelog]
