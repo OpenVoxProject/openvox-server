@@ -45,7 +45,7 @@ jobs:
           token: ${{ secrets.OPENVOXBOT_COMMIT_AND_PRS }}
           ref: main
       - name: Create backport pull requests
-        uses: korthout/backport-action@2e830a1d0b8269505846ddd407a70876913ad1f8 # v4.6.0
+        uses: korthout/backport-action@6b65649031ac6d18ffdfd0c0820e9436f3fde22b # v4.6.1
         with:
           auto_merge_enabled: true
           auto_merge_method: merge
