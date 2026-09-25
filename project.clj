@@ -15,7 +15,7 @@
 
 (def slf4j-version "2.0.20")
 (def i18n-version "1.0.6")
-(def logback-version "1.6.3")
+(def logback-version "1.6.4")
 ;; NOTE: Use the 2.21.z release series of Jackson. The Cheshire JSON
 ;;       library requires 2.x and 2.21 is the current LTS as of 2026.
 ;;
