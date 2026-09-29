@@ -164,6 +164,8 @@
                        :java-args-dist ~(str "--add-opens java.base/sun.nio.ch=ALL-UNNAMED "
                                              "--add-opens java.base/java.io=ALL-UNNAMED "
                                              "--enable-native-access=ALL-UNNAMED")
+                       ;; Java versions the packages run on, most preferred first
+                       :java-versions "25 21"
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"
                                      "/opt/puppetlabs/server/data/puppetserver/yaml"]
                        :repo-target "openvox9"
