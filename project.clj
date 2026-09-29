@@ -164,6 +164,8 @@
                        :java-args-dist ~(str "--add-opens java.base/sun.nio.ch=ALL-UNNAMED "
                                              "--add-opens java.base/java.io=ALL-UNNAMED "
                                              "--enable-native-access=ALL-UNNAMED")
+                       ;; Java versions the packages run on, most preferred first
+                       :java-versions "25 21"
                        :create-dirs ["/opt/puppetlabs/server/data/puppetserver/jars"
                                      "/opt/puppetlabs/server/data/puppetserver/yaml"]
                        :repo-target "openvox9"
@@ -199,7 +201,10 @@
                                         [org.bouncycastle/bctls-fips]]
                          :lein-ezbake {:vars {:java-args ~(str
                                                             "-Djava.security.properties==/opt/puppetlabs/server/data/puppetserver/java.security.fips "
-                                                            "-Xms2g -Xmx2g")}
+                                                            "-Xms2g -Xmx2g")
+                                              ;; The BouncyCastle FIPS libraries are certified for Java 8, 11, 17, and 21, see
+                                              ;; https://www.bouncycastle.org/download/bouncy-castle-java-fips/
+                                              :java-versions "21"}
                                        :classpath-jars [{:artifact org.bouncycastle/bc-fips
                                                   :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
                                                             :mode "0644"}}
@@ -215,15 +220,7 @@
                                                  {:artifact org.bouncycastle/bcprov-jdk18on}]
                                           :project-files [{:file "resources/ext/java.security.fips"
                                                            :install {:path "/opt/puppetlabs/server/data/puppetserver"}}]}
-                         :jvm-opts ~(let [version (System/getProperty "java.specification.version")
-                                          [major minor _] (clojure.string/split version #"\.")
-                                          unsupported-ex (ex-info "Unsupported major Java version."
-                                                           {:major major
-                                                            :minor minor})]
-                                      (condp = (java.lang.Integer/parseInt major)
-                                        17 ["-Djava.security.properties==./resources/ext/java.security.fips"]
-                                        21 ["-Djava.security.properties==./resources/ext/java.security.fips"]
-                                        (do)))}
+                         :jvm-opts ["-Djava.security.properties==./resources/ext/java.security.fips"]}
              :fips [:defaults :fips-deps]
 
              :testutils {:source-paths ["test/unit" "test/integration"]}
@@ -256,7 +253,7 @@
                                                [org.openvoxproject/puppetserver "9.1.0-SNAPSHOT"]
                                                [org.openvoxproject/trapperkeeper-webserver]
                                                [org.openvoxproject/trapperkeeper-metrics]]
-                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.1.0")]]
+                      :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.2.0")]]
                       :name "puppetserver"}
 
              :ezbake-fips {:dependencies ^:replace [[org.clojure/clojure]
@@ -270,7 +267,7 @@
                                                     [org.openvoxproject/trapperkeeper-webserver]
                                                     [org.openvoxproject/trapperkeeper-metrics]]
                             :uberjar-exclusions [#"^org/bouncycastle/.*"]
-                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.1.0")]]
+                            :plugins [[org.openvoxproject/lein-ezbake ~(or (System/getenv "EZBAKE_VERSION") "4.2.0")]]
                       :name "puppetserver"}
              :uberjar {:dependencies [[org.openvoxproject/trapperkeeper-webserver]]
                        :aot [puppetlabs.trapperkeeper.main
