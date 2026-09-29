@@ -220,15 +220,7 @@
                                                  {:artifact org.bouncycastle/bcprov-jdk18on}]
                                           :project-files [{:file "resources/ext/java.security.fips"
                                                            :install {:path "/opt/puppetlabs/server/data/puppetserver"}}]}
-                         :jvm-opts ~(let [version (System/getProperty "java.specification.version")
-                                          [major minor _] (clojure.string/split version #"\.")
-                                          unsupported-ex (ex-info "Unsupported major Java version."
-                                                           {:major major
-                                                            :minor minor})]
-                                      (condp = (java.lang.Integer/parseInt major)
-                                        17 ["-Djava.security.properties==./resources/ext/java.security.fips"]
-                                        21 ["-Djava.security.properties==./resources/ext/java.security.fips"]
-                                        (do)))}
+                         :jvm-opts ["-Djava.security.properties==./resources/ext/java.security.fips"]}
              :fips [:defaults :fips-deps]
 
              :testutils {:source-paths ["test/unit" "test/integration"]}
