@@ -18,6 +18,8 @@ SMOKE_COLLECTION = 'openvox9'
 SMOKE_HOSTNAME = 'smoke.example.com'
 # The architectures GitHub has runners for, as vanagon spells them
 SMOKE_ARCHES = %w[amd64 x86_64 aarch64].freeze
+# Images to use instead of the vanagon default, which for sles-15 is an old service pack kept for building
+SMOKE_IMAGES = { 'sles-15-x86_64' => 'registry.suse.com/suse/sle15:15.7' }.freeze
 
 # Runs docker without a shell in between, so the arguments need no quoting
 def smoke_docker(*args)
@@ -59,6 +61,7 @@ namespace :vox do
     abort 'You must provide a target, for example el-9-x86_64' if name.nil?
     defaults = smoke_vanagon_defaults
     target = Vanagon::Platform.load_platform(name, defaults)
+    image = SMOKE_IMAGES.fetch(name, "#{target.docker_registry}/#{target.docker_image}")
     # The platform is the target without its architecture
     platform = name.sub(/-[^-]+$/, '')
 
@@ -97,8 +100,7 @@ namespace :vox do
       smoke_docker('run', '--detach', '--name', SMOKE_CONTAINER, '--hostname', SMOKE_HOSTNAME,
                    '--platform', target.docker_arch, '--privileged', '--env', 'container=docker',
                    '--volume', "#{File.expand_path('output')}:/output:ro",
-                   "#{target.docker_registry}/#{target.docker_image}",
-                   '/bin/sh', '-c', "#{install_systemd} && exec /usr/lib/systemd/systemd")
+                   image, '/bin/sh', '-c', "#{install_systemd} && exec /usr/lib/systemd/systemd")
       smoke_wait_for_systemd
       smoke_exec(install_release)
       smoke_exec("#{install} openvox-agent")
