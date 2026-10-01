@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1.0](https://github.com/openvoxproject/openvox-server/tree/9.1.0) (2026-10-01)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc2...9.1.0)
+
+**Merged pull requests:**
+
+- Smoke testing for PRs or local tests [\#679](https://github.com/OpenVoxProject/openvox-server/pull/679) ([nmburgan](https://github.com/nmburgan))
+
 ## [9.0.0-rc2](https://github.com/openvoxproject/openvox-server/tree/9.0.0-rc2) (2026-09-29)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc1...9.0.0-rc2)
@@ -12,6 +20,7 @@ All notable changes to this project will be documented in this file.
 
 **Merged pull requests:**
 
+- Set version to 9.0.0-rc2 [\#677](https://github.com/OpenVoxProject/openvox-server/pull/677) ([nmburgan](https://github.com/nmburgan))
 - Add jruby-openssl to gem list [\#676](https://github.com/OpenVoxProject/openvox-server/pull/676) ([nmburgan](https://github.com/nmburgan))
 - Use ezbake 4.2.0, declare supported Java versions, remove cruft [\#675](https://github.com/OpenVoxProject/openvox-server/pull/675) ([nmburgan](https://github.com/nmburgan))
 
