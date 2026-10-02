@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.0.1](https://github.com/openvoxproject/openvox-server/tree/9.0.1) (2026-10-02)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc2...9.0.1)
+
+**Merged pull requests:**
+
+- Gate the gem subcommand test on FIPS mode [\#681](https://github.com/OpenVoxProject/openvox-server/pull/681) ([nmburgan](https://github.com/nmburgan))
+- Smoke testing for PRs or local tests [\#679](https://github.com/OpenVoxProject/openvox-server/pull/679) ([nmburgan](https://github.com/nmburgan))
+
 ## [9.0.0-rc2](https://github.com/openvoxproject/openvox-server/tree/9.0.0-rc2) (2026-09-29)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc1...9.0.0-rc2)
