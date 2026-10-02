@@ -54,6 +54,15 @@
       "matchPackageNames": [
         "/net.logstash.logback:logstash-logback-encoder/"
       ]
+    },
+    {
+      "groupName": "bouncycastle fips updates",
+      "matchPackageNames": [
+        "org.bouncycastle:bc-fips",
+        "org.bouncycastle:bcutil-fips",
+        "org.bouncycastle:bcpkix-fips",
+        "org.bouncycastle:bctls-fips"
+      ]
     }
   ]
 }
