@@ -2,9 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.17.0](https://github.com/openvoxproject/openvox-server/tree/8.17.0) (2026-10-02)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.16.0...8.17.0)
+
+**Implemented enhancements:**
+
+- \[Backport 8.x\] allow primary to clean jrubies code cache after code deployment [\#645](https://github.com/OpenVoxProject/openvox-server/pull/645) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
+**Merged pull requests:**
+
+- \[Backport 8.x\] Add test for Type= in systemd unit [\#636](https://github.com/OpenVoxProject/openvox-server/pull/636) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
 ## [8.16.0](https://github.com/openvoxproject/openvox-server/tree/8.16.0) (2026-09-08)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.2...8.16.0)
+
+We had a hiccup with our CI system and the 9.0.0-beta3 packages weren't released. In addition, a 9.0.0 release was published to [clojars](https://clojars.org/org.openvoxproject/puppetserver) with the 9.0.0-beta3 changes. 9.0.0-beta4 just republishes the 9.0.0-beta3 changes.
 
 **Implemented enhancements:**
 
