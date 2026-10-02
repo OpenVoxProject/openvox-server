@@ -356,7 +356,7 @@ else
     HEADER
     config.user = 'openvoxproject'
     config.project = 'openvox-server'
-    config.exclude_labels = %w[dependencies duplicate question invalid wontfix wont-fix modulesync skip-changelog]
+    config.exclude_labels = %w[dependencies duplicate question invalid wontfix wont-fix modulesync skip-changelog skip-8.x-changelog]
     config.future_release = File.readlines('project.clj')
       .grep(/^\(defproject /).first[/"([^"]+)"/, 1]
       .sub(/-SNAPSHOT\z/, '')
