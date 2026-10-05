@@ -291,9 +291,9 @@
       (let [jruby (jruby-core/default-initialize-scripting-container scripting-container config)]
         (-> ^org.jruby.RubyInstanceConfig jruby
             (.getRequiredLibraries)
-            ;; Can be dropped when this upstream bug is fixed:
-            ;;   https://github.com/jruby/jruby/issues/9550
-            (.add "puppet/server/patches/resolv_ipv6_normalization"))
+            ;; Add patches, as required, here
+            ;; (.add "puppet/server/patches/<some_patch_file>")
+            )
         jruby))))
 
 (def EnvironmentCacheEntry
