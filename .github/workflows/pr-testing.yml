@@ -208,7 +208,7 @@ jobs:
         env:
           # The same FIPS-only build as the release workflow
           DEB_PLATFORMS: ''
-          RPM_PLATFORMS: redhatfips-8,redhatfips-9
+          RPM_PLATFORMS: redhatfips-8,redhatfips-9,redhatfips-10
       - name: list the smoke test targets
         id: smoke-targets
         run: |
