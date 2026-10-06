@@ -35,4 +35,6 @@ elif command -v sudo &> /dev/null; then
 else
   su "${USER}" -s /bin/bash -c "$COMMAND"
 fi
+rc=$?
 popd &> /dev/null
+exit $rc
