@@ -19,13 +19,8 @@ jobs:
         javaargs: ['with-profile fips', '']
         filter: [':singlethreaded', ':multithreaded']
         version: ['21', '25']
+        # The FIPS packages run on Java 21 only
         exclude:
-          - javaargs: 'with-profile fips'
-            version: '21'
-            filter: ':multithreaded'
-          - javaargs: 'with-profile fips'
-            version: '21'
-            filter: ':singlethreaded'
           - javaargs: 'with-profile fips'
             version: '25'
             filter: ':multithreaded'

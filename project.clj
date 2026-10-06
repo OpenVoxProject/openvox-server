@@ -63,9 +63,10 @@
                          [net.logstash.logback/logstash-logback-encoder "8.1"]
                          [org.apache.commons/commons-exec "1.6.0"]
                          [org.bouncycastle/bcpkix-jdk18on "1.86"]
-                         [org.bouncycastle/bcpkix-fips "1.0.8"]
-                         [org.bouncycastle/bc-fips "1.0.2.6"]
-                         [org.bouncycastle/bctls-fips "1.0.19"]
+                         [org.bouncycastle/bcpkix-fips "2.1.13"]
+                         [org.bouncycastle/bc-fips "2.1.3"]
+                         [org.bouncycastle/bctls-fips "2.1.25"]
+                         [org.bouncycastle/bcutil-fips "2.1.8"]
                          [org.openvoxproject/clj-shell-utils "2.2.1"]
                          [org.openvoxproject/comidi "1.1.4"]
                          [org.openvoxproject/http-client "2.4.1"]
@@ -198,7 +199,8 @@
              :dev [:defaults :dev-deps]
              :fips-deps {:dependencies [[org.bouncycastle/bcpkix-fips]
                                         [org.bouncycastle/bc-fips]
-                                        [org.bouncycastle/bctls-fips]]
+                                        [org.bouncycastle/bctls-fips]
+                                        [org.bouncycastle/bcutil-fips]]
                          :lein-ezbake {:vars {:java-args ~(str
                                                             "-Djava.security.properties==/opt/puppetlabs/server/data/puppetserver/java.security.fips "
                                                             "-Xms2g -Xmx2g")
@@ -212,6 +214,9 @@
                                                   :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
                                                             :mode "0644"}}
                                                  {:artifact org.bouncycastle/bctls-fips
+                                                  :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
+                                                            :mode "0644"}}
+                                                 {:artifact org.bouncycastle/bcutil-fips
                                                   :install {:path "/opt/puppetlabs/server/data/puppetserver/jars"
                                                             :mode "0644"}}
                                                  ;; Only used for installing vendored gems during packaging and not included
