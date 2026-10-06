@@ -33,7 +33,7 @@ def vanagon_upload(tag, platform)
 
   if platform && !platform.to_s.empty?
     parts = platform.split('-')
-    os = parts[0].gsub('fedora', 'fc') + parts[1]
+    os = parts[0] + parts[1]
     source_tarball = ServerPackaging.source_tarball_name(tag)
     files = files.select do |f|
       name = File.basename(f)
