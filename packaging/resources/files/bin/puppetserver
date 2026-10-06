@@ -86,7 +86,8 @@ function execsubcommand {
     if [ -e ${cmd} ]; then
         exec "${cmd}" "$@"
     else
-        echo "puppetserver: '${sub}' is not a puppetserver command. See '$(basename $0) --help'."
+        echo "puppetserver: '${sub}' is not a puppetserver command. See '$(basename $0) --help'." >&2
+        exit 1
     fi
 }
 
