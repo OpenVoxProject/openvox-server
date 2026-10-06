@@ -75,7 +75,7 @@ component 'server-uberjar' do |pkg, settings, platform|
     if platform.is_fips?
       commands << "install -d #{jars_dir}"
       commands << "#{classpath_jars('user,fips-deps,provided')} > fips-classpath.txt"
-      %w[bc-fips bcpkix-fips bctls-fips].each do |jar|
+      %w[bc-fips bcpkix-fips bctls-fips bcutil-fips].each do |jar|
         commands << copy_jar(jar, 'fips-classpath.txt', jars_dir)
       end
     end
