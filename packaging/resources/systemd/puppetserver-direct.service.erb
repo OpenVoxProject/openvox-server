@@ -36,10 +36,8 @@ TasksMax=4915
 #set default privileges to -rw-r-----
 UMask=027
 
-# The classpath starts with the jars directory so that extra jars, most
-# notably the BouncyCastle FIPS provider jars on redhatfips platforms, are
-# available to the service.
-ExecStart=<%= @settings[:java_bin] %> $JAVA_ARGS_DIST $JAVA_ARGS $LOG_APPENDER -Dlogappender=F1 \
+<%# ezbake passes $LOG_APPENDER only in its debian unit. Nothing sets it for the service, so this only keeps the units identical. -%>
+ExecStart=<%= @settings[:java_bin] %> $JAVA_ARGS_DIST $JAVA_ARGS <%= '$LOG_APPENDER ' if @platform.is_deb? %>-Dlogappender=F1 \
   -XX:+CrashOnOutOfMemoryError \
   -XX:ErrorFile="${LOGS_DIRECTORY}/puppetserver_err_pid%%p.log" \
   -cp "/opt/puppetlabs/server/data/puppetserver/jars/*:${INSTALL_DIR}/puppet-server-release.jar" \

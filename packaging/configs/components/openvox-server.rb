@@ -8,12 +8,15 @@ component 'openvox-server' do |pkg, settings, platform|
   pkg.version settings[:package_version]
 
   wrapper_style = settings[:service_style] == :wrapper
+  # OpenVox 9 packages run Java through a launcher, as the ezbake 4.2 packages do
+  launcher = !settings[:java_versions].nil?
 
   service_template = wrapper_style ? 'puppetserver-wrapper.service.erb' : 'puppetserver-direct.service.erb'
   pkg.add_source "file://resources/systemd/#{service_template}", erb: true
   pkg.add_source 'file://resources/systemd/puppetserver.sysconfig.erb', erb: true
   pkg.add_source 'file://resources/cli-defaults.sh.erb', erb: true
   pkg.add_source 'file://resources/tmpfiles.d/puppetserver.conf' if wrapper_style
+  pkg.add_source 'file://resources/java.erb', erb: true if launcher
 
   pkg.build do
     ["#{platform.sed} -i 's/@@VERSION@@/#{settings[:package_version]}/' bin/puppetserver"]
@@ -22,6 +25,7 @@ component 'openvox-server' do |pkg, settings, platform|
   app_dir = '/opt/puppetlabs/server/apps/puppetserver'
 
   pkg.install_file 'bin/puppetserver', "#{app_dir}/bin/puppetserver", mode: '0755'
+  pkg.install_file '../java', "#{app_dir}/bin/java", mode: '0755' if launcher
   pkg.link "../apps/puppetserver/bin/puppetserver", '/opt/puppetlabs/server/bin/puppetserver'
   pkg.link "../server/apps/puppetserver/bin/puppetserver", '/opt/puppetlabs/bin/puppetserver'
 
@@ -62,14 +66,16 @@ component 'openvox-server' do |pkg, settings, platform|
     tarball_root = ServerPackaging.source_tarball_root(settings[:package_version])
     tarball_name = ServerPackaging.source_tarball_name(settings[:package_version])
     pkg.install do
-      [
+      commands = [
         "rm -rf ../#{tarball_root} && mkdir -p ../#{tarball_root}/ext/cli_defaults ../output",
         "cp #{app_dir}/puppet-server-release.jar ../#{tarball_root}/",
         "cp -r bin cli config system-config ../#{tarball_root}/ext/",
         "cp ../cli-defaults.sh ../#{tarball_root}/ext/cli_defaults/",
-        "#{platform.tar} --sort=name --owner=0 --group=0 --numeric-owner --mtime=@$$SOURCE_DATE_EPOCH --clamp-mtime " \
-        "-C .. -czf ../output/#{tarball_name} #{tarball_root}",
       ]
+      commands << "cp ../java ../#{tarball_root}/ext/bin/" if launcher
+      commands << "#{platform.tar} --sort=name --owner=0 --group=0 --numeric-owner --mtime=@$$SOURCE_DATE_EPOCH --clamp-mtime " \
+                  "-C .. -czf ../output/#{tarball_name} #{tarball_root}"
+      commands
     end
   end
 

@@ -1,3 +1,12 @@
+# The package each platform family installs a given Java major version from
+def java_package(platform, version)
+  return "java-#{version}-amazon-corretto-headless" if platform.is_amazon?
+  return "java-#{version}-openjdk-headless" if platform.is_sles?
+  return "openjdk-#{version}-jre-headless" if platform.is_deb?
+
+  "jre-#{version}-headless"
+end
+
 project 'openvox-server' do |proj|
   platform = proj.get_platform
 
@@ -45,52 +54,34 @@ project 'openvox-server' do |proj|
                 (platform.is_ubuntu? && platform.os_version == '22.04')
   proj.setting(:systemd_notify_reload, !old_systemd)
 
-  # Per platform java runtime dependency. Keep this in sync with what each
-  # distro actually packages.
-  java_dep =
-    if platform.is_fips?
-      # BC-FJA 2.x is only FIPS certified through Java 21, and 1.x through 17
-      openvox_major >= 9 ? 'jre-21-headless' : 'jre-17-headless'
-    elsif platform.is_el?
-      case [os_version, openvox_major]
-      in [8 | 9, 8] then 'jre-17-headless'
-      in [10, 8] then 'jre-21-headless'
-      in [8, 9] then 'jre-21-headless'
-      in [9 | 10, 9] then 'jre-25-headless'
-      else fail "Unknown el version #{platform.os_version} for OpenVox #{openvox_major}"
-      end
-    elsif platform.is_fedora?
-      openvox_major >= 9 ? 'jre-25-headless' : 'jre-21-headless'
-    elsif platform.is_amazon?
-      openvox_major >= 9 ? 'java-25-amazon-corretto-headless' : 'java-17-amazon-corretto-headless'
-    elsif platform.is_sles?
-      openvox_major >= 9 ? 'java-25-openjdk-headless' : 'java-17-openjdk-headless'
-    elsif platform.is_deb?
-      if openvox_major >= 9
-        'openjdk-25-jre-headless'
-      elsif platform.is_debian? && os_version <= 12
-        'openjdk-17-jre-headless'
-      else
-        'openjdk-21-jre-headless'
-      end
+  if openvox_major >= 9
+    # The ezbake 4.2 packages ship a launcher that runs the first of these
+    # Java versions it finds, most preferred first, and depend on any one of
+    # them. BC-FJA is only FIPS certified through Java 21.
+    java_versions = platform.is_fips? ? %w[21] : %w[25 21]
+    proj.setting(:java_versions, java_versions.join(' '))
+    proj.setting(:java_bin, '/opt/puppetlabs/server/apps/puppetserver/bin/java')
+    java_packages = java_versions.map { |java_version| java_package(platform, java_version) }
+    if platform.is_deb?
+      proj.requires java_packages.join(' | ')
+    elsif java_packages.one?
+      proj.requires java_packages.first
     else
-      fail "No java dependency known for platform #{platform.name}"
+      # The rpm solvers ignore the order of an or dependency, so the
+      # preferred package is suggested as well
+      proj.requires "(#{java_packages.join(' or ')})"
+      proj.suggests java_packages.first
     end
-  # OpenVox 9 rpm packages point at the exact runtime of the required java
-  # package instead of the alternatives symlink. Debian based packages keep
-  # /usr/bin/java because the Debian JVM directory paths include the
-  # architecture and these packages are noarch. At some point we might migrate
-  # to arch-specific packages to go back to the direct path, but we'll need
-  # to make that change carefully. OpenVox 8 packages keep /usr/bin/java everywhere
-  # like ezbake 2.x did. A platform file can override java_bin through settings.
-  java_bins = {
-    'jre-21-headless' => '/usr/lib/jvm/jre-21/bin/java',
-    'jre-25-headless' => '/usr/lib/jvm/jre-25/bin/java',
-    'java-25-amazon-corretto-headless' => '/usr/lib/jvm/jre-25/bin/java',
-    'java-25-openjdk-headless' => '/usr/lib64/jvm/jre-25/bin/java',
-  }
-  java_bin = openvox_major >= 9 ? java_bins.fetch(java_dep, '/usr/bin/java') : '/usr/bin/java'
-  proj.setting(:java_bin, proj.settings[:java_bin] || java_bin)
+  else
+    # OpenVox 8 packages are built with ezbake 2.x, which pins one Java
+    # package per platform and runs /usr/bin/java. Java 17 everywhere except
+    # where the distribution no longer ships it.
+    java_version = 17
+    java_version = 21 if platform.is_fedora? || (platform.is_el? && !platform.is_fips? && os_version >= 10)
+    java_version = 21 if platform.is_deb? && !(platform.is_debian? && os_version <= 12)
+    proj.requires java_package(platform, java_version)
+    proj.setting(:java_bin, proj.settings[:java_bin] || '/usr/bin/java')
+  end
 
   java_args = '-Xms2g -Xmx2g'
   # OpenVox 9 sets the JRuby logger in code, OpenVox 8 still needs the flag
@@ -112,7 +103,6 @@ project 'openvox-server' do |proj|
     proj.setting(:java_args_dist_min_major, 17)
   end
 
-  proj.requires java_dep
   proj.requires 'tzdata-java' if platform.is_amazon?
   proj.requires 'bash'
   proj.requires 'procps'
