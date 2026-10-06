@@ -21,6 +21,13 @@ else
 fi
 set +a
 
+# Packages ship a launcher that picks the Java runtime. Installs without it
+# keep the JAVA_BIN set above.
+java_launcher="/opt/puppetlabs/server/apps/puppetserver/bin/java"
+if [ -x "$java_launcher" ]; then
+    export JAVA_BIN=$("$java_launcher")
+fi
+
 CLI_DIR="${INSTALL_DIR}/cli"
 CLI_APP_DIR="${CLI_DIR}/apps"
 APPS=`ls ${CLI_APP_DIR} 2>/dev/null`

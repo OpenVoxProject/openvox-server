@@ -63,3 +63,10 @@ the default there. It runs java straight from the unit with `Type=notify`, or
 style matches the ezbake 2.x packages shipped for OpenVox 8 and is the default
 for 8.x versions. It runs the service through the start/stop/reload CLI
 wrappers in `resources/files/wrapper/`. Override with `SERVER_SERVICE_STYLE`.
+
+OpenVox 9 packages also carry the Java launcher of the ezbake 4.2 packages,
+`apps/puppetserver/bin/java` rendered from `resources/java.erb`. The service
+unit and the CLI dispatcher run Java through it, the defaults file has no
+`JAVA_BIN` value, and the package depends on any of the Java versions in the
+project's `java_versions` setting. OpenVox 8 packages keep the single Java
+dependency and `JAVA_BIN="/usr/bin/java"` of the ezbake 2.x packages.

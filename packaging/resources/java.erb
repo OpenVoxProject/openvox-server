@@ -1,0 +1,44 @@
+#!/bin/sh
+# Runs the Java runtime for puppetserver. When called with no
+# arguments it prints the path of that runtime.
+#
+# JAVA_BIN from the defaults file is used as it is. Packages used to write
+# /usr/bin/java there, so that value counts as not set. Without JAVA_BIN the
+# first supported version installed by the distribution is used.
+
+versions="<%= @settings[:java_versions] %>"
+
+# A JAVA_BIN that names this launcher would make it run itself without end
+java=$JAVA_BIN
+if [ "$java" = /usr/bin/java ] || [ "$java" = "$0" ]; then
+    java=
+fi
+
+deb_arch=$(dpkg --print-architecture 2>/dev/null)
+machine=$(uname -m)
+
+for version in $versions; do
+    for candidate in \
+        "/usr/lib/jvm/java-$version-openjdk-$deb_arch/bin/java" \
+        "/usr/lib/jvm/jre-$version/bin/java" \
+        "/usr/lib/jvm/java-$version-amazon-corretto.$machine/bin/java" \
+        "/usr/lib64/jvm/jre-$version/bin/java" \
+        "/usr/lib64/jvm/jre-$version-openjdk/bin/java"
+    do
+        if [ -z "$java" ] && [ -x "$candidate" ]; then
+            java=$candidate
+        fi
+    done
+done
+
+if [ -z "$java" ]; then
+    echo "puppetserver: no Java runtime found (wanted $versions)" >&2
+    exit 127
+fi
+
+if [ $# -eq 0 ]; then
+    echo "$java"
+    exit 0
+fi
+
+exec "$java" "$@"

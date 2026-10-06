@@ -2,8 +2,15 @@
 # Init settings for puppetserver
 ###########################################
 
+<% if @settings[:java_versions] -%>
+# The service and the CLI apps run the Java runtime chosen by
+# /opt/puppetlabs/server/apps/puppetserver/bin/java.
+# Set JAVA_BIN to run a different one.
+#JAVA_BIN="/path/to/bin/java"
+<% else -%>
 # used by openvox-server CLI apps, not by the systemd unit
 JAVA_BIN="<%= @settings[:java_bin] %>"
+<% end -%>
 
 # Modify this if you'd like to change the memory allocation, enable JMX, etc
 JAVA_ARGS="<%= @settings[:java_args] %>"
