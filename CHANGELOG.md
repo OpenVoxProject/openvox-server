@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.17.0](https://github.com/openvoxproject/openvox-server/tree/8.17.0) (2026-10-07)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.16.0...8.17.0)
+
+**Implemented enhancements:**
+
+- \[Backport 8.x\] allow primary to clean jrubies code cache after code deployment [\#645](https://github.com/OpenVoxProject/openvox-server/pull/645) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
+**Fixed bugs:**
+
+- \[Bug\]: DNS broken in custom functions [\#693](https://github.com/OpenVoxProject/openvox-server/issues/693)
+
+**Merged pull requests:**
+
+- \[Backport 8.x\] Gate the gem subcommand test on FIPS mode [\#699](https://github.com/OpenVoxProject/openvox-server/pull/699) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Add test for Type= in systemd unit [\#636](https://github.com/OpenVoxProject/openvox-server/pull/636) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+
 ## [8.16.0](https://github.com/openvoxproject/openvox-server/tree/8.16.0) (2026-09-08)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.15.2...8.16.0)
