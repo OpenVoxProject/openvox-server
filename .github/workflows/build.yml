@@ -1,57 +1,103 @@
 ---
 name: Build openvox-server
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
     inputs:
       ref:
-        description: >-
-          Tag to build for a release, or branch to build for a pre-release.
+        description: 'Tag, branch, or SHA to build from'
         required: true
       branch:
         description: >-
-          The default platform list to build for. Use `main` for 9.x builds
-          and `8.x` for 8.x builds.
+          The release branch being built. Selects the default platform list.
+          Use `main` for 9.x builds and `8.x` for 8.x builds.
         type: choice
         options:
           - main
           - '8.x'
         default: 'main'
-      deb_platform_list:
+      platform_list:
         description: >-
-          A comma-separated list of deb-based platforms to build for, excluding
-          the architecture (e.g. ubuntu-24.04,debian-12). Do not include spaces.
-          If not provided, will use the default list of platforms chosen above.
+          A comma-separated list of vanagon platforms to build for (e.g.
+          el-9-x86_64,ubuntu-24.04-amd64). Do not include spaces. If not
+          provided, will use the default server platform list for the branch.
         required: false
         type: string
-      rpm_platform_list:
-        description: >-
-          A comma-separated list of rpm-based platforms to build for, excluding
-          the architecture (e.g. el-9,amazon-2023). Do not include spaces.
-          If not provided, will use the default list of platforms chosen above.
+      vanagon_branch:
+        description: 'The branch of the vanagon repository to use'
         required: false
-        type: string
-      ezbake-ref:
-        description: |-
-          Branch/tag from ezbake that will be used for openvoxdb/server builds.
         type: string
         default: 'main'
-      ezbake-ver:
-        description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version found in project.clj in this repo if not specified.'
-        type: string
+      upload_to_s3:
+        description: >-
+          Whether to upload the built packages to S3. Note that the uberjar
+          archives are always uploaded to S3, because the per-platform builds
+          fetch them from there.
         required: false
+        type: boolean
+        default: true
+      use_dev:
+        description: 'Use the "dev" branch of the shared-actions repo'
+        required: false
+        type: boolean
+        default: false
 
-permissions:
-  contents: read
-
+# The uberjar jobs build the openvox-server-uberjar project once per variant,
+# see packaging/lib/server_packaging.rb for the platforms. The build jobs then
+# build openvox-server for every platform, fetching the archives from S3.
 jobs:
-  build:
-    uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake.yml@main'
+  uberjar:
+    if: ${{ github.event.inputs.use_dev == 'false' }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@main'
     with:
-      branch: ${{ inputs.branch }}
       ref: ${{ inputs.ref }}
-      deb_platform_list: ${{ inputs.deb_platform_list }}
-      rpm_platform_list: ${{ inputs.rpm_platform_list }}
-      ezbake-ref: ${{ inputs.ezbake-ref }}
-      ezbake-ver: ${{ inputs.ezbake-ver }}
+      project_name: 'openvox-server-uberjar'
+      platform_list: 'el-9-x86_64,redhatfips-9-x86_64'
+      vanagon_branch: ${{ inputs.vanagon_branch }}
+      upload_to_s3: true
+      working_directory: 'packaging'
+      branch: ${{ inputs.branch }}
+    secrets: inherit
+  build:
+    needs: uberjar
+    if: ${{ github.event.inputs.use_dev == 'false' }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@main'
+    with:
+      ref: ${{ inputs.ref }}
+      project_name: 'openvox-server'
+      platform_list: ${{ inputs.platform_list }}
+      platforms_key: 'server-vanagon'
+      vanagon_branch: ${{ inputs.vanagon_branch }}
+      upload_to_s3: ${{ inputs.upload_to_s3 }}
+      working_directory: 'packaging'
+      branch: ${{ inputs.branch }}
+    secrets: inherit
+  uberjar_dev:
+    if: ${{ github.event.inputs.use_dev == 'true' }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@dev'
+    with:
+      ref: ${{ inputs.ref }}
+      project_name: 'openvox-server-uberjar'
+      platform_list: 'el-9-x86_64,redhatfips-9-x86_64'
+      vanagon_branch: ${{ inputs.vanagon_branch }}
+      upload_to_s3: true
+      working_directory: 'packaging'
+      branch: ${{ inputs.branch }}
+    secrets: inherit
+  build_dev:
+    needs: uberjar_dev
+    if: ${{ github.event.inputs.use_dev == 'true' }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@dev'
+    with:
+      ref: ${{ inputs.ref }}
+      project_name: 'openvox-server'
+      platform_list: ${{ inputs.platform_list }}
+      platforms_key: 'server-vanagon'
+      vanagon_branch: ${{ inputs.vanagon_branch }}
+      upload_to_s3: ${{ inputs.upload_to_s3 }}
+      working_directory: 'packaging'
+      branch: ${{ inputs.branch }}
     secrets: inherit
