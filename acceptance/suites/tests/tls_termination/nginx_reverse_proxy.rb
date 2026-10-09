@@ -35,7 +35,6 @@ server_port = 8141
 confdir       = master['puppetserver-confdir']
 webserver_cfg = "#{confdir}/webserver.conf"
 auth_cfg      = "#{confdir}/auth.conf"
-site_pp       = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 nginx_cfg     = '/etc/nginx/conf.d/openvoxserver-tls-termination.conf'
 default_auth_conf = File.expand_path('../../../../ezbake/config/conf.d/auth.conf', __dir__)
 
@@ -48,12 +47,29 @@ cacrl       = "#{cadir}/ca_crl.pem"
 bootstrap_certname = 'tls-termination-bootstrap.test'
 bootstrap_host     = agents.find { |a| not_controller(a) } || master
 bootstrap_dir      = bootstrap_host.tmpdir('tls_termination')
-bootstrap_agent    = "agent --test --waitforcert 0 --server #{fqdn} " \
+# --noop: the node only needs to get a catalog and print its trusted facts; it
+# must not apply whatever the production environment classifies it with.
+bootstrap_agent    = "agent --test --noop --waitforcert 0 --server #{fqdn} " \
                      "--certname #{bootstrap_certname} " \
                      "--confdir #{bootstrap_dir} --vardir #{bootstrap_dir}/var"
 
 backupdir = master.tmpdir('tls_termination_backup')
-had_site_pp = on(master, "test -f #{site_pp}", :acceptable_exit_codes => [0, 1]).exit_code == 0
+
+# The bootstrap steps rely on the certificate request waiting for a manual
+# `puppetserver ca sign`, so turn autosign off for the test on a server that
+# has it on, and put it back afterwards.
+autosign_was_set = on(master, 'puppet config print autosign --section server').stdout.strip
+autosign_explicit = on(master, "grep -Eq '^\\s*autosign\\s*=' #{master.puppet['config']}",
+                       :acceptable_exit_codes => [0, 1]).exit_code == 0
+
+# The notify that proves the server saw the agent's certificate goes into the
+# site.pp of every environment an agent uses (production for the bootstrap
+# node below), appended so an existing site.pp keeps working.
+environments = (agents.map { |a| a.puppet['environment'] } + ['production']).compact.uniq
+site_pps = environments.map { |env| "/etc/puppetlabs/code/environments/#{env}/manifests/site.pp" }
+existing_site_pps = site_pps.select do |path|
+  on(master, "test -f #{path}", :acceptable_exit_codes => [0, 1]).exit_code == 0
+end
 
 # `getenforce` only exists where SELinux does. The default policy stops nginx
 # (httpd_t) from binding to 8140 and from connecting to 8141, so run permissive
@@ -81,12 +97,19 @@ teardown do
     on(master, "rm -f #{nginx_cfg}")
     on(master, "cp -p #{backupdir}/webserver.conf #{webserver_cfg}")
     on(master, "cp -p #{backupdir}/auth.conf #{auth_cfg}")
-    if had_site_pp
-      on(master, "cp -p #{backupdir}/site.pp #{site_pp}")
-    else
-      on(master, "rm -f #{site_pp}")
+    site_pps.each_with_index do |path, i|
+      if existing_site_pps.include?(path)
+        on(master, "cp -p #{backupdir}/site.pp.#{i} #{path}")
+      else
+        on(master, "rm -f #{path}")
+      end
     end
     on(master, "setenforce 1") if selinux_mode == 'Enforcing'
+    if autosign_explicit
+      on(master, "puppet config set autosign #{autosign_was_set} --section server")
+    else
+      on(master, 'puppet config delete autosign --section server', :acceptable_exit_codes => [0, 1])
+    end
     restart_puppetserver(master)
     wait_for_http(master, "-k https://127.0.0.1:#{proxy_port}/status/v1/simple")
     on(master, "puppetserver ca clean --certname #{bootstrap_certname}",
@@ -99,7 +122,9 @@ end
 step "Back up the files this test changes" do
   on(master, "cp -p #{webserver_cfg} #{backupdir}/webserver.conf")
   on(master, "cp -p #{auth_cfg} #{backupdir}/auth.conf")
-  on(master, "cp -p #{site_pp} #{backupdir}/site.pp") if had_site_pp
+  site_pps.each_with_index do |path, i|
+    on(master, "cp -p #{path} #{backupdir}/site.pp.#{i}") if existing_site_pps.include?(path)
+  end
 end
 
 step "Check the certificate files the proxy needs are where puppet says they are" do
@@ -129,6 +154,7 @@ step "Switch OpenVox Server to HTTP on the loopback interface and trust client h
   create_remote_file(master, auth_cfg, File.read(default_auth_conf))
   modify_tk_config(master, auth_cfg,
                    { 'authorization' => { 'allow-header-cert-info' => true } })
+  on(master, 'puppet config set autosign false --section server')
   restart_puppetserver(master)
   wait_for_http(master, "http://127.0.0.1:#{server_port}/status/v1/simple")
 end
@@ -153,9 +179,13 @@ step "Configure and start nginx in front of OpenVox Server" do
 end
 
 step "Print the trusted facts in every catalog" do
-  create_remote_file(master, site_pp, <<-SITE_PP.gsub(/^ {4}/, ''))
+  create_remote_file(master, "#{backupdir}/notify.pp", <<-NOTIFY_PP.gsub(/^ {4}/, ''))
+
     notify { "tls-termination certname=${trusted['certname']} authenticated=${trusted['authenticated']}": }
-  SITE_PP
+  NOTIFY_PP
+  site_pps.each do |path|
+    on(master, "mkdir -p #{File.dirname(path)} && cat #{backupdir}/notify.pp >> #{path}")
+  end
 end
 
 step "Existing agents get a catalog through the proxy and are seen as authenticated" do
