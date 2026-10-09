@@ -37,6 +37,7 @@ webserver_cfg = "#{confdir}/webserver.conf"
 auth_cfg      = "#{confdir}/auth.conf"
 site_pp       = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 nginx_cfg     = '/etc/nginx/conf.d/openvoxserver-tls-termination.conf'
+default_auth_conf = File.expand_path('../../../../ezbake/config/conf.d/auth.conf', __dir__)
 
 hostcert    = master.puppet['hostcert']
 hostprivkey = master.puppet['hostprivkey']
@@ -122,6 +123,10 @@ step "Switch OpenVox Server to HTTP on the loopback interface and trust client h
         port: #{server_port}
     }
   WEBSERVER_CONF
+  # Start from the auth.conf the package ships rather than whatever an earlier
+  # test left behind (intermediate_ca.rb leaves an allow-all rule in place),
+  # so the forged-header check below exercises the default rules.
+  create_remote_file(master, auth_cfg, File.read(default_auth_conf))
   modify_tk_config(master, auth_cfg,
                    { 'authorization' => { 'allow-header-cert-info' => true } })
   restart_puppetserver(master)
@@ -129,8 +134,10 @@ step "Switch OpenVox Server to HTTP on the loopback interface and trust client h
 end
 
 step "OpenVox Server listens only on the loopback interface" do
+  # Jetty binds the IPv4 loopback as an IPv4-mapped IPv6 address, which ss
+  # prints as [::ffff:127.0.0.1]:8141.
   on(master, 'ss -ltn') do |result|
-    assert_match(/127\.0\.0\.1:#{server_port}\s/, result.stdout,
+    assert_match(/(\[::ffff:)?127\.0\.0\.1\]?:#{server_port}\s/, result.stdout,
                  "expected OpenVox Server to listen on 127.0.0.1:#{server_port}")
     refute_match(/(0\.0\.0\.0|\*|\[::\]):#{server_port}\s/, result.stdout,
                  "OpenVox Server must not listen on all interfaces on port #{server_port}")
