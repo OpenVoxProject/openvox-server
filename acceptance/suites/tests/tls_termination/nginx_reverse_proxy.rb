@@ -135,6 +135,23 @@ step "Check the certificate files the proxy needs are where puppet says they are
   end
 end
 
+step "Make sure every agent still has a certificate the CA knows" do
+  # intermediate_ca.rb removes the agent's ssldir and then restores the
+  # original CA, which still holds a certificate for the agent's name. The
+  # agent's next request would be answered with that stale certificate, so
+  # clean it from the CA and issue a fresh one before going through the proxy.
+  agents.reject { |a| a == master }.each do |agent|
+    certname = agent.puppet['certname']
+    has_cert = on(agent, "test -f #{agent.puppet['hostcert']}", :acceptable_exit_codes => [0, 1]).exit_code == 0
+    next if has_cert
+
+    on(master, "puppetserver ca clean --certname #{certname}", :acceptable_exit_codes => [0, 1])
+    on(agent, puppet('agent --test --waitforcert 0'), :acceptable_exit_codes => [0, 1, 2])
+    on(master, "puppetserver ca sign --certname #{certname}", :acceptable_exit_codes => [0, 1])
+    on(agent, puppet('agent --test'), :acceptable_exit_codes => [0, 2])
+  end
+end
+
 step "Install nginx" do
   master.install_package('nginx')
   on(master, 'setenforce 0') if selinux_mode == 'Enforcing'
@@ -174,6 +191,9 @@ step "Configure and start nginx in front of OpenVox Server" do
   template = File.read(File.join(__dir__, 'fixtures', 'nginx-openvoxserver.conf.erb'))
   create_remote_file(master, nginx_cfg, ERB.new(template).result(binding))
   on(master, 'nginx -t')
+  # Debian and Ubuntu start nginx when the package is installed, so a plain
+  # ensure=running would leave the old configuration loaded.
+  on(master, puppet_resource('service', 'nginx', 'ensure=stopped'))
   on(master, puppet_resource('service', 'nginx', 'ensure=running'))
   wait_for_http(master, "-k https://127.0.0.1:#{proxy_port}/status/v1/simple")
 end
