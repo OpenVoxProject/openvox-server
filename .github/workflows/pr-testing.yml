@@ -89,8 +89,96 @@ jobs:
       - name: rspec tests
         run: rake spec
 
+  # The package build mirrors the release workflow: the uberjar project once
+  # per variant, then openvox-server for every platform. The uberjar archives
+  # travel between the jobs as workflow artifacts instead of the S3 bucket.
+  uberjar:
+    name: uberjar ${{ matrix.platform }}
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ['el-9-x86_64', 'redhatfips-9-x86_64']
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
+      - name: setup ruby
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: build the uberjar archive
+        run: bundle exec rake "vox:build[openvox-server-uberjar,${{ matrix.platform }}]"
+      - name: Upload the uberjar archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: uberjar-${{ matrix.platform }}
+          path: packaging/output/
+          retention-days: 1
+          overwrite: true
+
+  packages:
+    name: package ${{ matrix.platform }}
+    needs: uberjar
+    runs-on: ubuntu-26.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # The server-vanagon platform list of shared-actions platforms.json
+        platform:
+          - amazon-2023-x86_64
+          - debian-13-amd64
+          - el-8-x86_64
+          - el-9-x86_64
+          - el-10-x86_64
+          - fedora-43-x86_64
+          - fedora-44-x86_64
+          - redhatfips-8-x86_64
+          - redhatfips-9-x86_64
+          - sles-15-x86_64
+          - sles-16-x86_64
+          - ubuntu-22.04-amd64
+          - ubuntu-24.04-amd64
+          - ubuntu-26.04-amd64
+    env:
+      # The rake task expects the archives on S3 when it runs in CI, so point
+      # it at the ones downloaded from the uberjar jobs instead
+      SERVER_TARBALL_BASE: file://${{ github.workspace }}/packaging/output
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
+      - name: setup ruby
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Download the uberjar archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: uberjar-*
+          path: packaging/output/
+          merge-multiple: true
+      - name: build the package
+        run: bundle exec rake "vox:build[openvox-server,${{ matrix.platform }}]"
+      - name: Upload the package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-${{ matrix.platform }}
+          path: |
+            packaging/output/**/*.rpm
+            packaging/output/**/*.deb
+            packaging/output/openvox-server-*.tar.gz
+            !packaging/output/openvox-server-uberjar-*
+          retention-days: 1
+          overwrite: true
+
   build:
     name: build openvox-server
+    needs: packages
     runs-on: ubuntu-26.04
     permissions:
       pull-requests: write
@@ -101,33 +189,17 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          submodules: recursive
           fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
         uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
         with:
-          ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 10
+          ruby-version: '3.3'
           bundler-cache: true
-      - id: docker-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: Download everything the build jobs produced
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          path: /tmp/ezbake-builder.tar
-          key: docker-ezbake-${{ hashFiles('Dockerfile') }}
-      - name: load or build docker image
-        run: |
-          if [[ -f /tmp/ezbake-builder.tar ]]; then
-            docker load -i /tmp/ezbake-builder.tar
-          else
-            docker build -t ezbake-builder .
-            docker save ezbake-builder -o /tmp/ezbake-builder.tar
-          fi
-      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        if: always() && steps.docker-cache.outputs.cache-hit != 'true'
-        with:
-          path: /tmp/ezbake-builder.tar
-          key: docker-ezbake-${{ hashFiles('Dockerfile') }}
-      - name: build it
-        run: bundle exec rake vox:build
+          path: output/
+          merge-multiple: true
       - name: list the smoke test targets
         id: smoke-targets
         run: |
@@ -165,87 +237,17 @@ jobs:
           edit-mode: replace
           body: |-
             <!-- build-artifacts -->
-            The rpm/deb packages and the JAR file for openvox-server are available in a zip archive:
+            The packages, the uberjar archives and the source tarball for openvox-server are available in a zip archive:
             ${{ steps.upload.outputs.artifact-url }}
-
-  build-fips:
-    name: build openvox-server FIPS packages
-    runs-on: ubuntu-26.04
-    outputs:
-      artifact-id: ${{ steps.upload.outputs.artifact-id }}
-      smoke-targets: ${{ steps.smoke-targets.outputs.targets }}
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          submodules: recursive
-          fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
-      - name: setup ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
-        with:
-          ruby-version: '3.3' # should match the Ruby used in Dockerfile. Currently Ruby 3.3 from Alma 10
-          bundler-cache: true
-      - id: docker-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: /tmp/ezbake-builder.tar
-          key: docker-ezbake-${{ hashFiles('Dockerfile') }}
-      - name: load or build docker image
-        # The build job saves the image to the cache
-        run: |
-          if [[ -f /tmp/ezbake-builder.tar ]]; then
-            docker load -i /tmp/ezbake-builder.tar
-          else
-            docker build -t ezbake-builder .
-          fi
-      - name: build it
-        run: bundle exec rake vox:build
-        env:
-          # The same FIPS-only build as the release workflow
-          DEB_PLATFORMS: ''
-          RPM_PLATFORMS: redhatfips-8,redhatfips-9
-      - name: list the smoke test targets
-        id: smoke-targets
-        run: |
-          targets=$(bundle exec rake vox:smoke:targets)
-          echo "targets=${targets}" >> "$GITHUB_OUTPUT"
-      - name: Upload build artifacts
-        id: upload
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: openvox-server-fips
-          path: output/
-          retention-days: 1
-          overwrite: true
-
-  smoke-matrix:
-    name: Smoke test matrix
-    needs:
-      - build
-      - build-fips
-    runs-on: ubuntu-26.04
-    outputs:
-      matrix: ${{ steps.join.outputs.matrix }}
-    steps:
-      - name: join the targets of both builds
-        id: join
-        env:
-          BUILD_TARGETS: ${{ needs.build.outputs.smoke-targets }}
-          FIPS_TARGETS: ${{ needs.build-fips.outputs.smoke-targets }}
-        run: |
-          matrix=$(jq --compact-output --null-input '{target: ((env.BUILD_TARGETS | fromjson) + (env.FIPS_TARGETS | fromjson))}')
-          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
 
   smoke:
     name: Smoke Test - ${{ matrix.target }}
-    needs:
-      - build
-      - build-fips
-      - smoke-matrix
+    needs: build
     runs-on: ${{ endsWith(matrix.target, '-aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-26.04' }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.smoke-matrix.outputs.matrix) }}
+      matrix:
+        target: ${{ fromJSON(needs.build.outputs.smoke-targets) }}
     steps:
       - name: checkout repo
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -259,7 +261,7 @@ jobs:
       - name: download the packages from the build job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          artifact-ids: ${{ startsWith(matrix.target, 'redhatfips') && needs.build-fips.outputs.artifact-id || needs.build.outputs.artifact-id }}
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
           path: output
       - name: smoke test
         run: bundle exec rake "vox:smoke[${{ matrix.target }}]"
@@ -293,7 +295,6 @@ jobs:
       - rspec-tests
       - clojure-linting
       - build
-      - build-fips
       - smoke
     runs-on: ubuntu-26.04
     name: Test suite

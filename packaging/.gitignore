@@ -1,0 +1,4 @@
+output/
+tarballs/
+ext/build_metadata.*
+vanagon_hosts.log

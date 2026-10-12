@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tmpdir'
+require_relative '../packaging/lib/server_packaging'
 
 @image = 'ezbake-builder'
 @container = 'openvox-server-builder'
@@ -23,29 +24,7 @@ rpm_fips, rpm_nonfips = rpm_platforms.split(',').partition { |p| p.start_with?('
 @nonfips_rpms = rpm_nonfips.map{ |p| "pl-#{p}-x86_64" }.join(' ')
 @fips_rpms = rpm_fips.map{ |p| "pl-#{p}-x86_64" }.join(' ')
 
-# The deps must be built in this order due to dependencies between them.
-# There is a circular dependency between clj-http-client and trapperkeeper-webserver,
-# but only for tests, so the build *should* work.
-DEP_BUILD_ORDER = [
-  'clj-kitchensink',
-  'clj-i18n',
-  'comidi',
-  'jvm-ssl-utils',
-  'clj-typesafe-config',
-  'jruby-deps',
-  'trapperkeeper',
-  'trapperkeeper-filesystem-watcher',
-  'clj-http-client',
-  'trapperkeeper-webserver',
-  'ring-middleware',
-  'jruby-utils',
-  'clj-shell-utils',
-  'trapperkeeper-authorization',
-  'trapperkeeper-metrics',
-  'trapperkeeper-scheduler',
-  'trapperkeeper-status',
-  'trapperkeeper-comidi-metrics',
-].freeze
+OUTPUT_DIR = File.expand_path('../packaging/output', __dir__)
 
 def image_exists
   !`${DOCKER_BIN-docker} images -q #{@image} --format='{{json .ID}}'`.strip.empty?
@@ -71,9 +50,52 @@ def run(cmd)
   run_command("${DOCKER_BIN-docker} exec #{@container} /bin/bash --login -c '#{cmd}'", silent: false, print_command: true)
 end
 
+# Mirrors vanagon's Project::DSL#version_from_git so the uberjar archive name
+# computed here matches the one the vanagon projects compute for the same ref
+def server_package_version
+  return ENV['OPENVOX_SERVER_VERSION'] unless ENV['OPENVOX_SERVER_VERSION'].to_s.empty?
+
+  describe = run_command('git describe --tags --abbrev=9')
+  case describe
+  when /\A\d+\.\d+\.\d+-(?:alpha|beta|rc)\d+\z/
+    describe.sub('-', '~')
+  else
+    describe.split('-').reject(&:empty?).join('.')
+  end
+end
+
+# Runs the vanagon build for one project and platform. Outside CI a build of
+# openvox-server first builds the uberjar archive it needs when that is
+# missing from packaging/output, then points vanagon at that directory. In CI
+# the uberjar job has already uploaded the archive, so the openvox-server
+# project falls back to the artifacts bucket URL for this version.
+def vanagon_build(project, build_platform)
+  abort "Unexpected project name #{project}" unless project.match?(/\A[a-z0-9-]+\z/)
+  abort "Unexpected platform #{build_platform}" unless build_platform.match?(/\A[a-z0-9._-]+\z/)
+
+  ENV['SOURCE_DATE_EPOCH'] ||= run_command('git log -1 --format=%ct')
+
+  if project == 'openvox-server' && ENV['SERVER_TARBALL_BASE'].to_s.empty? && ENV['GITHUB_ACTIONS'] != 'true'
+    variant = ServerPackaging.uberjar_variant(build_platform)
+    archive = File.join(OUTPUT_DIR, ServerPackaging.uberjar_archive_name(server_package_version, variant))
+    vanagon_build('openvox-server-uberjar', ServerPackaging::UBERJAR_PLATFORMS.fetch(variant)) unless File.exist?(archive)
+    ENV['SERVER_TARBALL_BASE'] = "file://#{OUTPUT_DIR}"
+  end
+
+  Dir.chdir(File.expand_path('../packaging', __dir__)) do
+    run_command("bundle exec vanagon build #{project} #{build_platform} --engine docker",
+                silent: false, print_command: true, report_status: true)
+  end
+end
+
 namespace :vox do
-  desc 'Build openvox-server packages with Docker'
-  task :build, [:tag] do |_, args|
+  desc 'Build openvox-server packages. Project and platform args run the vanagon build, a single ref arg runs the transitional ezbake build.'
+  task :build, [:tag, :platform] do |_, args|
+    if args[:platform] && !args[:platform].to_s.empty?
+      vanagon_build(args[:tag] || 'openvox-server', args[:platform])
+      next
+    end
+
     begin
       #abort 'You must provide a tag.' if args[:tag].nil? || args[:tag].empty?
       if args[:tag].nil? || args[:tag].empty?
@@ -98,24 +120,7 @@ namespace :vox do
         }
       end
 
-      deps_to_build = []
-      dep_branch = nil
-
-      full_rebuild_branch = ENV['FULL_DEP_REBUILD_BRANCH']
-      subset_list = (ENV['DEP_REBUILD'] || '').split(',').map(&:strip).reject(&:empty?)
-      subset_branch = ENV.fetch('DEP_REBUILD_BRANCH', 'main').to_s
-      rebuild_org = ENV.fetch('DEP_REBUILD_ORG', 'openvoxproject').to_s
-
-      if full_rebuild_branch && !full_rebuild_branch.strip.empty?
-        dep_branch = full_rebuild_branch.strip
-        deps_to_build = DEP_BUILD_ORDER.dup
-      elsif !subset_list.empty?
-        dep_branch = subset_branch
-        unknown = subset_list.reject { |lib| DEP_BUILD_ORDER.include?(lib) }
-        puts "WARNING: Unknown deps in DEP_REBUILD (will be ignored): #{unknown.join(', ')}" unless unknown.empty?
-        deps_to_build = DEP_BUILD_ORDER.select { |lib| subset_list.include?(lib) }
-      end
-
+      deps_to_build, dep_branch, rebuild_org = ServerPackaging.clojure_dep_rebuild
       deps_to_build.each do |lib|
         libs_to_build_manually[lib] = {
           :repo => "https://github.com/#{rebuild_org}/#{lib}",
