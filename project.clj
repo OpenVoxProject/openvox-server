@@ -51,7 +51,7 @@
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-annotations-version]
-                         [commons-codec "1.22.1"]
+                         [commons-codec "1.23.0"]
                          [commons-io "2.22.0"]
                          [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
                          [io.dropwizard.metrics/metrics-core "3.2.6"]
