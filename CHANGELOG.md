@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1.0](https://github.com/openvoxproject/openvox-server/tree/9.1.0) (2026-10-14)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.1...9.1.0)
+
+**Implemented enhancements:**
+
+- depend on openvox-agent 9.1.0 [\#713](https://github.com/OpenVoxProject/openvox-server/pull/713) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- \[Bug\]: DNS broken in custom functions [\#693](https://github.com/OpenVoxProject/openvox-server/issues/693)
+- Revert "Fix Resolv regression when querying IPv6 DNS servers" [\#694](https://github.com/OpenVoxProject/openvox-server/pull/694) ([bastelfreak](https://github.com/bastelfreak))
+
+**Merged pull requests:**
+
+- Update Ruby Submodules for main branch [\#706](https://github.com/OpenVoxProject/openvox-server/pull/706) ([Sharpie](https://github.com/Sharpie))
+- Bump ezbake to 4.2.1 [\#696](https://github.com/OpenVoxProject/openvox-server/pull/696) ([nmburgan](https://github.com/nmburgan))
+- Move the FIPS build to BouncyCastle FIPS 2.1  [\#684](https://github.com/OpenVoxProject/openvox-server/pull/684) ([nmburgan](https://github.com/nmburgan))
+
 ## [9.0.1](https://github.com/openvoxproject/openvox-server/tree/9.0.1) (2026-10-02)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-rc2...9.0.1)
@@ -68,8 +87,6 @@ All notable changes to this project will be documented in this file.
 ## [9.0.0-beta4](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta4) (2026-08-06)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.0-beta3...9.0.0-beta4)
-
-We had a hiccup with our CI system and the 9.0.0-beta3 packages weren't released. In addition, a 9.0.0 release was published to [clojars](https://clojars.org/org.openvoxproject/puppetserver) with the 9.0.0-beta3 changes. 9.0.0-beta4 just republishes the 9.0.0-beta3 changes.
 
 ## [9.0.0-beta3](https://github.com/openvoxproject/openvox-server/tree/9.0.0-beta3) (2026-08-06)
 
