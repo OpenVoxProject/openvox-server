@@ -157,8 +157,7 @@
   :plugins [[jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             ;; We have to have this, and it needs to agree with clj-parent
             ;; until/unless you can have managed plugin dependencies.
-            [org.openvoxproject/i18n ~i18n-version :hooks false]
-            [lein-shell "0.5.0"]]
+            [org.openvoxproject/i18n ~i18n-version :hooks false]]
   :uberjar-name "puppet-server-release.jar"
   :lein-ezbake {:vars {:user "puppet"
                        :group "puppet"
@@ -358,21 +357,6 @@
                  (if (>= (java.lang.Integer/parseInt major) 17)
                    ["--add-opens" "java.base/sun.nio.ch=ALL-UNNAMED" "--add-opens" "java.base/java.io=ALL-UNNAMED"]
                    [])))
-
-  ;; We define our own release tasks here, rather than the default that 'lein release' does,
-  ;; so that we can keep the necessary org.openvoxproject/puppetserver ezbake dependency in sync.
-  ;; This also make is always bump the minor version rather than patch, since we rarely end up
-  ;; releasing patch versions.
-  :release-tasks [["vcs" "assert-committed"]
-                  ["change" "version" "leiningen.release/bump-version" "release"]
-                  ["shell" "ruby" "scripts/sync_ezbake_dep.rb"]
-                  ["vcs" "commit"]
-                  ["vcs" "tag"]
-                  ["deploy"]
-                  ["change" "version" "leiningen.release/bump-version" ":minor"]
-                  ["shell" "ruby" "scripts/sync_ezbake_dep.rb"]
-                  ["vcs" "commit"]
-                  ["vcs" "push"]]
 
   :repl-options {:init-ns dev-tools}
   :uberjar-exclusions  [#"META-INF/jruby.home/lib/ruby/stdlib/org/bouncycastle"
