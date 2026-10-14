@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.18.0](https://github.com/openvoxproject/openvox-server/tree/8.18.0) (2026-10-14)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.17.0...8.18.0)
+
+**Implemented enhancements:**
+
+- depend on openvox-agent 8.31.0 [\#714](https://github.com/OpenVoxProject/openvox-server/pull/714) ([bastelfreak](https://github.com/bastelfreak))
+
+**Merged pull requests:**
+
+- Update Ruby Submodules for 8.x branch [\#707](https://github.com/OpenVoxProject/openvox-server/pull/707) ([Sharpie](https://github.com/Sharpie))
+
 ## [8.17.0](https://github.com/openvoxproject/openvox-server/tree/8.17.0) (2026-10-07)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.16.0...8.17.0)
