@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 **Implemented enhancements:**
 
 - depend on openvox-agent 9.1.0 [\#713](https://github.com/OpenVoxProject/openvox-server/pull/713) ([bastelfreak](https://github.com/bastelfreak))
+- Move the FIPS build to BouncyCastle FIPS 2.1  [\#684](https://github.com/OpenVoxProject/openvox-server/pull/684) ([nmburgan](https://github.com/nmburgan))
 
 **Fixed bugs:**
 
@@ -17,9 +18,9 @@ All notable changes to this project will be documented in this file.
 
 **Merged pull requests:**
 
+- Adopt the shared Clojure release flow [\#716](https://github.com/OpenVoxProject/openvox-server/pull/716) ([nmburgan](https://github.com/nmburgan))
 - Update Ruby Submodules for main branch [\#706](https://github.com/OpenVoxProject/openvox-server/pull/706) ([Sharpie](https://github.com/Sharpie))
 - Bump ezbake to 4.2.1 [\#696](https://github.com/OpenVoxProject/openvox-server/pull/696) ([nmburgan](https://github.com/nmburgan))
-- Move the FIPS build to BouncyCastle FIPS 2.1  [\#684](https://github.com/OpenVoxProject/openvox-server/pull/684) ([nmburgan](https://github.com/nmburgan))
 
 ## [9.0.1](https://github.com/openvoxproject/openvox-server/tree/9.0.1) (2026-10-02)
 
