@@ -29,3 +29,11 @@ jobs:
       ssh_private_key: ${{ secrets.OPENVOXBOT_SSH_PRIVATE_KEY }}
       clojars_username: ${{ secrets.CLOJARS_USERNAME }}
       clojars_password: ${{ secrets.CLOJARS_PASSWORD }}
+
+  build:
+    needs: release
+    uses: $/.github/workflows/build.yml
+    with:
+      ref: ${{ needs.release.outputs.version }}
+      branch: ${{ inputs.branch }}
+    secrets: inherit
