@@ -98,7 +98,7 @@
                          [prismatic/schema "1.4.2"]
                          [ring-basic-authentication "1.2.0"]
                          [ring/ring-codec "1.3.0"]
-                         [ring/ring-core "1.15.5"]
+                         [ring/ring-core "1.15.6"]
                          [ring/ring-mock "0.6.2"]
                          [slingshot "0.12.2"]]
 
