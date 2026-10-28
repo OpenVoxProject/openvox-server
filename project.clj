@@ -89,6 +89,7 @@
                          [org.openvoxproject/trapperkeeper-status "1.5.1"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.1"]
                          [org.openvoxproject/trapperkeeper-webserver "12.1.1" :classifier "test"]
+                         [org.jruby/joni "2.2.7"]
                          [org.ow2.asm/asm "9.11.1"]
                          [org.slf4j/jul-to-slf4j ~slf4j-version]
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
