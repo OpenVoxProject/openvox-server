@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1.1](https://github.com/openvoxproject/openvox-server/tree/9.1.1) (2026-10-29)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.1.0...9.1.1)
+
+**Implemented enhancements:**
+
+- Depend on openvox-agent \>= 9.2.1 [\#729](https://github.com/OpenVoxProject/openvox-server/pull/729) ([bastelfreak](https://github.com/bastelfreak))
+
+**Security fixes:**
+
+- Update dependency org.openvoxproject:trapperkeeper-webserver to v12.1.2 \(main\) [\#743](https://github.com/OpenVoxProject/openvox-server/pull/743) ([renovate[bot]](https://github.com/apps/renovate))
+- Update JOni to 2.2.8 [\#738](https://github.com/OpenVoxProject/openvox-server/pull/738) ([Sharpie](https://github.com/Sharpie))
+- Update jackson updates to v2.21.8 \(main\) [\#721](https://github.com/OpenVoxProject/openvox-server/pull/721) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency org.ow2.asm:asm to v9.11.1 \(main\) [\#720](https://github.com/OpenVoxProject/openvox-server/pull/720) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Merged pull requests:**
+
+- Add ring-jakarta-servlet to managed-dependencies [\#745](https://github.com/OpenVoxProject/openvox-server/pull/745) ([Sharpie](https://github.com/Sharpie))
+- Manage Jackson CBOR and SMILE versions [\#741](https://github.com/OpenVoxProject/openvox-server/pull/741) ([Sharpie](https://github.com/Sharpie))
+- Add managed dependency on JOni 2.2.7 [\#736](https://github.com/OpenVoxProject/openvox-server/pull/736) ([Sharpie](https://github.com/Sharpie))
+- Build redhatfips-10 packages in PR testing [\#695](https://github.com/OpenVoxProject/openvox-server/pull/695) ([nmburgan](https://github.com/nmburgan))
+
 ## [9.1.0](https://github.com/openvoxproject/openvox-server/tree/9.1.0) (2026-10-14)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.0.1...9.1.0)
