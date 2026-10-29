@@ -40,6 +40,11 @@ on:
         description: 'The version specified in project.clj in the given ezbake-ref. Will default to the version found in project.clj in this repo if not specified.'
         type: string
         required: false
+      use_dev:
+        description: 'Use the "dev" branch of the shared-actions repo'
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -61,13 +66,29 @@ on:
       ezbake-ver:
         type: string
         required: false
+      use_dev:
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   build:
+    if: ${{ !inputs.use_dev }}
     uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake.yml@main'
+    with:
+      branch: ${{ inputs.branch }}
+      ref: ${{ inputs.ref }}
+      deb_platform_list: ${{ inputs.deb_platform_list }}
+      rpm_platform_list: ${{ inputs.rpm_platform_list }}
+      ezbake-ref: ${{ inputs.ezbake-ref }}
+      ezbake-ver: ${{ inputs.ezbake-ver }}
+    secrets: inherit
+  build_dev:
+    if: ${{ inputs.use_dev }}
+    uses: 'openvoxproject/shared-actions/.github/workflows/build_ezbake.yml@dev'
     with:
       branch: ${{ inputs.branch }}
       ref: ${{ inputs.ref }}
