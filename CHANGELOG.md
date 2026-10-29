@@ -9,7 +9,6 @@ All notable changes to this project will be documented in this file.
 **Implemented enhancements:**
 
 - Depend on openvox-agent \>= 8.31.1 [\#730](https://github.com/OpenVoxProject/openvox-server/pull/730) ([bastelfreak](https://github.com/bastelfreak))
-- depend on openvox-agent 8.31.0 [\#714](https://github.com/OpenVoxProject/openvox-server/pull/714) ([bastelfreak](https://github.com/bastelfreak))
 
 **Security fixes:**
 
@@ -20,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 **Merged pull requests:**
 
+- \[Backport 8.x\] Adopt the shared Clojure release flow [\#751](https://github.com/OpenVoxProject/openvox-server/pull/751) ([Sharpie](https://github.com/Sharpie))
 - require openvox-agent 8.31.2 [\#747](https://github.com/OpenVoxProject/openvox-server/pull/747) ([bastelfreak](https://github.com/bastelfreak))
 - \[Backport 8.x\] Add ring-jakarta-servlet to managed-dependencies [\#746](https://github.com/OpenVoxProject/openvox-server/pull/746) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
 - \[Backport 8.x\] Manage Jackson CBOR and SMILE versions [\#742](https://github.com/OpenVoxProject/openvox-server/pull/742) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
