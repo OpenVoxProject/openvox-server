@@ -5,7 +5,8 @@ def vox_set_version(version)
   data = File.read('project.clj')
 #(defproject org.openvoxproject/puppetserver "9.1.0-SNAPSHOT"
 #  data = data.sub(/\(def ps-version "[^"]*"/,"(def ps-version \"#{version}\"")
-  data = data.sub /\(defproject org.openvoxproject\/puppetserver .*-SNAPSHOT\"/, "(defproject org.openvoxproject/puppetserver \"#{version}-SNAPSHOT\""
+  data = data.sub /\(defproject org.openvoxproject\/puppetserver "[^"]+"/, "(defproject org.openvoxproject/puppetserver \"#{version}\""
+
 
   # stolen from sync_ezbake_dep.rb needs ARGV[0]='project.cli'
   v = data[/^\(defproject\s+\S+\s+"([^"]+)"/m, 1]
