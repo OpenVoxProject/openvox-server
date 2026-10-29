@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.17.1](https://github.com/openvoxproject/openvox-server/tree/8.17.1) (2026-10-29)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.17.0...8.17.1)
+
+**Implemented enhancements:**
+
+- Depend on openvox-agent \>= 8.31.1 [\#730](https://github.com/OpenVoxProject/openvox-server/pull/730) ([bastelfreak](https://github.com/bastelfreak))
+- depend on openvox-agent 8.31.0 [\#714](https://github.com/OpenVoxProject/openvox-server/pull/714) ([bastelfreak](https://github.com/bastelfreak))
+
+**Security fixes:**
+
+- Update dependency org.openvoxproject:trapperkeeper-webserver to v12.1.2 \(8.x\) [\#744](https://github.com/OpenVoxProject/openvox-server/pull/744) ([renovate[bot]](https://github.com/apps/renovate))
+- \[Backport 8.x\] Update JOni to 2.2.8 [\#739](https://github.com/OpenVoxProject/openvox-server/pull/739) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- Update jackson updates to v2.21.8 \(8.x\) [\#723](https://github.com/OpenVoxProject/openvox-server/pull/723) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency org.ow2.asm:asm to v9.11.1 \(8.x\) [\#722](https://github.com/OpenVoxProject/openvox-server/pull/722) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Merged pull requests:**
+
+- require openvox-agent 8.31.2 [\#747](https://github.com/OpenVoxProject/openvox-server/pull/747) ([bastelfreak](https://github.com/bastelfreak))
+- \[Backport 8.x\] Add ring-jakarta-servlet to managed-dependencies [\#746](https://github.com/OpenVoxProject/openvox-server/pull/746) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Manage Jackson CBOR and SMILE versions [\#742](https://github.com/OpenVoxProject/openvox-server/pull/742) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- \[Backport 8.x\] Add managed dependency on JOni 2.2.7 [\#737](https://github.com/OpenVoxProject/openvox-server/pull/737) ([OpenVoxProjectBot](https://github.com/OpenVoxProjectBot))
+- Update Ruby Submodules for 8.x branch [\#707](https://github.com/OpenVoxProject/openvox-server/pull/707) ([Sharpie](https://github.com/Sharpie))
+
 ## [8.17.0](https://github.com/openvoxproject/openvox-server/tree/8.17.0) (2026-10-07)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.16.0...8.17.0)
