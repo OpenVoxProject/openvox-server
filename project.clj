@@ -50,6 +50,8 @@
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.module/jackson-module-afterburner ~jackson-version]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-annotations-version]
                          [commons-codec "1.23.0"]
                          [commons-io "2.22.0"]
