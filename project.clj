@@ -84,7 +84,7 @@
                          [org.openvoxproject/trapperkeeper "5.0.6"]
                          [org.openvoxproject/trapperkeeper "5.0.6" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.1"]
-                         [org.openvoxproject/trapperkeeper-authorization "2.4.1"]
+                         [org.openvoxproject/trapperkeeper-authorization "2.5.0"]
                          [org.openvoxproject/trapperkeeper-filesystem-watcher "1.6.1"]
                          [org.openvoxproject/trapperkeeper-metrics "2.3.3"]
                          [org.openvoxproject/trapperkeeper-metrics "2.3.3" :classifier "test"]
