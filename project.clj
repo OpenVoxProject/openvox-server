@@ -46,7 +46,7 @@
                          [ch.qos.logback.access/logback-access-jetty12 "2.0.15"]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
-                         [cheshire "6.2.0"]
+                         [cheshire "6.2.1"]
                          [clj-commons/fs "1.6.312"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
