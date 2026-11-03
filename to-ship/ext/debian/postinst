@@ -1,0 +1,30 @@
+#!/bin/sh
+
+/opt/puppetlabs/server/apps/puppetserver/scripts/install.sh postinst_deb
+
+# Set some configuration from the project on install
+if [ -z "$2" ]; then
+  /opt/puppetlabs/server/apps/puppetserver/scripts/install.sh postinst_deb_install
+fi
+
+# On upgrade, we should restart the service if it's running
+if [ $1 = 'configure' -a -n $2 ] ; then
+  if [ -d '/run/systemd/system' ] ; then
+    # Using systemd
+    systemctl daemon-reload >/dev/null 2>&1 || :
+    systemctl try-restart puppetserver.service ||:
+  else
+    # Using sysv
+    invoke-rc.d puppetserver try-restart || :
+  fi
+fi
+
+# Run trigger scripts on install if defined
+if [ $1 = triggered ] && [ -z $2 ]; then
+    : # in case there are no install triggers
+fi
+
+# Run trigger scripts on upgrade if defined
+if [ $1 = triggered ] && [ -n $2 ]; then
+    : # in case there are no upgrade triggers
+fi
