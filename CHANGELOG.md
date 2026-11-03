@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [8.18.0](https://github.com/openvoxproject/openvox-server/tree/8.18.0) (2026-11-03)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.17.1...8.18.0)
+
+**Security fixes:**
+
+- Depend on openvox-agent \>=8.32.0 [\#766](https://github.com/OpenVoxProject/openvox-server/pull/766) ([Sharpie](https://github.com/Sharpie))
+- Update dependency org.openvoxproject:trapperkeeper-authorization to v2.5.0 \(8.x\) [\#765](https://github.com/OpenVoxProject/openvox-server/pull/765) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [8.17.1](https://github.com/openvoxproject/openvox-server/tree/8.17.1) (2026-10-29)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/8.17.0...8.17.1)
