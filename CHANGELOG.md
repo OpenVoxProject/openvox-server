@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.2.0](https://github.com/openvoxproject/openvox-server/tree/9.2.0) (2026-11-03)
+
+[Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.1.1...9.2.0)
+
+**Security fixes:**
+
+- Depend on openvox-agent \>=9.3.0 [\#767](https://github.com/OpenVoxProject/openvox-server/pull/767) ([Sharpie](https://github.com/Sharpie))
+- Update dependency org.openvoxproject:trapperkeeper-authorization to v2.5.0 \(main\) [\#764](https://github.com/OpenVoxProject/openvox-server/pull/764) ([renovate[bot]](https://github.com/apps/renovate))
+
+**Merged pull requests:**
+
+- Allow building with the dev branch of shared-actions [\#753](https://github.com/OpenVoxProject/openvox-server/pull/753) ([nmburgan](https://github.com/nmburgan))
+
 ## [9.1.1](https://github.com/openvoxproject/openvox-server/tree/9.1.1) (2026-10-29)
 
 [Full Changelog](https://github.com/openvoxproject/openvox-server/compare/9.1.0...9.1.1)
