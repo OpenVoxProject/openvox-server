@@ -42,6 +42,14 @@ echo "jruby-puppet: { gem-home: ${DESTDIR}/opt/puppetlabs/server/data/puppetserv
 
 install_gems "${DIR}/jruby-gem-list.txt"
 
+# FIPS builds stage the FIPS jars and vendor the gems in the FIPS list as well.
+if compgen -G "ext/classpath-jars/bc-fips-*.jar" > /dev/null; then
+  echo "Installing JRuby FIPS vendor gems"
+  cat "${DIR}/jruby-gem-list-fips.txt"
+
+  install_gems "${DIR}/jruby-gem-list-fips.txt"
+fi
+
 echo "Installing JRuby Standard Library gems"
 cat "${DIR}/jruby-stdlib-gem-list.txt"
 
