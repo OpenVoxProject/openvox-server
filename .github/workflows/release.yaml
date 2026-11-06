@@ -37,3 +37,11 @@ jobs:
       ref: ${{ needs.release.outputs.version }}
       branch: ${{ inputs.branch }}
     secrets: inherit
+
+  build-fips:
+    needs: release
+    uses: $/.github/workflows/build_fips.yml
+    with:
+      ref: ${{ needs.release.outputs.version }}
+      branch: ${{ inputs.branch }}
+    secrets: inherit
