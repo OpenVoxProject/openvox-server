@@ -113,9 +113,9 @@ project 'openvox-server' do |proj|
   proj.requires 'systemd' if platform.is_rpm? && !platform.is_sles?
   proj.requires 'adduser' if platform.is_deb?
   if openvox_major >= 9
-    proj.requires 'openvox-agent', '>= 9.0.0~rc1'
+    proj.requires 'openvox-agent', '>= 9.4.0'
   else
-    proj.requires 'openvox-agent', '>= 8.29.0'
+    proj.requires 'openvox-agent', '>= 8.33.0'
     proj.requires 'openvox-agent', '< 9.0.0~'
   end
 
