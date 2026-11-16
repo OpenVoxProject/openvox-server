@@ -266,7 +266,7 @@
                       :name "puppetserver"}
 
              ;; Profiles for building the release uberjar without ezbake. Used by
-             ;; tasks/uberjar.rake, which feeds the vanagon packaging under packaging/.
+             ;; the server-uberjar vanagon component under packaging/.
              ;; bcpkix-jdk18on is bundled in the regular jar and is also needed at
              ;; packaging time to install vendored gems. The FIPS jar excludes all
              ;; BouncyCastle classes and the package installs the separate BC FIPS
