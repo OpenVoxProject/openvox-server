@@ -44,13 +44,37 @@ on:
         required: false
         type: boolean
         default: false
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      branch:
+        type: string
+        required: false
+        default: 'main'
+      platform_list:
+        type: string
+        required: false
+      vanagon_branch:
+        type: string
+        required: false
+        default: 'main'
+      upload_to_s3:
+        type: boolean
+        required: false
+        default: true
+      use_dev:
+        type: boolean
+        required: false
+        default: false
 
 # The uberjar jobs build the openvox-server-uberjar project once per variant,
 # see packaging/lib/server_packaging.rb for the platforms. The build jobs then
 # build openvox-server for every platform, fetching the archives from S3.
 jobs:
   uberjar:
-    if: ${{ github.event.inputs.use_dev == 'false' }}
+    if: ${{ !inputs.use_dev }}
     uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@main'
     with:
       ref: ${{ inputs.ref }}
@@ -63,7 +87,7 @@ jobs:
     secrets: inherit
   build:
     needs: uberjar
-    if: ${{ github.event.inputs.use_dev == 'false' }}
+    if: ${{ !inputs.use_dev }}
     uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@main'
     with:
       ref: ${{ inputs.ref }}
@@ -76,7 +100,7 @@ jobs:
       branch: ${{ inputs.branch }}
     secrets: inherit
   uberjar_dev:
-    if: ${{ github.event.inputs.use_dev == 'true' }}
+    if: ${{ inputs.use_dev }}
     uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@dev'
     with:
       ref: ${{ inputs.ref }}
@@ -89,7 +113,7 @@ jobs:
     secrets: inherit
   build_dev:
     needs: uberjar_dev
-    if: ${{ github.event.inputs.use_dev == 'true' }}
+    if: ${{ inputs.use_dev }}
     uses: 'openvoxproject/shared-actions/.github/workflows/build_vanagon.yml@dev'
     with:
       ref: ${{ inputs.ref }}
