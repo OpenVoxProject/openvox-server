@@ -105,14 +105,14 @@ jobs:
         with:
           fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
         with:
           ruby-version: '3.3'
           bundler-cache: true
       - name: build the uberjar archive
         run: bundle exec rake "vox:build[openvox-server-uberjar,${{ matrix.platform }}]"
       - name: Upload the uberjar archive
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: uberjar-${{ matrix.platform }}
           path: packaging/output/
@@ -153,12 +153,12 @@ jobs:
         with:
           fetch-depth: 0 # So we fetch all history and tags and can build non-tagged versions
       - name: setup ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
         with:
           ruby-version: '3.3'
           bundler-cache: true
       - name: Download the uberjar archives
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: uberjar-*
           path: packaging/output/
@@ -166,7 +166,7 @@ jobs:
       - name: build the package
         run: bundle exec rake "vox:build[openvox-server,${{ matrix.platform }}]"
       - name: Upload the package
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: package-${{ matrix.platform }}
           path: |
@@ -197,7 +197,7 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
       - name: Download everything the build jobs produced
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: output/
           merge-multiple: true
