@@ -137,6 +137,7 @@ jobs:
           - fedora-44-x86_64
           - redhatfips-8-x86_64
           - redhatfips-9-x86_64
+          - redhatfips-10-x86_64
           - sles-15-x86_64
           - sles-16-x86_64
           - ubuntu-22.04-amd64
