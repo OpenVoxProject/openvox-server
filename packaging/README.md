@@ -17,8 +17,8 @@ Two vanagon projects make up the build:
    component fetches the matching uberjar archive (from S3 in CI, or from
    `packaging/output` for local builds) and the `openvox-server` component
    installs all authored content from `packaging/resources/`: CLI wrappers and
-   configs from `resources/files/`, and the systemd unit, defaults file, and
-   tmpfiles config rendered from the templates next to it.
+   configs from `resources/files/`, and the systemd unit and defaults file
+   rendered from the templates next to it.
 
 The package build for `SOURCE_TARBALL_PLATFORM` in `lib/server_packaging.rb` 
 also writes `openvox-server-<version>.tar.gz` to `packaging/output/`. That is
@@ -54,19 +54,14 @@ The Clojure dependencies can be rebuilt from source before the uberjar build
 with `DEP_REBUILD` (a comma separated subset), `DEP_REBUILD_BRANCH`,
 `DEP_REBUILD_ORG` and `FULL_DEP_REBUILD_BRANCH`, as with the ezbake build.
 
-## Service styles
+## Service
 
-Two systemd service styles are maintained (see `packaging/resources/systemd/`).
-The `direct` style matches the ezbake 4.x packages shipped for OpenVox 9 and is
-the default there. It runs java straight from the unit with `Type=notify`, or
-`Type=notify-reload` on platforms with systemd 253 or newer. The `wrapper`
-style matches the ezbake 2.x packages shipped for OpenVox 8 and is the default
-for 8.x versions. It runs the service through the start/stop/reload CLI
-wrappers in `resources/files/wrapper/`. Override with `SERVER_SERVICE_STYLE`.
+The systemd unit in `packaging/resources/systemd/` matches the ezbake 4.x
+packages shipped for OpenVox 9. It runs java straight from the unit with
+`Type=notify`, or `Type=notify-reload` on platforms with systemd 253 or newer.
 
 OpenVox 9 packages also carry the Java launcher of the ezbake 4.2 packages,
 `apps/puppetserver/bin/java` rendered from `resources/java.erb`. The service
 unit and the CLI dispatcher run Java through it, the defaults file has no
 `JAVA_BIN` value, and the package depends on any of the Java versions in the
-project's `java_versions` setting. OpenVox 8 packages keep the single Java
-dependency and `JAVA_BIN="/usr/bin/java"` of the ezbake 2.x packages.
+project's `java_versions` setting.

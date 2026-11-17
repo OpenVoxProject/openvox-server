@@ -23,15 +23,14 @@ project 'openvox-server-uberjar' do |proj|
     proj.version_from_git
   end
   version = proj.get_version
-  major = version.split('.').first.to_i
   proj.setting(:package_version, version)
 
   # The output is the archive of the installed tree, not a package
   proj.generate_packages false
   proj.generate_archives true
 
-  # OpenVox 8 is built with JDK 17 and OpenVox 9 with JDK 21
-  proj.setting(:build_jdk, major >= 9 ? 'java-21-openjdk-headless' : 'java-17-openjdk-headless')
+  # OpenVox 9 is built with JDK 21
+  proj.setting(:build_jdk, 'java-21-openjdk-headless')
   proj.setting(:uberjar_profiles, variant == 'fips' ? 'user,pkg-fips,provided' : 'user,pkg,provided')
 
   proj.setting(:lein_version, '2.13.0')

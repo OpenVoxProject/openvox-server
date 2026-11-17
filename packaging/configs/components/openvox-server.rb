@@ -7,16 +7,10 @@ component 'openvox-server' do |pkg, settings, platform|
   pkg.url 'file://resources/files'
   pkg.version settings[:package_version]
 
-  wrapper_style = settings[:service_style] == :wrapper
-  # OpenVox 9 packages run Java through a launcher, as the ezbake 4.2 packages do
-  launcher = !settings[:java_versions].nil?
-
-  service_template = wrapper_style ? 'puppetserver-wrapper.service.erb' : 'puppetserver-direct.service.erb'
-  pkg.add_source "file://resources/systemd/#{service_template}", erb: true
+  pkg.add_source 'file://resources/systemd/puppetserver-direct.service.erb', erb: true
   pkg.add_source 'file://resources/systemd/puppetserver.sysconfig.erb', erb: true
   pkg.add_source 'file://resources/cli-defaults.sh.erb', erb: true
-  pkg.add_source 'file://resources/tmpfiles.d/puppetserver.conf' if wrapper_style
-  pkg.add_source 'file://resources/java.erb', erb: true if launcher
+  pkg.add_source 'file://resources/java.erb', erb: true
 
   pkg.build do
     ["#{platform.sed} -i 's/@@VERSION@@/#{settings[:package_version]}/' bin/puppetserver"]
@@ -25,18 +19,14 @@ component 'openvox-server' do |pkg, settings, platform|
   app_dir = '/opt/puppetlabs/server/apps/puppetserver'
 
   pkg.install_file 'bin/puppetserver', "#{app_dir}/bin/puppetserver", mode: '0755'
-  pkg.install_file '../java', "#{app_dir}/bin/java", mode: '0755' if launcher
+  pkg.install_file '../java', "#{app_dir}/bin/java", mode: '0755'
   pkg.link "../apps/puppetserver/bin/puppetserver", '/opt/puppetlabs/server/bin/puppetserver'
   pkg.link "../server/apps/puppetserver/bin/puppetserver", '/opt/puppetlabs/bin/puppetserver'
 
-  cli_apps = %w[ca foreground gem irb prune ruby].map { |app| ["cli/#{app}", app] }
-  # The wrapper style ships its own version of reload alongside start and stop
-  cli_apps += wrapper_style ? %w[start stop reload].map { |app| ["wrapper/#{app}", app] } : [['cli/reload', 'reload']]
-  cli_apps.each do |source, app|
-    pkg.install_file source, "#{app_dir}/cli/apps/#{app}", mode: '0755'
+  %w[ca foreground gem irb prune ruby reload].each do |app|
+    pkg.install_file "cli/#{app}", "#{app_dir}/cli/apps/#{app}", mode: '0755'
   end
   pkg.install_file '../cli-defaults.sh', "#{app_dir}/cli/cli-defaults.sh", mode: '0755'
-  pkg.install_file 'wrapper/helper-functions.sh', "#{app_dir}/helper-functions.sh", mode: '0755' if wrapper_style
 
   pkg.install_file 'system-config/services.d/bootstrap.cfg', "#{app_dir}/config/services.d/bootstrap.cfg"
 
@@ -51,9 +41,7 @@ component 'openvox-server' do |pkg, settings, platform|
 
   # The rendered service unit, defaults file, and cli-defaults.sh land in the
   # workdir root, one level above this component's source directory
-  service_file = File.basename(service_template, '.erb')
-  pkg.install_service "../#{service_file}", '../puppetserver.sysconfig', 'puppetserver'
-  pkg.install_file '../puppetserver.conf', '/usr/lib/tmpfiles.d/puppetserver.conf' if wrapper_style
+  pkg.install_service '../puppetserver-direct.service', '../puppetserver.sysconfig', 'puppetserver'
 
   # Ordering only, so the jar is unpacked before the source tarball below is assembled
   pkg.build_requires 'uberjar-tarball'
@@ -66,16 +54,15 @@ component 'openvox-server' do |pkg, settings, platform|
     tarball_root = ServerPackaging.source_tarball_root(settings[:package_version])
     tarball_name = ServerPackaging.source_tarball_name(settings[:package_version])
     pkg.install do
-      commands = [
+      [
         "rm -rf ../#{tarball_root} && mkdir -p ../#{tarball_root}/ext/cli_defaults ../output",
         "cp #{app_dir}/puppet-server-release.jar ../#{tarball_root}/",
         "cp -r bin cli config system-config ../#{tarball_root}/ext/",
         "cp ../cli-defaults.sh ../#{tarball_root}/ext/cli_defaults/",
+        "cp ../java ../#{tarball_root}/ext/bin/",
+        "#{platform.tar} --sort=name --owner=0 --group=0 --numeric-owner --mtime=@$$SOURCE_DATE_EPOCH --clamp-mtime " \
+        "-C .. -czf ../output/#{tarball_name} #{tarball_root}",
       ]
-      commands << "cp ../java ../#{tarball_root}/ext/bin/" if launcher
-      commands << "#{platform.tar} --sort=name --owner=0 --group=0 --numeric-owner --mtime=@$$SOURCE_DATE_EPOCH --clamp-mtime " \
-                  "-C .. -czf ../output/#{tarball_name} #{tarball_root}"
-      commands
     end
   end
 

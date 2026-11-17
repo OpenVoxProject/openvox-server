@@ -2,17 +2,14 @@
 # the archive built by the openvox-server-uberjar project is found under the
 # same name by the openvox-server project and by the local build helper.
 module ServerPackaging
-  # Platforms the uberjar project builds on. Both are AlmaLinux 9 images, which
-  # carry the JDK 17 and JDK 21 packages, so one platform per variant serves
-  # both release lines.
+  # Platforms the uberjar project builds on. Both are AlmaLinux 9 images.
   UBERJAR_PLATFORMS = {
     'regular' => 'el-9-x86_64',
     'fips' => 'redhatfips-9-x86_64',
   }.freeze
 
   # The package build that also emits the source tarball downstream packagers
-  # such as the FreeBSD port build from. Any one platform would do, this one is
-  # in the platform lists of both release lines.
+  # such as the FreeBSD port build from. Any one platform would do.
   SOURCE_TARBALL_PLATFORM = 'el-9-x86_64'
 
   # Clojure libraries that can be rebuilt from source before the uberjar
