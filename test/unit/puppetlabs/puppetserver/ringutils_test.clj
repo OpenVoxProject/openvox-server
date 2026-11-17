@@ -1,6 +1,7 @@
 (ns puppetlabs.puppetserver.ringutils-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [puppetlabs.puppetserver.ringutils :refer [wrap-with-cert-whitelist-check]]
+            [puppetlabs.puppetserver.ringutils :refer [wrap-with-cert-whitelist-check
+                                                       wrap-with-puppet-version-header]]
             [puppetlabs.ssl-utils.core :as ssl-utils]
             [schema.test :as schema-test]))
 
@@ -58,3 +59,27 @@
       (let [response (ring-handler (test-request other-cert))]
         (is (= 200 (:status response)))
         (is (= "hello" (:body response)))))))
+
+(deftest wrap-with-puppet-version-header-test
+  (testing "adds the X-Puppet-Version header when a version is supplied"
+    (let [handler (wrap-with-puppet-version-header base-handler "1.2.3")
+          response (handler (test-request localhost-cert))]
+      (is (= "1.2.3" (get-in response [:headers "X-Puppet-Version"])))))
+  (testing "omits the header when the version is blank (disable-version-header)"
+    (let [handler (wrap-with-puppet-version-header base-handler "")
+          response (handler (test-request localhost-cert))]
+      (is (= 200 (:status response)))
+      (is (nil? (get-in response [:headers "X-Puppet-Version"])))))
+  (testing "strips a header set by a downstream handler when the version is blank"
+    (let [downstream (fn [_req] {:status 200
+                                 :headers {"X-Puppet-Version" "9.9.9"
+                                           "Content-Type" "text/plain"}
+                                 :body "hello"})
+          handler (wrap-with-puppet-version-header downstream "")
+          response (handler (test-request localhost-cert))]
+      (is (= 200 (:status response)))
+      (is (nil? (get-in response [:headers "X-Puppet-Version"])))
+      (is (= "text/plain" (get-in response [:headers "Content-Type"])))))
+  (testing "leaves nil responses untouched"
+    (let [handler (wrap-with-puppet-version-header (constantly nil) "1.2.3")]
+      (is (nil? (handler (test-request localhost-cert)))))))
