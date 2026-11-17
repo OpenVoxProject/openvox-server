@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set +e
+
+pid="$(pgrep -f "puppet-server-release.jar.* -m puppetlabs.trapperkeeper.main")"
+realname="puppetserver"
+
+if [ -d "/run" ]; then
+  PIDFILE="/run/puppetlabs/${realname}/${realname}.pid"
+else
+  PIDFILE="/var/run/puppetlabs/${realname}/${realname}.pid"
+fi
+
+if [ ! -e "${INSTALL_DIR}/ezbake-functions.sh" ]; then
+    echo "Unable to find ${INSTALL_DIR}/ezbake-functions.sh script, failing stop." 1>&2
+    exit 1
+fi
+
+. "${INSTALL_DIR}/ezbake-functions.sh"
+
+if [ -z "$pid" ]; then
+    rm -f "$PIDFILE"
+    exit 0
+else
+    kill_pid "$pid" "$PIDFILE" "$SERVICE_STOP_RETRIES"
+    exit $?
+fi

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Note: Changes to this section may require synchronisation with the install.sh
+# source based installation method.
+
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+    # Note: changes to this section of the spec may require synchronisation with the
+    # install.sh source based installation methodology.
+    #
+    # Add puppet group
+    getent group puppet > /dev/null || \
+      groupadd -r puppet || :
+    # Add puppet user
+    if getent passwd puppet > /dev/null; then
+      usermod --gid puppet \
+        --home /opt/puppetlabs/server/data/puppetserver \
+        --comment "puppetserver daemon" puppet || :
+    else
+      useradd -r --gid puppet \
+        --home /opt/puppetlabs/server/data/puppetserver  --shell $(which nologin) \
+        --comment "puppetserver daemon"  puppet || :
+    fi
+
+
+fi

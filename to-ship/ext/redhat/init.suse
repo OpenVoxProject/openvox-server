@@ -1,0 +1,148 @@
+#!/bin/bash
+#
+# Vox Pupuli puppetserver
+#
+# chkconfig: - 70 10
+# description: Vox Pupuli puppetserver
+
+### BEGIN INIT INFO
+# Provides:          puppetserver
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: puppetserver
+# Description:       Start puppetserver daemon placed in /etc/init.d.
+### END INIT INFO
+
+# Copyright 2014 Puppet Labs, 2025 Vox Pupuli
+
+# Source function library.
+[ -e /lib/lsb/init-functions ] && . /lib/lsb/init-functions
+
+#set default privileges to -rw-r-----
+umask 027
+
+prog="puppetserver"
+realname="puppetserver"
+
+##########################################
+#  You should not have to edit this init script.
+#  Please attempt to make changes in /etc/sysconfig/puppetserver
+##########################################
+
+[ -e "/etc/sysconfig/${prog}" ] && . "/etc/sysconfig/${prog}"
+[ -e "$INSTALL_DIR/ezbake-functions.sh" ] && . "$INSTALL_DIR/ezbake-functions.sh"
+
+config=$CONFIG
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+JARFILE="puppet-server-release.jar"
+JAVA_ARGS="${JAVA_ARGS} -cp ${INSTALL_DIR}/${JARFILE} clojure.main -m puppetlabs.trapperkeeper.main --config ${CONFIG} -b ${BOOTSTRAP_CONFIG}"
+lockfile="/var/lock/subsys/${prog}"
+PIDFILE="/run/puppetlabs/${realname}/${realname}.pid"
+LOGFILE="/var/log/puppetlabs/${realname}/${realname}-daemon.log"
+START_TIMEOUT=${START_TIMEOUT:-300}
+
+# First reset status of this service
+rc_reset
+
+start() {
+    local service_pid
+    [ -x "${JAVA_BIN}" ] || exit 5
+    [ -e "${config}" ] || exit 6
+    echo -n $"Starting ${prog}: "
+
+    
+    
+    # startproc creates logfiles but doesn't set ownership correctly for new
+    # files. Let's always do this in case the file ownership is wrong.
+    touch "${LOGFILE}"
+    chown $USER:$USER "${LOGFILE}"
+
+    export HOME="$(getent passwd ${USER} | cut -d':' -f6)"
+
+    /usr/bin/install --directory --owner=$USER --group=$GROUP --mode=755 "/run/puppetlabs/${realname}"
+    # startproc will change users, so make sure that user has permission
+    # to access the present working directory.
+    cd "${INSTALL_DIR}"
+    startproc -u "${USER}" -l "${LOGFILE}" -p "${PIDFILE}" -w -- "${INSTALL_DIR}/bin/${realname}" start >/dev/null 2>&1
+    [ -n "$(pgrep -f puppet-server-release.jar)" ]
+    rc_status -v
+
+    retval=$?
+    if [ "$retval" -eq 0 ]; then
+        touch "${lockfile}"
+    fi
+
+    
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping ${prog}: "
+    "${INSTALL_DIR}/bin/${realname}" stop
+    rc_status -v
+    retval=$?
+
+    if [ "$retval" -eq 0 ]; then
+        rm -f "${lockfile}"
+    fi
+
+    return $retval
+}
+
+restart() {
+    stop && start
+}
+
+sl_status_q() {
+  sl_status > /dev/null 2>&1
+}
+
+sl_status() {
+    echo -n $"Checking for service ${prog}: "
+    checkproc -p "${PIDFILE}" -- "${JAVA_BIN}" "-XX:OnOutOfMemoryError=\"kill -9 %p\"" "${JAVA_ARGS}"
+    rc_status -v
+}
+
+reload() {
+    echo -n $"Reloading ${prog}: "
+    "${INSTALL_DIR}/bin/${realname}" reload
+    rc_status -v
+    retval=$?
+
+    if [ "$retval" -ne 0 ] && [ -z $(pgrep -f puppet-server-release.jar) ]; then
+        rm -f "${lockfile}"
+    fi
+
+    return $retval
+}
+
+case "$1" in
+    start)
+        sl_status_q && exit 0
+        start
+        ;;
+    stop)
+        sl_status_q || exit 0
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    condrestart|try-restart)
+        sl_status_q || exit 0
+        restart
+        ;;
+    reload|force-reload)
+        reload
+        ;;
+    status)
+        sl_status
+        ;;
+    *)
+        echo $"Usage: ${0} {start|stop|restart|condrestart|try-restart|reload|force-reload|status}"
+        exit 2
+esac
+exit $?

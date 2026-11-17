@@ -1,0 +1,75 @@
+require 'rake'
+require './ezbake.rb'
+
+puts "EZBAKE PROJECT NAME: #{EZBake::Config[:project]}"
+
+
+RAKE_ROOT = File.dirname(__FILE__)
+
+# TODO: not sure what to do here.  I have it this way so that you
+# can toggle it on and off during dev, but in practice, we probably
+# just want it on all the time?  Otherwise we'd just be detecting
+# to see if there were any snapshots involved, and if so, we'd
+# dynamically turn it on; so it's not providing any safety...
+LEIN_SNAPSHOTS_IN_RELEASE = true
+if LEIN_SNAPSHOTS_IN_RELEASE
+  ENV['LEIN_SNAPSHOTS_IN_RELEASE'] = 'y'
+end
+
+# Load tasks and variables for packaging automation
+require 'packaging'
+Pkg::Util::RakeUtils.load_packaging_tasks
+
+namespace :package do
+  task :bootstrap do
+    puts 'Bootstrap is no longer needed, using packaging-as-a-gem'
+  end
+  task :implode do
+    puts 'Implode is no longer needed, using packaging-as-a-gem'
+  end
+end
+
+# We want to use ezbake's package:tar and its dependencies, because it
+# contains all the special java snowflake magicks, so we have to clear the
+# packaging repo's. We also want to use ezbake's clean task, since it has so
+# much more clean than the packaging repo knows about
+['clean'].each do |task|
+  Rake::Task[task].clear if Rake::Task.task_defined?(task)
+end
+
+# All variables have been set, so we can load the ezbake tasks
+Dir[ File.join(RAKE_ROOT, 'tasks','*.rake') ].sort.each { |t| load t }
+
+task :'default.erb' => [ :package ]
+
+task :allclean => [ :clobber ]
+
+desc "Remove build artifacts (other than clojure (lein) builds)"
+task :clean do
+  rm_rf FileList["ext/files", "pkg", "*.tar.gz"]
+end
+
+desc "Get rid of build artifacts including clojure (lein) builds"
+task :clobber => [ :clean ] do
+  rm_rf FileList["target/EZBake::Config[:project]*jar"]
+end
+
+if defined?(Pkg) and defined?(Pkg::Config)
+  @version = Pkg::Config.version
+else
+  begin
+    %x{which git >/dev/null 2>&1}
+    if $?.success?
+      @version = %x{git describe --always --dirty}
+      if $?.success?
+        @version.chomp!
+      end
+    end
+  rescue
+    @version = "0.0-dev-build"
+  end
+end
+
+task :version do
+  puts @version
+end
