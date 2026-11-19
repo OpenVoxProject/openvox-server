@@ -39,6 +39,7 @@
   ;; :managed-dependencies. This prevents endless version conflicts due to deps of deps.
   ;; Renovate should keep the versions largely in sync between projects.
   :managed-dependencies [[org.clojure/clojure "1.12.6"]
+                         [org.clojure/tools.logging "1.3.2"]
                          [org.clojure/tools.namespace "1.5.1"]
                          [org.clojure/tools.reader "1.6.0"]
                          [beckon "0.1.1"]
@@ -80,7 +81,7 @@
                          [org.openvoxproject/rbac-client "1.3.0"]
                          [org.openvoxproject/rbac-client "1.3.0" :classifier "test"]
                          [org.openvoxproject/ring-middleware "2.2.1"]
-                         [org.openvoxproject/ssl-utils "3.7.1"]
+                         [org.openvoxproject/ssl-utils "3.7.2"]
                          [org.openvoxproject/trapperkeeper "5.0.6"]
                          [org.openvoxproject/trapperkeeper "5.0.6" :classifier "test"]
                          [org.openvoxproject/trapperkeeper-comidi-metrics "1.1.1"]
