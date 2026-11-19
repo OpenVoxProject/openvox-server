@@ -55,7 +55,7 @@
 
 (defn gen-csr-input-stream!
   [subject]
-  (let [key-pair (utils/generate-key-pair 512)
+  (let [key-pair (utils/generate-key-pair 2048)
         csr (utils/generate-certificate-request key-pair (utils/cn subject))
         pem (java.io.ByteArrayOutputStream.)
         _ (utils/obj->pem! csr pem)]
@@ -460,8 +460,7 @@
                (:body response)))))
 
       (testing "when the public key on the CSR is bogus, the response is a 400"
-        (let [csr-with-bad-public-key (test-pem-file "luke.madstop.com-bad-public-key.pem")
-              csr-stream              (io/input-stream csr-with-bad-public-key)
+        (let [csr-stream              (testutils/csr-stream-with-mismatched-public-key "luke.madstop.com")
               request                 (assoc request :route-params {:subject "luke.madstop.com"} :body csr-stream)
               response                (handle-put-certificate-request! settings (constantly nil) request)]
           (is (= 400 (:status response)))

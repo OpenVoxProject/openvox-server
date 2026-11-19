@@ -117,7 +117,7 @@
           cert (:cert (ssl-simple/gen-self-signed-cert
                        "ssl-client"
                        1
-                       {:keylength 512
+                       {:keylength 2048
                         :extensions [{:oid "1.3.6.1.4.1.34380.1.1.1"
                                       :critical false
                                       :value extension-value}]}))
@@ -222,7 +222,7 @@
                            (:cert (ssl-simple/gen-self-signed-cert
                                     "ssl-client"
                                     1
-                                    {:keylength 512
+                                    {:keylength 2048
                                      :extensions extensions})))
              allowable-cert (create-cert good-exts)
              deniable-cert (create-cert bad-exts)

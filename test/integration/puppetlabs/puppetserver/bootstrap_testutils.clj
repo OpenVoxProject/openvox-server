@@ -199,7 +199,7 @@
      ;; Set this artificially lower than default 4K that OpenVox Server uses
      ;; just to make it a bit faster.  Key size is presumed not to matter
      ;; for the core functionality in any tests that use this.
-     {:keylength 1024})))
+     {:keylength 2048})))
 
 (schema/defn get-ssl-context-for-cert-map :- SSLContext
   [ca-cert :- ca/Certificate
