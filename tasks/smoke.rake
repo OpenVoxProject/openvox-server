@@ -7,7 +7,8 @@ require 'json'
 # that runs systemd, starts the service, and runs the agent against it. The
 # container is the image the vanagon platform defaults name for that target,
 # on that target's architecture. The FIPS packages run on a regular kernel
-# here, which covers install and startup.
+# here, which covers install and startup. For the FIPS packages it also checks
+# Ruby's OpenSSL in the CLI subcommands.
 
 # DOCKER_BIN swaps in another container engine, the same as for vox:build
 SMOKE_DOCKER = ENV.fetch('DOCKER_BIN', 'docker').split.freeze
@@ -107,6 +108,17 @@ namespace :vox do
       smoke_exec("#{install} #{package}")
       # The unit is of type notify, so this returns once the server reports that it is ready
       smoke_exec('systemctl start puppetserver')
+      if platform.start_with?('redhatfips')
+        # The CLI subcommands of the FIPS packages run the FIPS build of jruby-openssl. The agent's eyaml
+        # encrypts a value, and smoke_fips.rb checks that the server's JRuby decrypts it.
+        smoke_exec("mkdir /tmp/eyaml && cd /tmp/eyaml && echo 'openvox fips smoke secret' > plaintext")
+        smoke_exec('cd /tmp/eyaml && /opt/puppetlabs/puppet/bin/eyaml createkeys')
+        smoke_exec('cd /tmp/eyaml && /opt/puppetlabs/puppet/bin/eyaml encrypt --output string --file plaintext > ciphertext')
+        smoke_docker('cp', File.join(__dir__, 'smoke_fips.rb'), "#{SMOKE_CONTAINER}:/tmp/smoke_fips.rb")
+        smoke_exec('/opt/puppetlabs/bin/puppetserver ruby /tmp/smoke_fips.rb /tmp/eyaml')
+        # RubyGems in the CLI subcommands has to reach an https source
+        smoke_exec("/opt/puppetlabs/bin/puppetserver gem list --remote --exact rake | grep '^rake ('")
+      end
       smoke_exec("/opt/puppetlabs/bin/puppet agent --test --server #{SMOKE_HOSTNAME}")
       puts "#{GREEN}The #{platform} package passed the smoke test on #{name}#{RESET}"
     rescue SystemExit
