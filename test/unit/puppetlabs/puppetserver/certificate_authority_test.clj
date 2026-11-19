@@ -737,12 +737,12 @@
     (testing "cakey"
       (let [key (-> settings :cakey utils/pem->private-key)]
         (is (utils/private-key? key))
-        (is (= 512 (utils/keylength key)))))
+        (is (= 2048 (utils/keylength key)))))
 
     (testing "capub"
       (let [key (-> settings :capub utils/pem->public-key)]
         (is (utils/public-key? key))
-        (is (= 512 (utils/keylength key)))))
+        (is (= 2048 (utils/keylength key)))))
 
     (testing "cert-inventory"
       (is (fs/exists? (:cert-inventory settings))))
@@ -766,17 +766,17 @@
                              (str "File " f " was replaced")))))))
 
 (deftest initialize!-test-with-keylength-in-settings
-  (let [settings (assoc (testutils/ca-settings (ks/temp-dir)) :keylength 768)]
+  (let [settings (assoc (testutils/ca-settings (ks/temp-dir)) :keylength 3072)]
     (ca/initialize! settings)
     (testing "cakey with keylength"
       (let [key (-> settings :cakey utils/pem->private-key)]
         (is (utils/private-key? key))
-        (is (= 768 (utils/keylength key)))))
+        (is (= 3072 (utils/keylength key)))))
 
     (testing "capub with keylength"
       (let [key (-> settings :capub utils/pem->public-key)]
         (is (utils/public-key? key))
-        (is (= 768 (utils/keylength key)))))))
+        (is (= 3072 (utils/keylength key)))))))
 
 (deftest ca-fail-fast-test
   (testing "Directories not required but are created if absent"
@@ -917,12 +917,12 @@
     (testing "hostprivkey"
       (let [key (-> settings :hostprivkey utils/pem->private-key)]
         (is (utils/private-key? key))
-        (is (= 512 (utils/keylength key)))))
+        (is (= 2048 (utils/keylength key)))))
 
     (testing "hostpubkey"
       (let [key (-> settings :hostpubkey utils/pem->public-key)]
         (is (utils/public-key? key))
-        (is (= 512 (utils/keylength key)))))
+        (is (= 2048 (utils/keylength key)))))
 
     (testing "Does not replace files if they all exist"
       (let [files (-> (ca/settings->ssldir-paths settings)
@@ -1006,8 +1006,8 @@
 (deftest initialize-master-ssl!-test-with-keylength-settings
   (let [tmp-confdir (fs/copy-dir confdir (ks/temp-dir))
         settings (-> (testutils/master-settings tmp-confdir)
-                     (assoc :keylength 768))
-        ca-settings (assoc (testutils/ca-settings (str tmp-confdir "/ca")) :keylength 768)]
+                     (assoc :keylength 3072))
+        ca-settings (assoc (testutils/ca-settings (str tmp-confdir "/ca")) :keylength 3072)]
 
     (ca/retrieve-ca-cert! (:cacert ca-settings) (:localcacert settings))
     (ca/initialize-master-ssl! settings "master" ca-settings)
@@ -1015,12 +1015,12 @@
     (testing "hostprivkey should have correct keylength"
       (let [key (-> settings :hostprivkey utils/pem->private-key)]
         (is (utils/private-key? key))
-        (is (= 768 (utils/keylength key)))))
+        (is (= 3072 (utils/keylength key)))))
 
     (testing "hostpubkey should have correct keylength"
       (let [key (-> settings :hostpubkey utils/pem->public-key)]
         (is (utils/public-key? key))
-        (is (= 768 (utils/keylength key)))))))
+        (is (= 3072 (utils/keylength key)))))))
 
 (when-not (SSLUtils/isFIPS)
   (deftest initialize-master-ssl!-test-with-incorrect-keylength
@@ -1232,13 +1232,12 @@
                   (is (false? (fs/exists? path)))))))
 
           (testing "extension & key policies are not checked"
-            (doseq [[policy subject csr-file]
-                    [["subject alt name extension" "hostwithaltnames" "hostwithaltnames.pem"]
-                     ["unknown extension" "meow" "meow-bad-extension.pem"]
-                     ["public-private key mismatch" "luke.madstop.com" "luke.madstop.com-bad-public-key.pem"]]]
+            (doseq [[policy subject csr]
+                    [["subject alt name extension" "hostwithaltnames" (io/input-stream (test-pem-file "hostwithaltnames.pem"))]
+                     ["unknown extension" "meow" (io/input-stream (test-pem-file "meow-bad-extension.pem"))]
+                     ["public-private key mismatch" "luke.madstop.com" (testutils/csr-stream-with-mismatched-public-key "luke.madstop.com")]]]
               (testing policy
-                (let [path (ca/path-to-cert-request (:csrdir settings) subject)
-                      csr  (io/input-stream (test-pem-file csr-file))]
+                (let [path (ca/path-to-cert-request (:csrdir settings) subject)]
                   (is (false? (fs/exists? path)))
                   (ca/process-csr-submission! subject csr settings (constantly nil))
                   (is (true? (fs/exists? path)))
@@ -1276,8 +1275,8 @@
                   (is (false? (fs/exists? path)))))))
 
           (testing "CSR will be saved when"
-            (doseq [[policy subject csr-file expected]
-                    [["subject alt name extension exists" "hostwithaltnames" "hostwithaltnames.pem"
+            (doseq [[policy subject csr expected]
+                    [["subject alt name extension exists" "hostwithaltnames" (io/input-stream (test-pem-file "hostwithaltnames.pem"))
                       #(= {:kind :disallowed-extension
                            :msg (str "CSR 'hostwithaltnames' contains extra subject alternative names "
                                    "(DNS:altname1, DNS:altname2, DNS:altname3), which are disallowed. "
@@ -1285,17 +1284,16 @@
                                    "true in your ca.conf file. Then restart the puppetserver "
                                    "and try signing this certificate again.")}
                           (select-keys % [:kind :msg]))]
-                     ["unknown extension exists" "meow" "meow-bad-extension.pem"
+                     ["unknown extension exists" "meow" (io/input-stream (test-pem-file "meow-bad-extension.pem"))
                       #(= {:kind :disallowed-extension
                            :msg "Found extensions that are not permitted: 1.9.9.9.9.9.9"}
                           (select-keys % [:kind :msg]))]
-                     ["public-private key mismatch" "luke.madstop.com" "luke.madstop.com-bad-public-key.pem"
+                     ["public-private key mismatch" "luke.madstop.com" (testutils/csr-stream-with-mismatched-public-key "luke.madstop.com")
                       #(= {:kind :invalid-signature
                            :msg "CSR contains a public key that does not correspond to the signing key"}
                           (select-keys % [:kind :msg]))]]]
               (testing policy
-                (let [path (ca/path-to-cert-request (:csrdir settings) subject)
-                      csr  (io/input-stream (test-pem-file csr-file))]
+                (let [path (ca/path-to-cert-request (:csrdir settings) subject)]
                   (is (false? (fs/exists? path)))
                   (is (thrown+? expected (ca/process-csr-submission! subject csr settings (constantly nil))))
                   (is (true? (fs/exists? path)))
@@ -1339,9 +1337,9 @@
         (reset! common/action-registration-function old-fn)))))
 
 (deftest cert-signing-extension-test
-  (let [issuer-keys  (utils/generate-key-pair 512)
+  (let [issuer-keys  (utils/generate-key-pair 2048)
         issuer-pub   (utils/get-public-key issuer-keys)
-        subject-keys (utils/generate-key-pair 512)
+        subject-keys (utils/generate-key-pair 2048)
         subject-pub  (utils/get-public-key subject-keys)
         subject      "subject"
         subject-dn   (utils/cn subject)
@@ -1639,7 +1637,7 @@
     (is (= "Puppet Server Internal Certificate" ca/netscape-comment-value))))
 
 (deftest ensure-alt-names-allowed-test
-  (let [subject-keys (utils/generate-key-pair 512)
+  (let [subject-keys (utils/generate-key-pair 2048)
         subject "new-cert"
         subject-dn (utils/cn subject)]
     (logutils/with-test-logging
@@ -1678,7 +1676,7 @@
 
 (deftest ensure-no-authorization-extensions!-test
   (testing "when checking a csr for authorization extensions"
-    (let [subject-keys (utils/generate-key-pair 512)
+    (let [subject-keys (utils/generate-key-pair 2048)
           subject      "borges"
           subject-dn   (utils/cn subject)
 
@@ -1847,9 +1845,9 @@
   (testing "Master certificate has default DNS alt names if none are specified"
     (let [settings     (assoc (testutils/master-settings confdir)
                               :dns-alt-names "")
-          pubkey       (-> (utils/generate-key-pair 512)
+          pubkey       (-> (utils/generate-key-pair 2048)
                            (utils/get-public-key))
-          ca-key-pair  (utils/generate-key-pair 512)
+          ca-key-pair  (utils/generate-key-pair 2048)
           ca-priv-key  (utils/get-private-key ca-key-pair)
           ca-pub-key   (utils/get-public-key ca-key-pair)
           not-after    (-> (ZonedDateTime/now ZoneOffset/UTC)

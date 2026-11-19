@@ -3,8 +3,10 @@
             [me.raynes.fs :as fs]
             [puppetlabs.kitchensink.core :as ks]
             [puppetlabs.kitchensink.file :as ks-file]
-            [puppetlabs.services.jruby.jruby-puppet-testutils :as jruby-testutils])
-  (:import (java.io ByteArrayInputStream)
+            [puppetlabs.services.jruby.jruby-puppet-testutils :as jruby-testutils]
+            [puppetlabs.ssl-utils.core :as utils])
+  (:import (java.io ByteArrayInputStream ByteArrayOutputStream)
+           (java.security KeyPair)
            (java.util.concurrent.locks ReentrantReadWriteLock)))
 
 (defn assert-subject [o subject]
@@ -16,6 +18,18 @@
 (defn pem-to-stream
   [pem-string]
   (ByteArrayInputStream. (.getBytes (slurp pem-string))))
+
+(defn csr-stream-with-mismatched-public-key
+  "A stream of a PEM encoded CSR for `subject` whose public key
+   does not belong to the key that signed the CSR."
+  [subject]
+  (let [signing-key (utils/get-private-key (utils/generate-key-pair 2048))
+        other-public-key (utils/get-public-key (utils/generate-key-pair 2048))
+        csr (utils/generate-certificate-request (KeyPair. other-public-key signing-key)
+                                                (utils/cn subject))
+        pem (ByteArrayOutputStream.)]
+    (utils/obj->pem! csr pem)
+    (ByteArrayInputStream. (.toByteArray pem))))
 
 (defmacro with-backed-up-crl
   [crl-path crl-backup-path & body]
@@ -43,7 +57,7 @@
         :privatekeydir (str ssldir "/private_keys")
         :requestdir     (str ssldir "/certificate_requests")
         :csr-attributes (str confdir "/csr_attributes.yaml")
-        :keylength      512})))
+        :keylength      2048})))
 
 (defn ca-settings
   "CA configuration settings with defaults appropriate for testing.
@@ -67,7 +81,7 @@
    :capub                            (str cadir "/ca_pub.pem")
    :cert-inventory                   (str cadir "/inventory.txt")
    :csrdir                           (str cadir "/requests")
-   :keylength                        512
+   :keylength                        2048
    :manage-internal-file-permissions true
    :signeddir                        (str cadir "/signed")
    :serial                           (str cadir "/serial")

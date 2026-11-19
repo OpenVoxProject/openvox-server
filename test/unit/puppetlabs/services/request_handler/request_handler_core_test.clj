@@ -148,11 +148,11 @@
           cert-from-authorization (:cert (ssl-simple/gen-self-signed-cert
                                           "authorization-client"
                                           1
-                                          {:keylength 512}))
+                                          {:keylength 2048}))
           cert-from-ssl (:cert (ssl-simple/gen-self-signed-cert
                                 "ssl-client"
                                 1
-                                {:keylength 512}))]
+                                {:keylength 2048}))]
       (doseq [allow-header-cert-info [false true]]
         (testing (str "for allow-header-cert-info " allow-header-cert-info)
           (let [req (core/as-jruby-request
