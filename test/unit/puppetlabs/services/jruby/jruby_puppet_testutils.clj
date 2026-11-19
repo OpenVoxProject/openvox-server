@@ -1,5 +1,6 @@
 (ns puppetlabs.services.jruby.jruby-puppet-testutils
-  (:require [puppetlabs.services.jruby.jruby-puppet-core :as jruby-puppet-core]
+  (:require [clojure.string :as str]
+            [puppetlabs.services.jruby.jruby-puppet-core :as jruby-puppet-core]
             [puppetlabs.services.jruby-pool-manager.jruby-core :as jruby-core]
             [puppetlabs.services.jruby.jruby-puppet-schemas :as jruby-puppet-schemas]
             [puppetlabs.trapperkeeper.app :as tk-app]
@@ -125,7 +126,10 @@ create-mock-pool-instance :- JRubyInstance
   [pool-config]
   {:product       {:name              "puppetserver"
                    :update-server-url "http://localhost:11111"}
-   :jruby-puppet  pool-config
+   ;; A config file has the gem path as a list, which the server joins into a
+   ;; string. A pool config from `jruby-puppet-config` is already joined.
+   :jruby-puppet  (cond-> pool-config
+                    (string? (:gem-path pool-config)) (update :gem-path str/split #":"))
    :http-client {}
    :metrics {:server-id "localhost"}
    :authorization {:version 1
