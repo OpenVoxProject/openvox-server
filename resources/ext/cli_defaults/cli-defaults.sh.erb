@@ -18,4 +18,11 @@ if [[ $java_major_version -ge 21 ]]; then
 	fi
 fi
 
+# Only the FIPS packages ship this file. The service gets it through JAVA_ARGS,
+# and the CLI subcommands need the same crypto providers.
+fips_properties="/opt/puppetlabs/server/data/<%= EZBake::Config[:real_name] %>/java.security.fips"
+if [[ -e "$fips_properties" ]] && ! grep -q 'java.security.properties' <<<"$JAVA_ARGS_CLI"; then
+	export JAVA_ARGS_CLI="-Djava.security.properties==${fips_properties} ${JAVA_ARGS_CLI}"
+fi
+
 CLASSPATH="/opt/puppetlabs/server/data/<%= EZBake::Config[:real_name] %>/jars/*:${CLASSPATH}"
