@@ -76,6 +76,13 @@ security.provider.4=SunRsaSign
 #security.provider.14=SunPKCS11
 
 #
+# Run BouncyCastle FIPS in approved-only mode, which refuses algorithms and
+# key sizes that FIPS does not approve. A value set here takes precedence
+# over the system property of the same name.
+#
+org.bouncycastle.fips.approved_only=true
+
+#
 # A list of preferred providers for specific algorithms. These providers will
 # be searched for matching algorithms before the list of registered providers.
 # Entries containing errors (parsing, etc) will be ignored. Use the
