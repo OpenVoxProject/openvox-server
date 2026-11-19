@@ -17,6 +17,7 @@
                                                          (puppetlabs.trapperkeeper.testutils.bootstrap/with-app-with-config [app])
                                                          (puppetlabs.trapperkeeper.testutils.logging/with-log-output [logs])
                                                          (puppetlabs.trapperkeeper.testutils.webserver/with-test-webserver [port])
+                                                         (puppetlabs.trapperkeeper.testutils.webserver/with-test-webserver-and-config [port])
                                                          (slingshot.slingshot/try+ [&throw-context])]}
            :invalid-arity {:skip-args [puppetlabs.trapperkeeper.core/service puppetlabs.trapperkeeper.services/service]}
            :refer-all {:exclude [clojure.test slingshot.test]}}
