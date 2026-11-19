@@ -11,6 +11,17 @@ ROOTDIR="${HOME}/.puppetlabs"
 CONFDIR="${ROOTDIR}/etc/puppet"
 CODEDIR="${ROOTDIR}/etc/code"
 
+# --fips also installs the FIPS build of jruby-openssl, into a directory that
+# only the tests of the fips profile add to their gem path.
+FIPS=false
+for arg in "$@"
+do
+  case "${arg}" in
+    --fips) FIPS=true ;;
+    *) echo "Usage: $0 [--fips]" >&2; exit 1 ;;
+  esac
+done
+
 gem_list=()
 while read LINE
 do
@@ -32,6 +43,15 @@ done < ./resources/ext/build-scripts/jruby-stdlib-gem-list.txt
 
 echo "Installing vendored gems"
 lein gem install --no-document "${gem_list[@]}"
+
+if [ "${FIPS}" = true ]; then
+  # Downloaded from gem.coop the same way as in install-vendored-gems.sh
+  echo "Installing the FIPS build of jruby-openssl"
+  fips_version=$(awk '{print $2}' ./resources/ext/build-scripts/jruby-gem-list-fips.txt)
+  download_dir=$(mktemp -d)
+  curl -fsSL -o "${download_dir}/jruby-openssl-fips.gem" "https://gem.coop/@jossl-fips/gems/jruby-openssl-${fips_version}-java.gem"
+  lein gem install --local --no-document --install-dir "${ROOTDIR}/opt/server/data/puppetserver/jruby-gems-fips" "${download_dir}/jruby-openssl-fips.gem"
+fi
 
 echo "Setting up puppet.conf for dev environment"
 

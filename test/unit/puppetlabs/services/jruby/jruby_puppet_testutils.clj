@@ -21,6 +21,7 @@
             [puppetlabs.trapperkeeper.services.webrouting.webrouting-service :as webrouting-service])
   (:import (clojure.lang IFn)
            (com.puppetlabs.jruby_utils.jruby ScriptingContainer)
+           (com.puppetlabs.ssl_utils SSLUtils)
            (puppetlabs.services.jruby_pool_manager.jruby_schemas JRubyInstance)
            (com.puppetlabs.puppetserver JRubyPuppet JRubyPuppetResponse)))
 
@@ -29,7 +30,9 @@
 
 (def ruby-load-path ["./ruby/puppet/lib" "./ruby/facter/lib" "./ruby/hiera/lib"])
 (def gem-home (str (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/jruby-gems"))
-(def gem-path (str gem-home ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/vendored-jruby-gems"))
+(def gem-path (cond-> (str gem-home ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/vendored-jruby-gems")
+                ;; `./dev-setup --fips` installs the FIPS build of jruby-openssl there
+                (SSLUtils/isFIPS) (str ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/jruby-gems-fips")))
 
 (def conf-dir "./target/server-conf")
 (def code-dir "./target/server-code")

@@ -48,7 +48,7 @@ jobs:
         with:
           lein: latest
       - name: setup gems
-        run: ./dev-setup
+        run: ./dev-setup ${{ matrix.javaargs == 'with-profile fips' && '--fips' || '' }}
       - name: clojure tests
         run: lein -U ${{ matrix.javaargs }} test ${{ matrix.filter }}
         timeout-minutes: 30
