@@ -9,6 +9,9 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [puppetlabs.trapperkeeper.testutils.logging :as logutils]
             [puppetlabs.trapperkeeper.testutils.webserver :as jetty]
+            [puppetlabs.kitchensink.core :as ks]
+            [puppetlabs.ssl-utils.core :as ssl-utils]
+            [puppetlabs.ssl-utils.simple :as ssl-simple]
             [puppetlabs.services.jruby.jruby-puppet-testutils :as jruby-puppet-testutils]
             [ring.middleware.basic-authentication :as auth]
             [schema.core :as schema]
@@ -384,3 +387,44 @@
                                      "$response = $c.get(URI('https://localhost:10080/'))"))
               (is (= 200 (.runScriptlet sc "$response.code")))
               (is (= "hi" (.runScriptlet sc "$response.body"))))))))))
+
+(deftest https-include-system-store-trusts-ssl-trust-store
+  (testing "a CA in the ssl_trust_store setting is trusted only with include_system_store"
+    (let [tmp-dir (ks/temp-dir)
+          external-ca (ssl-simple/gen-self-signed-cert "OpenVox Test External CA" 1 {:keylength 2048} true)
+          external-ca-pem (str tmp-dir "/external_ca.pem")
+          _ (ssl-utils/cert->pem! (:cert external-ca) external-ca-pem)
+          localhost-cert (ssl-simple/gen-cert "localhost" external-ca 2
+                                              {:keylength 2048
+                                               :extensions [(ssl-utils/subject-dns-alt-names ["localhost"] false)]})
+          localhost-cert-pem (str tmp-dir "/localhost_cert.pem")
+          _ (ssl-utils/cert->pem! (:cert localhost-cert) localhost-cert-pem)
+          localhost-key-pem (str tmp-dir "/localhost_key.pem")
+          _ (ssl-utils/key->pem! (:private-key localhost-cert) localhost-key-pem)
+          url "https://localhost:10080"]
+      (logutils/with-test-logging
+        (jetty/with-test-webserver-and-config ring-app port
+          {:ssl-host    "localhost"
+           :ssl-port    10080
+           :ssl-ca-cert external-ca-pem
+           :ssl-cert    localhost-cert-pem
+           :ssl-key     localhost-key-pem
+           :client-auth "none"}
+          (with-scripting-container sc
+            (with-http-client sc {}
+              (.runScriptlet sc (format "Puppet[:ssl_trust_store] = '%s'" external-ca-pem))
+              (try
+                (testing "a GET with include_system_store succeeds"
+                  (.runScriptlet sc (format "$response = $c.get(URI('%s'), options: { include_system_store: true })" url))
+                  (is (= 200 (.runScriptlet sc "$response.code")))
+                  (is (= "hi" (.runScriptlet sc "$response.body"))))
+
+                (testing "the same GET without include_system_store fails with an SSL error"
+                  (try
+                    (.runScriptlet sc (raise-caught-http-error (format "$c.get(URI('%s'))" url)))
+                    (is false "Expected the request to fail without the trust store")
+                    (catch EvalFailedException e
+                      (is (instance? SSLException (.getCause e))))))
+                (finally
+                  (.runScriptlet sc (format "load '%s'" (ks/absolute-path (test-resource "reset_ssl_trust_store.rb"))))
+                  (.runScriptlet sc "reset_ssl_trust_store"))))))))))
