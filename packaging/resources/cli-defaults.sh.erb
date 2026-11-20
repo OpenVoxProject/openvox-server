@@ -1,0 +1,21 @@
+INSTALL_DIR="/opt/puppetlabs/server/apps/puppetserver"
+
+if [ -n "$JRUBY_JAR" ]; then
+  echo "Warning: the JRUBY_JAR setting is no longer needed and will be ignored." 1>&2
+fi
+
+java_version=$($JAVA_BIN -version 2>&1 | head -1 | awk -F\" '{ print $2 }')
+java_major_version=$(echo $java_version | awk -F. '{ print $1 }')
+
+if [[ $java_major_version -ge <%= @settings[:java_args_dist_min_major] %> ]]; then
+
+	if ! grep -Eq 'add-opens|enable-native-access' <<<"$JAVA_ARGS"; then
+		export JAVA_ARGS="<%= @settings[:java_args_dist] %> ${JAVA_ARGS}"
+	fi
+
+	if ! grep -Eq 'add-opens|enable-native-access' <<<"$JAVA_ARGS_CLI"; then
+		export JAVA_ARGS_CLI="<%= @settings[:java_args_dist] %> ${JAVA_ARGS_CLI}"
+	fi
+fi
+
+CLASSPATH="/opt/puppetlabs/server/data/puppetserver/jars/*:${CLASSPATH}"
