@@ -14,17 +14,24 @@ install_gems () {
     [[ $LINE == "#"* ]] && continue
     gem_name=$(echo $LINE |awk '{print $1}')
     gem_version=$(echo $LINE |awk '{print $2}')
+    # FIPS builds install the FIPS build of jruby-openssl at the end instead.
+    [[ $fips_build == true && $gem_name == jruby-openssl ]] && continue
     gem_list+=("$gem_name:$gem_version")
   done < $gem_file
 
   # Return early if no gems in file.
   [[ "${#gem_list[@]}" -eq 0 ]] && return
 
+  jruby_gem install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
+}
+
+# Runs the gem command of the server's JRuby with the gem home in jruby.conf.
+jruby_gem () {
   # JRuby Gem Install requires the non-FIPS BouncyCastle libraries, and only
   # the non-FIPS libraries, to be present on the classpath.
   gem_install_jars=(ext/classpath-jars/{bcpkix,bcprov}-jdk18on-*.jar)
 
-  java -cp "$(IFS=:; echo "${gem_install_jars[*]}"):puppet-server-release.jar" clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- install ${additional_args:+"$additional_args"} --no-document "${gem_list[@]}"
+  java -cp "$(IFS=:; echo "${gem_install_jars[*]}"):puppet-server-release.jar" clojure.main -m puppetlabs.puppetserver.cli.gem --config jruby.conf -- "$@"
 }
 
 SOURCE="${BASH_SOURCE[0]}"
@@ -34,6 +41,12 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
   [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# FIPS builds stage the BouncyCastle FIPS jars.
+fips_build=false
+if [ -e ext/classpath-jars/bc-fips-*.jar ]; then
+  fips_build=true
+fi
 
 echo "Installing JRuby vendor gems"
 cat "${DIR}/jruby-gem-list.txt"
@@ -65,3 +78,18 @@ cat "${DIR}/mri-gem-list-no-dependencies.txt"
 echo "jruby-puppet: { gem-home: ${DESTDIR}/opt/puppetlabs/puppet/lib/ruby/vendor_gems }" > jruby.conf
 
 install_gems "${DIR}/mri-gem-list-no-dependencies.txt" "--ignore-dependencies"
+
+if [[ $fips_build == true ]]; then
+  # The FIPS build of jruby-openssl has the name of the regular gem and is only
+  # published at gem.coop. RubyGems can't install it from there by name, because
+  # gem.coop doesn't serve the gemspec files that gem install asks for.
+  echo "Installing the FIPS build of jruby-openssl"
+  fips_version=$(awk '{print $2}' "${DIR}/jruby-gem-list-fips.txt")
+  curl -fsSL -o jruby-openssl-fips.gem "https://gem.coop/@jossl-fips/gems/jruby-openssl-${fips_version}-java.gem"
+
+  echo "jruby-puppet: { gem-home: ${DESTDIR}/opt/puppetlabs/server/data/puppetserver/vendored-jruby-gems }" > jruby.conf
+
+  # A JVM without the FIPS security properties can't load OpenSSL once this
+  # gem is on its gem path, so this is the last JRuby run.
+  jruby_gem install --local --no-document jruby-openssl-fips.gem
+fi

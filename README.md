@@ -83,7 +83,7 @@ OpenVox Server also uses the
 To run lein tests, do the following:
 
 - Clone the repo with the `--recursive` flag, or after cloning, do `git submodule init && git submodule update`
-- Run `./dev-setup`
+- Run `./dev-setup`. With `--fips` it also installs the FIPS build of jruby-openssl into `~/.puppetlabs/opt/server/data/puppetserver/jruby-gems-fips`, which only `lein with-profile fips test` loads.
 - Run `lein test`
 
 ## Branching strategy

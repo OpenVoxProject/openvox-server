@@ -52,6 +52,8 @@
         (assoc-in [:jruby-puppet :server-run-dir] server-run-dir)
         (assoc-in [:jruby-puppet :server-log-dir] server-log-dir)
         (assoc-in [:jruby-puppet :multithreaded] multithreaded)
+        ;; The gem path of the other tests, which has the FIPS gems in FIPS runs
+        (assoc-in [:jruby-puppet :gem-path] [jruby-puppet-testutils/gem-path])
         (ks/deep-merge overrides))))
 
 (defn services-from-dev-bootstrap

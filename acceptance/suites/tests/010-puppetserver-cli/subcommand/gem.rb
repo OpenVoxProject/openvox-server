@@ -1,7 +1,5 @@
 require 'puppetserver/acceptance/gem_utils'
 
-skip_test('Skipped for fips') if master.fips_mode?
-
 test_name "Puppetserver 'gem' subcommand tests."
 
 cli = "puppetserver"

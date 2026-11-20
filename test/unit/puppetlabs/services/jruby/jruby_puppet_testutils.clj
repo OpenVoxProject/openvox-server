@@ -1,5 +1,6 @@
 (ns puppetlabs.services.jruby.jruby-puppet-testutils
-  (:require [puppetlabs.services.jruby.jruby-puppet-core :as jruby-puppet-core]
+  (:require [clojure.string :as str]
+            [puppetlabs.services.jruby.jruby-puppet-core :as jruby-puppet-core]
             [puppetlabs.services.jruby-pool-manager.jruby-core :as jruby-core]
             [puppetlabs.services.jruby.jruby-puppet-schemas :as jruby-puppet-schemas]
             [puppetlabs.trapperkeeper.app :as tk-app]
@@ -20,6 +21,7 @@
             [puppetlabs.trapperkeeper.services.webrouting.webrouting-service :as webrouting-service])
   (:import (clojure.lang IFn)
            (com.puppetlabs.jruby_utils.jruby ScriptingContainer)
+           (com.puppetlabs.ssl_utils SSLUtils)
            (puppetlabs.services.jruby_pool_manager.jruby_schemas JRubyInstance)
            (com.puppetlabs.puppetserver JRubyPuppet JRubyPuppetResponse)))
 
@@ -28,7 +30,9 @@
 
 (def ruby-load-path ["./ruby/puppet/lib" "./ruby/facter/lib" "./ruby/hiera/lib"])
 (def gem-home (str (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/jruby-gems"))
-(def gem-path (str gem-home ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/vendored-jruby-gems"))
+(def gem-path (cond-> (str gem-home ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/vendored-jruby-gems")
+                ;; `./dev-setup --fips` installs the FIPS build of jruby-openssl there
+                (SSLUtils/isFIPS) (str ":" (System/getProperty "user.home") "/.puppetlabs/opt/server/data/puppetserver/jruby-gems-fips")))
 
 (def conf-dir "./target/server-conf")
 (def code-dir "./target/server-code")
@@ -125,7 +129,10 @@ create-mock-pool-instance :- JRubyInstance
   [pool-config]
   {:product       {:name              "puppetserver"
                    :update-server-url "http://localhost:11111"}
-   :jruby-puppet  pool-config
+   ;; A config file has the gem path as a list, which the server joins into a
+   ;; string. A pool config from `jruby-puppet-config` is already joined.
+   :jruby-puppet  (cond-> pool-config
+                    (string? (:gem-path pool-config)) (update :gem-path str/split #":"))
    :http-client {}
    :metrics {:server-id "localhost"}
    :authorization {:version 1

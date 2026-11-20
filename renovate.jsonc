@@ -55,6 +55,13 @@
         "/net.logstash.logback:logstash-logback-encoder/"
       ]
     },
+    // The FIPS build of jruby-openssl comes from gem.coop, which lists every
+    // version with a -java suffix.
+    {
+      "matchFileNames": ["resources/ext/build-scripts/jruby-gem-list-fips.txt"],
+      "registryUrls": ["https://gem.coop/@jossl-fips"],
+      "extractVersion": "^(?<version>.+)-java$"
+    },
     {
       "groupName": "bouncycastle fips updates",
       "matchPackageNames": [
