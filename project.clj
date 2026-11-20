@@ -71,6 +71,7 @@
                          [org.bouncycastle/bc-fips "2.1.3"]
                          [org.bouncycastle/bctls-fips "2.1.25"]
                          [org.bouncycastle/bcutil-fips "2.1.8"]
+                         [org.jruby.jcodings/jcodings "1.0.67"]
                          [org.openvoxproject/clj-shell-utils "2.2.1"]
                          [org.openvoxproject/comidi "1.1.4"]
                          [org.openvoxproject/http-client "2.4.1"]
