@@ -34,6 +34,24 @@ on:
         type: string
         required: false
 
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      branch:
+        type: string
+        default: 'main'
+      rpm_platform_list:
+        type: string
+        required: false
+      ezbake-ref:
+        type: string
+        default: 'main'
+      ezbake-ver:
+        type: string
+        required: false
+
 permissions:
   contents: read
 
