@@ -20,7 +20,7 @@
 ;;       library requires 2.x and 2.21 is the current LTS as of 2026.
 ;;
 ;;       See: https://github.com/FasterXML/jackson/wiki/Jackson-Releases
-(def jackson-version "2.21.8")
+(def jackson-version "2.21.9")
 (def jackson-annotations-version (re-find #"^\d+\.\d+" jackson-version))
 (def ring-version "1.15.6")
 
