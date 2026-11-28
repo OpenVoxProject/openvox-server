@@ -1,0 +1,30 @@
+# nginx reverse proxy that terminates TLS in front of OpenVox Server.
+#
+# Rendered by acceptance/suites/tests/tls_termination/nginx_reverse_proxy.rb.
+# Keep this in step with the nginx example on the "External SSL Termination"
+# page of the OpenVox Server docs.
+upstream openvoxserver {
+    server 127.0.0.1:<%= server_port %>;
+}
+
+server {
+    listen <%= proxy_port %> ssl;
+    server_name <%= fqdn %>;
+
+    ssl_certificate        <%= hostcert %>;
+    ssl_certificate_key    <%= hostprivkey %>;
+    ssl_client_certificate <%= cacert %>;
+    ssl_crl                <%= cacrl %>;
+    ssl_verify_client      optional;
+
+    client_max_body_size 50m;
+
+    location / {
+        proxy_pass http://openvoxserver;
+        proxy_read_timeout 300s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Client-Verify $ssl_client_verify;
+        proxy_set_header X-Client-DN     $ssl_client_s_dn;
+        proxy_set_header X-Client-Cert   $ssl_client_escaped_cert;
+    }
+}
